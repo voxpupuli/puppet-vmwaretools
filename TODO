@@ -1,0 +1,46 @@
+http://packages.vmware.com/tools/esx/latest/README
+
+If you are reading this, then its because you tried to use the rhel5 or rhel6
+symlink under the 5.0latest directory (or you are very curious).  We have 
+disabled these links due to known bugs during the upgrade process.  Please 
+use the release directories instead of the *latest directories to access 
+the OSPs for RHEL 5 and 6.
+
+Please see the engineering release note in the docs directory
+(../../docs/engineering-release-notes/rhel-upgrade) for more details.
+
+Thanks.
+
+
+
+http://packages.vmware.com/tools/docs/engineering-release-notes/rhel-upgrade
+
+-- Problem --
+
+Updating OSPs from 5.0 GA via "yum update" in RHEL 5.* and 
+RHEL 6.0 may fail with unresolved dependency errors.  RHEL 6.1 does not 
+have this problem.
+
+-- Workaround --
+
+The workaround depends on which version of the distribution 
+you are running.
+
+RHEL 5.0 does not have a fix and upgrade will fail.  VMware recommends 
+upgrading to a newer version of the RHEL 5 series.
+
+RHEL 5.1 introduced the yum-kmods package, which will handle kmod 
+dependency resolution correctly in the 5.* series.  Install it by 
+running "yum install yum-kmods" and then run "yum update" again.
+
+RHEL 6.0 was released with yum version 3.2.17-14.  This version has a 
+bug that prevents it from upgrading properly.  Update yum to at least 
+version 3.2.29-17 (available for 6.0 updates from the Red Hat Network)
+
+RHEL 6.1 and later have a new enough version of yum and will upgrade 
+successfully.
+
+For more information please see https://bugzilla.redhat.com/show_bug.cgi?id=719200
+
+  -VMware Engineering
+
