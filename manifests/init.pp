@@ -13,7 +13,6 @@
 #   Starts the vmware-tools service.
 #
 # Requires:
-#   $::lsbmajdistrelease - required - fact
 #
 # Sample Usage:
 #
@@ -24,10 +23,6 @@ class vmware-tools {
         ''      => '4.1latest',
         default => "$::vmwaretools_esx_version",
       }
-
-#      if ! $::lsbmajdistrelease {
-#      	fail("Please install the redhat-lsb package so that facter can provide the \$lsbmajdistrelease fact.")
-#      }
 
       $majdistrelease = regsubst($::operatingsystemrelease,'^(\d+)\.(\d+)','\1')
 
@@ -40,12 +35,10 @@ class vmware-tools {
 
           yumrepo { "vmware-tools":
             descr    => "VMware Tools $vmwaretools_esx_version_real - RHEL${majdistrelease} ${yum_basearch}",
-           #descr    => "VMware Tools $vmwaretools_esx_version_real - RHEL${::lsbmajdistrelease} ${yum_basearch}",
             enabled  => 1,
             gpgcheck => 1,
             gpgkey   => "http://packages.vmware.com/tools/VMWARE-PACKAGING-GPG-KEY.pub",
             baseurl  => "http://packages.vmware.com/tools/esx/${vmwaretools_esx_version_real}/rhel${majdistrelease}/${yum_basearch}/",
-           #baseurl  => "http://packages.vmware.com/tools/esx/${vmwaretools_esx_version_real}/rhel${::lsbmajdistrelease}/${yum_basearch}/",
             priority => 50,
             protect  => 0,
           }
@@ -58,12 +51,10 @@ class vmware-tools {
 
           yumrepo { "vmware-tools":
             descr    => "VMware Tools $vmwaretools_esx_version_real - SUSE${majdistrelease} ${yum_basearch}",
-            #descr    => "VMware Tools $vmwaretools_esx_version_real - SUSE${::lsbmajdistrelease} ${yum_basearch}",
             enabled  => 1,
             gpgcheck => 1,
             gpgkey   => "http://packages.vmware.com/tools/VMWARE-PACKAGING-GPG-KEY.pub",
             baseurl  => "http://packages.vmware.com/tools/esx/${vmwaretools_esx_version_real}/suse${majdistrelease}/${yum_basearch}/",
-            #baseurl  => "http://packages.vmware.com/tools/esx/${vmwaretools_esx_version_real}/suse${::lsbmajdistrelease}/${yum_basearch}/",
             priority => 50,
             protect  => 0,
           }
