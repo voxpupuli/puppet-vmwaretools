@@ -16,6 +16,9 @@
 #
 # Sample Usage:
 #
+#   $vmwaretools_esx_version = '4.1latest'
+#   include vmware-tools
+#
 class vmware-tools {
   case $::virtual {
     vmware: {
