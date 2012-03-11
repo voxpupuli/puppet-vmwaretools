@@ -18,12 +18,24 @@ Class documentation is available via puppetdoc.
 Examples
 --------
 
+    $vmwaretools_esx_version = '4.1latest'
     include vmware-tools
+
+Notes
+-----
+
+* Only tested on CentOS 5.5 and CentOS 6.2.
 
 Issues
 ------
 
-* ??
+* Does not yet work with version 5.0 OSP tools.
+* Does not install Desktop (X Window) components.
+
+TODO
+----
+
+* Support installation of Desktop packages.
 
 Copyright
 ---------

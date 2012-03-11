@@ -1,5 +1,5 @@
 name    'runningman-vmwaretools'
-version '1.0.0'
+version '2.0.0'
 source 'git://github.com/runningman/puppet-vmware-tools.git'
 author 'runningman'
 license 'Apache 2.0'

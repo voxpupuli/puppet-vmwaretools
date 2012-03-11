@@ -1,9 +1,10 @@
 # Class: vmware-tools
 #
-# This module handles installing the VMware Tools Operating System Specific
+# This class handles installing the VMware Tools Operating System Specific
 # Packages.  http://packages.vmware.com/
 #
 # Parameters:
+#   $vmwaretools_esx_version - optional - 3.5latest|4.0|3.5u5|etc, default: 4.1latest
 #
 # Actions:
 #   Removes old VMwareTools package or runs vmware-uninstall-tools.pl if found.
@@ -12,33 +13,78 @@
 #   Starts the vmware-tools service.
 #
 # Requires:
-#   $vmwarever         - optional - 4.0latest|3.5u5|5.0|etc, default: latest
-#   $lsbmajdistrelease - required - fact
+#   $::lsbmajdistrelease - required - fact
 #
 # Sample Usage:
 #
 class vmware-tools {
-  $vmwarever_real = $vmwarever ? {
-    ''      => 'latest',
-    default => "$vmwarever",
-  }
+  case $::virtual {
+    vmware: {
+      $vmwaretools_esx_version_real = $::vmwaretools_esx_version ? {
+        ''      => '4.1latest',
+        default => "$::vmwaretools_esx_version",
+      }
 
-  case $productname {
-    'VMware Virtual Platform': {
+#      if ! $::lsbmajdistrelease {
+#      	fail("Please install the redhat-lsb package so that facter can provide the \$lsbmajdistrelease fact.")
+#      }
+
+      $majdistrelease = regsubst($::operatingsystemrelease,'^(\d+)\.(\d+)','\1')
+
+      case $::operatingsystem {
+        "RedHat", "CentOS", "Scientific", "SLC", "Ascendos", "PSBM", "OracleLinux", "OVS", "OEL": {
+          $yum_basearch = $::architecture ? {
+            'i386'  => 'i686',
+            default => "$::architecture",
+          }
+
+          yumrepo { "vmware-tools":
+            descr    => "VMware Tools $vmwaretools_esx_version_real - RHEL${majdistrelease} ${yum_basearch}",
+           #descr    => "VMware Tools $vmwaretools_esx_version_real - RHEL${::lsbmajdistrelease} ${yum_basearch}",
+            enabled  => 1,
+            gpgcheck => 1,
+            gpgkey   => "http://packages.vmware.com/tools/VMWARE-PACKAGING-GPG-KEY.pub",
+            baseurl  => "http://packages.vmware.com/tools/esx/${vmwaretools_esx_version_real}/rhel${majdistrelease}/${yum_basearch}/",
+           #baseurl  => "http://packages.vmware.com/tools/esx/${vmwaretools_esx_version_real}/rhel${::lsbmajdistrelease}/${yum_basearch}/",
+            priority => 50,
+            protect  => 0,
+          }
+        }
+        "SLES", "SLED", "OpenSuSE", "SuSE": {
+          $yum_basearch = $::architecture ? {
+            'i386'  => 'i586',
+            default => "$::architecture",
+          }
+
+          yumrepo { "vmware-tools":
+            descr    => "VMware Tools $vmwaretools_esx_version_real - SUSE${majdistrelease} ${yum_basearch}",
+            #descr    => "VMware Tools $vmwaretools_esx_version_real - SUSE${::lsbmajdistrelease} ${yum_basearch}",
+            enabled  => 1,
+            gpgcheck => 1,
+            gpgkey   => "http://packages.vmware.com/tools/VMWARE-PACKAGING-GPG-KEY.pub",
+            baseurl  => "http://packages.vmware.com/tools/esx/${vmwaretools_esx_version_real}/suse${majdistrelease}/${yum_basearch}/",
+            #baseurl  => "http://packages.vmware.com/tools/esx/${vmwaretools_esx_version_real}/suse${::lsbmajdistrelease}/${yum_basearch}/",
+            priority => 50,
+            protect  => 0,
+          }
+        }
+        default: { }
+      }
+
       package { "VMwareTools":
-        ensure  => "absent",
+        ensure => "absent",
         before => Package["vmware-tools"],
       }
 
       package { "vmware-tools":
         ensure  => "latest",
-        name    => $operatingsystem ? {
+        name    => $::operatingsystem ? {
           Fedora  => "open-vm-tools",
           default => "vmware-tools-nox",
         },
-        require => $operatingsystem ? {
+        require => $::operatingsystem ? {
           Fedora  => Package ["VMwareTools"],
-          default => [ Yumrepo["vmware"], Package ["VMwareTools"], ],
+          default => [ Yumrepo["vmware-tools"], Package ["VMwareTools"], ],
         },
       }
 
@@ -66,40 +112,17 @@ class vmware-tools {
         refreshonly => true,
       }
 
-      $yum_basearch = $architecture ? {
-        'i386'  => 'i686',
-        default => "$architecture",
-      }
-
-      case $operatingsystem {
-        CentOS, RedHat, OEL: {
-          yumrepo { "vmware":
-            descr    => "VMware Tools $vmwarever_real - rhel${lsbmajdistrelease} ${yum_basearch}",
-            enabled  => 1,
-            gpgcheck => 1,
-            gpgkey   => "http://packages.vmware.com/tools/VMWARE-PACKAGING-GPG-KEY.pub",
-            baseurl  => "http://packages.vmware.com/tools/esx/${vmwarever_real}/rhel${lsbmajdistrelease}/${yum_basearch}/",
-            priority => 10,
-            protect  => 0,
-           #require  => [ Package["yum-priorities"], Package["yum-protectbase"], ],
-          }
-        }
-        default: { }
-      }
-
       service { "vmware-tools":
-        name       => $operatingsystem ? {
-          default => "vmware-tools",
-        },
+        name       => "vmware-tools",
         ensure     => "running",
         enable     => "true",
         hasrestart => "true",
-        hasstatus  => "true",
+        hasstatus  => "false",
+        pattern    => "vmware-guestd",
         require    => Package["vmware-tools"],
       }
 
     }
     default: { }
-
   }
 }
