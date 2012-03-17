@@ -15,13 +15,12 @@
 # Requires:
 #
 # Sample Usage:
-#
 #   $vmwaretools_esx_version = '4.1latest'
 #   include vmware-tools
 #
 class vmware-tools {
   case $::virtual {
-    vmware: {
+    "vmware": {
       $vmwaretools_esx_version_real = $::vmwaretools_esx_version ? {
         ''      => '4.1latest',
         default => "$::vmwaretools_esx_version",
@@ -29,6 +28,7 @@ class vmware-tools {
 
       $majdistrelease = regsubst($::operatingsystemrelease,'^(\d+)\.(\d+)','\1')
 
+      # We use $::operatingsystem and not $::osfamily because certain things (like Fedora) are excluded.
       case $::operatingsystem {
         "RedHat", "CentOS", "Scientific", "SLC", "Ascendos", "PSBM", "OracleLinux", "OVS", "OEL": {
           $yum_basearch = $::architecture ? {
