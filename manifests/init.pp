@@ -1,10 +1,11 @@
-# Class: vmware-tools
+# Class: vmwaretools
 #
 # This class handles installing the VMware Tools Operating System Specific
 # Packages.  http://packages.vmware.com/
 #
 # Parameters:
-#   $vmwaretools_esx_version - optional - 3.5latest|4.0|3.5u5|etc, default: 4.1latest
+#   $vmwaretools_esx_version - optional - 3.5latest|4.0|3.5u5|etc
+#     default: 4.1latest
 #
 # Actions:
 #   Removes old VMwareTools package or runs vmware-uninstall-tools.pl if found.
@@ -16,11 +17,13 @@
 #
 # Sample Usage:
 #   $vmwaretools_esx_version = '4.1latest'
-#   include vmware-tools
+#   include vmwaretools
 #
-class vmware-tools {
+class vmwaretools {
   case $::virtual {
     "vmware": {
+      include vmwaretools::params
+
       $vmwaretools_esx_version_real = $::vmwaretools_esx_version ? {
         ''      => '4.1latest',
         default => "$::vmwaretools_esx_version",
@@ -28,7 +31,8 @@ class vmware-tools {
 
       $majdistrelease = regsubst($::operatingsystemrelease,'^(\d+)\.(\d+)','\1')
 
-      # We use $::operatingsystem and not $::osfamily because certain things (like Fedora) are excluded.
+      # We use $::operatingsystem and not $::osfamily because certain things
+      # (like Fedora) need to be excluded.
       case $::operatingsystem {
         "RedHat", "CentOS", "Scientific", "SLC", "Ascendos", "PSBM", "OracleLinux", "OVS", "OEL": {
           $yum_basearch = $::architecture ? {
@@ -40,12 +44,13 @@ class vmware-tools {
             descr    => "VMware Tools $vmwaretools_esx_version_real - RHEL${majdistrelease} ${yum_basearch}",
             enabled  => 1,
             gpgcheck => 1,
-            gpgkey   => "http://packages.vmware.com/tools/VMWARE-PACKAGING-GPG-KEY.pub",
-            baseurl  => "http://packages.vmware.com/tools/esx/${vmwaretools_esx_version_real}/rhel${majdistrelease}/${yum_basearch}/",
-            priority => 50,
-            protect  => 0,
+            gpgkey   => "${vmwaretools::params::yum_server}${vmwaretools::params::yum_path}/VMWARE-PACKAGING-GPG-KEY.pub",
+            baseurl  => "${vmwaretools::params::yum_server}${vmwaretools::params::yum_path}/esx/${vmwaretools_esx_version_real}/rhel${majdistrelease}/${yum_basearch}/",
+            priority => $vmwaretools::params::yum_priority,
+            protect  => $vmwaretools::params::yum_protect,
           }
         }
+
         "SLES", "SLED", "OpenSuSE", "SuSE": {
           $yum_basearch = $::architecture ? {
             'i386'  => 'i586',
@@ -56,12 +61,13 @@ class vmware-tools {
             descr    => "VMware Tools $vmwaretools_esx_version_real - SUSE${majdistrelease} ${yum_basearch}",
             enabled  => 1,
             gpgcheck => 1,
-            gpgkey   => "http://packages.vmware.com/tools/VMWARE-PACKAGING-GPG-KEY.pub",
-            baseurl  => "http://packages.vmware.com/tools/esx/${vmwaretools_esx_version_real}/suse${majdistrelease}/${yum_basearch}/",
-            priority => 50,
-            protect  => 0,
+            gpgkey   => "${vmwaretools::params::yum_server}${vmwaretools::params::yum_path}/VMWARE-PACKAGING-GPG-KEY.pub",
+            baseurl  => "${vmwaretools::params::yum_server}${vmwaretools::params::yum_path}/esx/${vmwaretools_esx_version_real}/suse${majdistrelease}/${yum_basearch}/",
+            priority => $vmwaretools::params::yum_priority,
+            protect  => $vmwaretools::params::yum_protect,
           }
         }
+
         default: { }
       }
 
@@ -96,8 +102,9 @@ class vmware-tools {
         before  => [ Package["vmware-tools"], Package["VMwareTools"], ],
       }
 
-      # tools.syncTime = "TRUE" should be in the guest's vmx file.
-      # http://kb.vmware.com/kb/1006427
+      # tools.syncTime = "FALSE" should be in the guest's vmx file and NTP
+      # should be in use on the guest.  http://kb.vmware.com/kb/1006427
+      # TODO: split vmware-tools.syncTime out to the NTP module??
       exec { "vmware-tools.syncTime":
         command     => 'vmware-guestd --cmd "vmx.set_option synctime 1 0" || true',
         path        => "/usr/bin:/usr/local/bin",
@@ -109,14 +116,15 @@ class vmware-tools {
       service { "vmware-tools":
         name       => "vmware-tools",
         ensure     => "running",
-        enable     => "true",
-        hasrestart => "true",
-        hasstatus  => "false",
+        enable     => true,
+        hasrestart => true,
+        hasstatus  => false,
         pattern    => "vmware-guestd",
         require    => Package["vmware-tools"],
       }
 
     }
+    # If we are not on VMware, do not do anything.
     default: { }
   }
 }

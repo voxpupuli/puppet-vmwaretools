@@ -1,3 +1,2 @@
-#$vmwarever = "4.0latest"
-include vmware-tools
-
+$vmwaretools_esx_version = '4.0latest'
+include vmwaretools

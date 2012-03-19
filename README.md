@@ -13,13 +13,20 @@ Actions:
 * Installs the OSP or open vmware tools.
 * Starts the vmware-tools service.
 
+OS Support:
+
+* RedHat family - tested on CentOS 5.5 and CentOS 6.2
+* SuSE family   - untested (initial support for yumrepo)
+* Ubuntu        - presently unsupported
+* Debian        - presently unsupported
+
 Class documentation is available via puppetdoc.
 
 Examples
 --------
 
     $vmwaretools_esx_version = '4.1latest'
-    include vmware-tools
+    include vmwaretools
 
 Notes
 -----
