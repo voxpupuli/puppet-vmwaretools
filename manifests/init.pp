@@ -68,9 +68,7 @@ class vmwaretools {
           }
         }
 
-        default: {
-          fail("Module vmwaretools does not support ${::operatingsystem}")
-        }
+        default: { }
       }
 
       package { 'VMwareTools':
