@@ -21,12 +21,12 @@
 #
 class vmwaretools {
   case $::virtual {
-    "vmware": {
+    'vmware': {
       include vmwaretools::params
 
       $vmwaretools_esx_version_real = $::vmwaretools_esx_version ? {
         ''      => '4.1latest',
-        default => "$::vmwaretools_esx_version",
+        default => $::vmwaretools_esx_version,
       }
 
       $majdistrelease = regsubst($::operatingsystemrelease,'^(\d+)\.(\d+)','\1')
@@ -34,14 +34,14 @@ class vmwaretools {
       # We use $::operatingsystem and not $::osfamily because certain things
       # (like Fedora) need to be excluded.
       case $::operatingsystem {
-        "RedHat", "CentOS", "Scientific", "SLC", "Ascendos", "PSBM", "OracleLinux", "OVS", "OEL": {
+        'RedHat', 'CentOS', 'Scientific', 'SLC', 'Ascendos', 'PSBM', 'OracleLinux', 'OVS', 'OEL': {
           $yum_basearch = $::architecture ? {
             'i386'  => 'i686',
-            default => "$::architecture",
+            default => $::architecture,
           }
 
-          yumrepo { "vmware-tools":
-            descr    => "VMware Tools $vmwaretools_esx_version_real - RHEL${majdistrelease} ${yum_basearch}",
+          yumrepo { 'vmware-tools':
+            descr    => "VMware Tools ${vmwaretools_esx_version_real} - RHEL${majdistrelease} ${yum_basearch}",
             enabled  => 1,
             gpgcheck => 1,
             gpgkey   => "${vmwaretools::params::yum_server}${vmwaretools::params::yum_path}/VMWARE-PACKAGING-GPG-KEY.pub",
@@ -51,14 +51,14 @@ class vmwaretools {
           }
         }
 
-        "SLES", "SLED", "OpenSuSE", "SuSE": {
+        'SLES', 'SLED', 'OpenSuSE', 'SuSE': {
           $yum_basearch = $::architecture ? {
             'i386'  => 'i586',
-            default => "$::architecture",
+            default => $::architecture,
           }
 
-          yumrepo { "vmware-tools":
-            descr    => "VMware Tools $vmwaretools_esx_version_real - SUSE${majdistrelease} ${yum_basearch}",
+          yumrepo { 'vmware-tools':
+            descr    => "VMware Tools ${vmwaretools_esx_version_real} - SUSE${majdistrelease} ${yum_basearch}",
             enabled  => 1,
             gpgcheck => 1,
             gpgkey   => "${vmwaretools::params::yum_server}${vmwaretools::params::yum_path}/VMWARE-PACKAGING-GPG-KEY.pub",
@@ -68,59 +68,61 @@ class vmwaretools {
           }
         }
 
-        default: { }
+        default: {
+          fail("Module vmwaretools does not support ${::operatingsystem}")
+        }
       }
 
-      package { "VMwareTools":
-        ensure => "absent",
-        before => Package["vmware-tools"],
+      package { 'VMwareTools':
+        ensure => 'absent',
+        before => Package['vmware-tools'],
       }
 
-      package { "vmware-tools":
-        ensure  => "latest",
+      package { 'vmware-tools':
+        ensure  => 'latest',
         name    => $::operatingsystem ? {
-          Fedora  => "open-vm-tools",
-          default => "vmware-tools-nox",
+          Fedora  => 'open-vm-tools',
+          default => 'vmware-tools-nox',
         },
         require => $::operatingsystem ? {
-          Fedora  => Package ["VMwareTools"],
-          default => [ Yumrepo["vmware-tools"], Package ["VMwareTools"], ],
+          Fedora  => Package ['VMwareTools'],
+          default => [ Yumrepo['vmware-tools'], Package ['VMwareTools'], ],
         },
       }
 
-      exec { "vmware-uninstall-tools":
-        command => "/usr/bin/vmware-uninstall-tools.pl",
-        path    => "/usr/bin:/usr/local/bin",
-        onlyif  => "test -f /usr/bin/vmware-uninstall-tools.pl",
-        before  => [ Package["vmware-tools"], Package["VMwareTools"], ],
+      exec { 'vmware-uninstall-tools':
+        command => '/usr/bin/vmware-uninstall-tools.pl',
+        path    => '/usr/bin:/usr/local/bin',
+        onlyif  => 'test -f /usr/bin/vmware-uninstall-tools.pl',
+        before  => [ Package['vmware-tools'], Package['VMwareTools'], ],
       }
 
-      exec { "vmware-uninstall-tools-local":
-        command => "/usr/local/bin/vmware-uninstall-tools.pl",
-        path    => "/usr/bin:/usr/local/bin",
-        onlyif  => "test -f /usr/local/bin/vmware-uninstall-tools.pl",
-        before  => [ Package["vmware-tools"], Package["VMwareTools"], ],
+      exec { 'vmware-uninstall-tools-local':
+        command => '/usr/local/bin/vmware-uninstall-tools.pl',
+        path    => '/usr/bin:/usr/local/bin',
+        onlyif  => 'test -f /usr/local/bin/vmware-uninstall-tools.pl',
+        before  => [ Package['vmware-tools'], Package['VMwareTools'], ],
       }
 
       # tools.syncTime = "FALSE" should be in the guest's vmx file and NTP
       # should be in use on the guest.  http://kb.vmware.com/kb/1006427
       # TODO: split vmware-tools.syncTime out to the NTP module??
-      exec { "vmware-tools.syncTime":
+      exec { 'vmware-tools.syncTime':
         command     => 'vmware-guestd --cmd "vmx.set_option synctime 1 0" || true',
-        path        => "/usr/bin:/usr/local/bin",
+        path        => '/usr/bin:/usr/local/bin',
         returns     => [ 0, 1, ],
-        require     => Package["vmware-tools"],
+        require     => Package['vmware-tools'],
         refreshonly => true,
       }
 
-      service { "vmware-tools":
-        name       => "vmware-tools",
-        ensure     => "running",
+      service { 'vmware-tools':
+        name       => 'vmware-tools',
+        ensure     => 'running',
         enable     => true,
         hasrestart => true,
         hasstatus  => false,
-        pattern    => "vmware-guestd",
-        require    => Package["vmware-tools"],
+        pattern    => 'vmware-guestd',
+        require    => Package['vmware-tools'],
       }
 
     }
