@@ -81,12 +81,12 @@ class vmwaretools {
       package { 'vmware-tools':
         ensure  => 'latest',
         name    => $::operatingsystem ? {
-          Fedora  => 'open-vm-tools',
-          default => 'vmware-tools-nox',
+          'Fedora' => 'open-vm-tools',
+          default  => 'vmware-tools-nox',
         },
         require => $::operatingsystem ? {
-          Fedora  => Package ['VMwareTools'],
-          default => [ Yumrepo['vmware-tools'], Package ['VMwareTools'], ],
+          'Fedora' => Package ['VMwareTools'],
+          default  => [ Yumrepo['vmware-tools'], Package ['VMwareTools'], ],
         },
       }
 
@@ -121,7 +121,10 @@ class vmwaretools {
         enable     => true,
         hasrestart => true,
         hasstatus  => false,
-        pattern    => 'vmware-guestd',
+        pattern    => $vmwaretools_esx_version_real ? {
+          /(4.1)/ => 'vmtoolsd',
+          default => 'vmware-guestd',
+        },
         require    => Package['vmware-tools'],
       }
 
