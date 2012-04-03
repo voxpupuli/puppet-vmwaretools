@@ -1,6 +1,8 @@
 Puppet VMware Tools OSP Module
 ==============================
 
+[![Build Status](https://secure.travis-ci.org/runningman/puppet-vmwaretools.png?branch=param_class)](http://travis-ci.org/runningman/puppet-vmwaretools)
+
 Introduction
 ------------
 
@@ -25,8 +27,14 @@ Class documentation is available via puppetdoc.
 Examples
 --------
 
-    $vmwaretools_esx_version = '4.1latest'
     include vmwaretools
+
+    class { vmwaretools': }
+
+    class { vmwaretools':
+      tools_version = '4.0u3',
+      autoupgrade   = true,
+    }
 
 Notes
 -----
@@ -47,5 +55,5 @@ TODO
 Copyright
 ---------
 
-Copyright (C) 2011 Mike Arnold <mike@razorsedge.org>
+Copyright (C) 2012 Mike Arnold <mike@razorsedge.org>
 
