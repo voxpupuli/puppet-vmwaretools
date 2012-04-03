@@ -6,15 +6,27 @@ class vmwaretools::params {
 
   case $::osfamily {
     'RedHat': {
-      $package = 'vmware-tools-nox'
-      $service_name = 'vmware-tools'
-      $yum_basearch = $::architecture ? {
-        'i386'  => 'i686',
-        default => $::architecture,
+      case $::operatingsystem {
+        'Fedora': {
+          $package_name = 'open-vm-tools'
+          $service_name = 'vmware-tools'
+          $yum_basearch = $::architecture ? {
+            'i386'  => 'i686',
+            default => $::architecture,
+          }
+        }
+        default: {
+          $package_name = 'vmware-tools-nox'
+          $service_name = 'vmware-tools'
+          $yum_basearch = $::architecture ? {
+            'i386'  => 'i686',
+            default => $::architecture,
+          }
+        }
       }
     }
     'Suse': {
-      $package = 'vmware-tools-nox'
+      $package_name = 'vmware-tools-nox'
       $service_name = 'vmware-tools'
       $yum_basearch = $::architecture ? {
         'i386'  => 'i586',

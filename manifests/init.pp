@@ -19,7 +19,8 @@
 #
 #   [*package*]
 #     Name of the package.
-#     Only set this, if your platform is not supported or you know, what you're doing.
+#     Only set this, if your platform is not supported or you know, what you're
+#     doing.
 #     Default: auto-set, platform specific
 #
 #   [*service_ensure*]
@@ -28,7 +29,8 @@
 #
 #   [*service_name*]
 #     Name of VMware Tools service
-#     Only set this, if your platform is not supported or you know, what you're doing.
+#     Only set this, if your platform is not supported or you know, what you're
+#     doing.
 #     Default: auto-set, platform specific
 #
 #   [*service_enable*]
@@ -61,7 +63,7 @@ class vmwaretools (
   $tools_version      = '4.1latest',
   $ensure             = 'present',
   $autoupgrade        = false,
-  $package            = $vmwaretools::params::package,
+  $package            = $vmwaretools::params::package_name,
   $service_ensure     = 'running',
   $service_name       = $vmwaretools::params::service_name,
   $service_enable     = true,
@@ -105,28 +107,33 @@ class vmwaretools (
       # (like Fedora) need to be excluded.
       case $::operatingsystem {
         'RedHat', 'CentOS', 'Scientific', 'SLC', 'Ascendos', 'PSBM', 'OracleLinux', 'OVS', 'OEL': {
+          # TODO: figure out this yumrepo mess.
           yumrepo { 'vmware-tools':
-            descr    => "VMware Tools ${tools_version} - RHEL${majdistrelease} ${yum_basearch}",
+            descr    => "VMware Tools ${tools_version} - RHEL${majdistrelease} ${vmwaretools::params::yum_basearch}",
             enabled  => 1,
             gpgcheck => 1,
             gpgkey   => "${vmwaretools::params::yum_server}${vmwaretools::params::yum_path}/VMWARE-PACKAGING-GPG-KEY.pub",
             baseurl  => "${vmwaretools::params::yum_server}${vmwaretools::params::yum_path}/esx/${tools_version}/rhel${majdistrelease}/${vmwaretools::params::yum_basearch}/",
             priority => $vmwaretools::params::yum_priority,
             protect  => $vmwaretools::params::yum_protect,
+            before   => Package['vmware-tools'],
           }
         }
 
         'SLES', 'SLED', 'OpenSuSE', 'SuSE': {
           yumrepo { 'vmware-tools':
-            descr    => "VMware Tools ${tools_version} - SUSE${majdistrelease} ${yum_basearch}",
+            descr    => "VMware Tools ${tools_version} - SUSE${majdistrelease} ${vmwaretools::params::yum_basearch}",
             enabled  => 1,
             gpgcheck => 1,
             gpgkey   => "${vmwaretools::params::yum_server}${vmwaretools::params::yum_path}/VMWARE-PACKAGING-GPG-KEY.pub",
             baseurl  => "${vmwaretools::params::yum_server}${vmwaretools::params::yum_path}/esx/${tools_version}/suse${majdistrelease}/${vmwaretools::params::yum_basearch}/",
             priority => $vmwaretools::params::yum_priority,
             protect  => $vmwaretools::params::yum_protect,
+            before   => Package['vmware-tools'],
           }
         }
+
+      default: { }
       }
 
       package { 'VMwareTools':
@@ -161,19 +168,12 @@ class vmwaretools (
 
       package { 'vmware-tools':
         ensure  => $package_ensure,
-        name    => $::operatingsystem ? {
-          'Fedora' => 'open-vm-tools',
-          default  => $package,
-        },
-        require => $::operatingsystem ? {
-          'Fedora' => Package ['VMwareTools'],
-          default  => [ Yumrepo['vmware-tools'], Package ['VMwareTools'], ],
-        },
+        name    => $package,
       }
 
       service { 'vmware-tools':
-        name       => $service_name,
         ensure     => $service_ensure_real,
+        name       => $service_name,
         enable     => $service_enable,
         hasrestart => $service_hasrestart,
         hasstatus  => false,
