@@ -3,12 +3,12 @@ require 'rspec/core/rake_task'
 
 task :default => [:spec, :lint]
 
-desc "Run all rspec-puppet tests visually"
+desc "Run all rspec-puppet tests"
 RSpec::Core::RakeTask.new(:spec) do |t|
   t.pattern = 'spec/*/*_spec.rb'
 end
 
-desc "Run all rspec-puppet tests"
+desc "Run all rspec-puppet tests visually"
 RSpec::Core::RakeTask.new(:vspec) do |t|
   t.rspec_opts = ['--color', '--format documentation']
   t.pattern = 'spec/*/*_spec.rb'
