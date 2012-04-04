@@ -143,14 +143,12 @@ class vmwaretools (
 
       exec { 'vmware-uninstall-tools':
         command => '/usr/bin/vmware-uninstall-tools.pl',
-        path    => '/usr/bin:/usr/local/bin',
         onlyif  => 'test -f /usr/bin/vmware-uninstall-tools.pl',
         before  => [ Package['vmware-tools'], Package['VMwareTools'], ],
       }
 
       exec { 'vmware-uninstall-tools-local':
         command => '/usr/local/bin/vmware-uninstall-tools.pl',
-        path    => '/usr/bin:/usr/local/bin',
         onlyif  => 'test -f /usr/local/bin/vmware-uninstall-tools.pl',
         before  => [ Package['vmware-tools'], Package['VMwareTools'], ],
       }
