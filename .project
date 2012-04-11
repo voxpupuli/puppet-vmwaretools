@@ -22,12 +22,21 @@
 	</natures>
 	<filteredResources>
 		<filter>
-			<id>0</id>
+			<id>1333331016202</id>
 			<name></name>
 			<type>10</type>
 			<matcher>
 				<id>org.eclipse.ui.ide.multiFilter</id>
 				<arguments>1.0-name-matches-false-false-pkg</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1333331016214</id>
+			<name></name>
+			<type>26</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-projectRelativePath-matches-false-false-spec/fixtures/modules</arguments>
 			</matcher>
 		</filter>
 	</filteredResources>
