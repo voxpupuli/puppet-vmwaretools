@@ -152,20 +152,6 @@ class vmwaretools (
         before  => [ Package['vmware-tools'], Package['VMwareTools'], ],
       }
 
-      # tools.syncTime = "FALSE" should be in the guest's vmx file and NTP
-      # should be in use on the guest.  http://kb.vmware.com/kb/1006427
-      # TODO: split vmware-tools.syncTime out to the NTP module??
-      exec { 'vmware-tools.syncTime':
-        command     => $service_pattern ? {
-          'vmtoolsd' => 'vmware-toolbox-cmd timesync disable',
-          default    => 'vmware-guestd --cmd "vmx.set_option synctime 1 0" || true',
-        },
-        path        => '/usr/bin:/usr/sbin',
-        returns     => [ 0, 1, ],
-        require     => Package['vmware-tools'],
-        refreshonly => true,
-      }
-
       package { 'vmware-tools':
         ensure  => $package_ensure,
         name    => $package,

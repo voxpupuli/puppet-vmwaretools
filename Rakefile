@@ -29,6 +29,6 @@ end
 desc "Check puppet manifests with puppet-lint"
 task :lint do
   # This requires pull request: https://github.com/rodjek/puppet-lint/pull/81
-  system("puppet-lint --no-80chars-check manifests")
-  system("puppet-lint --no-80chars-check tests")
+  system("puppet-lint --with-filename manifests")
+  system("puppet-lint --with-filename tests")
 end
