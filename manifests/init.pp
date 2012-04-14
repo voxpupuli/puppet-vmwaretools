@@ -1,63 +1,74 @@
-# Class: vmwaretools
+# == Class: vmwaretools
 #
 # This class handles installing the VMware Tools Operating System Specific
 # Packages.  http://packages.vmware.com/
 #
-# Parameters:
+# === Parameters:
 #
-#   [*tools_version*]
-#     The version of VMware Tools to install.
-#     Default: 4.1latest
+# [*tools_version*]
+#   The version of VMware Tools to install.
+#   Default: 4.1latest
 #
-#   [*ensure*]
-#     Ensure if present or absent.
-#     Default: present
+# [*ensure*]
+#   Ensure if present or absent.
+#   Default: present
 #
-#   [*autoupgrade*]
-#     Upgrade package automatically, if there is a newer version.
-#     Default: false
+# [*autoupgrade*]
+#   Upgrade package automatically, if there is a newer version.
+#   Default: false
 #
-#   [*package*]
-#     Name of the package.
-#     Only set this, if your platform is not supported or you know, what you're
-#     doing.
-#     Default: auto-set, platform specific
+# [*package*]
+#   Name of the package.
+#   Only set this if your platform is not supported or you know what you are
+#   doing.
+#   Default: auto-set, platform specific
 #
-#   [*service_ensure*]
-#     Ensure if service is running or stopped
-#     Default: running
+# [*service_ensure*]
+#   Ensure if service is running or stopped.
+#   Default: running
 #
-#   [*service_name*]
-#     Name of VMware Tools service
-#     Only set this, if your platform is not supported or you know, what you're
-#     doing.
-#     Default: auto-set, platform specific
+# [*service_name*]
+#   Name of VMware Tools service
+#   Only set this if your platform is not supported or you know what you are
+#   doing.
+#   Default: auto-set, platform specific
 #
-#   [*service_enable*]
-#     Start service at boot
-#     Default: true
+# [*service_enable*]
+#   Start service at boot.
+#   Default: true
 #
-#   [*service_hasstatus*]
-#     Service has status command
-#     Default: true
+# [*service_hasstatus*]
+#   Service has status command.
+#   Default: true
 #
-#   [*service_hasrestart*]
-#     Service has restart command
-#     Default: true
+# [*service_hasrestart*]
+#   Service has restart command.
+#   Default: true
 #
-# Actions:
-#   Removes old VMwareTools package or runs vmware-uninstall-tools.pl if found.
-#   Installs a vmware YUM repository, if needed.
-#   Install the OSP or open vmware tools.
-#   Starts the vmware-tools service.
+# === Actions:
 #
-# Requires:
-#   Nothing
+# Removes old VMwareTools package or runs vmware-uninstall-tools.pl if found.
+# Installs a vmware YUM repository, if needed.
+# Install the OSP or open vmware tools.
+# Starts the vmware-tools service.
 #
-# Sample Usage:
+# === Requires:
+#
+# Nothing.
+#
+# === Sample Usage:
+#
 #   class { vmwaretools':
-#     tools_version = '4.0u3',
+#     tools_version => '4.0u3',
 #   }
+#
+# === Authors:
+#
+# Mike Arnold <mike@razorsedge.org>
+#
+# === Copyright:
+#
+# Copyright (C) 2011 Mike Arnold, unless otherwise noted.
 #
 class vmwaretools (
   $tools_version      = '4.1latest',

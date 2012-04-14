@@ -1,3 +1,15 @@
+# == Class: vmwaretools::params
+#
+# This class handles OS-specific configuration of the vmwaretools module.
+#
+# === Authors:
+#
+# Mike Arnold <mike@razorsedge.org>
+#
+# === Copyright:
+#
+# Copyright (C) 2011 Mike Arnold, unless otherwise noted.
+#
 class vmwaretools::params {
   # Customize these values if you (for example) mirror public YUM repos to your
   # internal network.
