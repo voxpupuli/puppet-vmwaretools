@@ -142,13 +142,16 @@ class vmwaretools (
       }
 
       exec { 'vmware-uninstall-tools':
-        command => '/usr/bin/vmware-uninstall-tools.pl',
+        command => '/usr/bin/vmware-uninstall-tools.pl && rm -rf /usr/lib/vmware-tools',
+        path    => '/bin:/sbin:/usr/bin:/usr/sbin',
         onlyif  => 'test -f /usr/bin/vmware-uninstall-tools.pl',
         before  => [ Package['vmware-tools'], Package['VMwareTools'], ],
       }
 
+      # TODO: remove Exec["vmware-uninstall-tools-local"]
       exec { 'vmware-uninstall-tools-local':
-        command => '/usr/local/bin/vmware-uninstall-tools.pl',
+        command => '/usr/local/bin/vmware-uninstall-tools.pl && rm -rf /usr/local/lib/vmware-tools',
+        path    => '/bin:/sbin:/usr/bin:/usr/sbin',
         onlyif  => 'test -f /usr/local/bin/vmware-uninstall-tools.pl',
         before  => [ Package['vmware-tools'], Package['VMwareTools'], ],
       }

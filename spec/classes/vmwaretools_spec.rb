@@ -50,8 +50,8 @@ describe 'vmwaretools' do
         it 'should remove Package[VMwareTools]' do
           should contain_package('VMwareTools').with_ensure('absent')
         end
-        it { should contain_exec('vmware-uninstall-tools').with_command('/usr/bin/vmware-uninstall-tools.pl') }
-        it { should contain_exec('vmware-uninstall-tools-local').with_command('/usr/local/bin/vmware-uninstall-tools.pl') }
+        it { should contain_exec('vmware-uninstall-tools').with_command('/usr/bin/vmware-uninstall-tools.pl && rm -rf /usr/lib/vmware-tools') }
+        it { should contain_exec('vmware-uninstall-tools-local').with_command('/usr/local/bin/vmware-uninstall-tools.pl && rm -rf /usr/local/lib/vmware-tools') }
         it { should contain_service('vmware-tools').with_pattern('vmtoolsd')  }
       end
     end
