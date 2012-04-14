@@ -106,33 +106,18 @@ class vmwaretools (
       # We use $::operatingsystem and not $::osfamily because certain things
       # (like Fedora) need to be excluded.
       case $::operatingsystem {
-        'RedHat', 'CentOS', 'Scientific', 'SLC', 'Ascendos', 'PSBM', 'OracleLinux', 'OVS', 'OEL': {
-          # TODO: figure out this yumrepo mess.
+        'RedHat', 'CentOS', 'Scientific', 'SLC', 'Ascendos', 'PSBM', 'OracleLinux', 'OVS', 'OEL', 'SLES', 'SLED', 'OpenSuSE', 'SuSE': {
           yumrepo { 'vmware-tools':
-            descr    => "VMware Tools ${tools_version} - RHEL${majdistrelease} ${vmwaretools::params::yum_basearch}",
+            descr    => "VMware Tools ${tools_version} - ${vmwaretools::params::baseurl_string}${majdistrelease} ${vmwaretools::params::yum_basearch}",
             enabled  => 1,
             gpgcheck => 1,
             gpgkey   => "${vmwaretools::params::yum_server}${vmwaretools::params::yum_path}/VMWARE-PACKAGING-GPG-KEY.pub",
-            baseurl  => "${vmwaretools::params::yum_server}${vmwaretools::params::yum_path}/esx/${tools_version}/rhel${majdistrelease}/${vmwaretools::params::yum_basearch}/",
+            baseurl  => "${vmwaretools::params::yum_server}${vmwaretools::params::yum_path}/esx/${tools_version}/${vmwaretools::params::baseurl_string}${majdistrelease}/${vmwaretools::params::yum_basearch}/",
             priority => $vmwaretools::params::yum_priority,
             protect  => $vmwaretools::params::yum_protect,
             before   => Package['vmware-tools'],
           }
         }
-
-        'SLES', 'SLED', 'OpenSuSE', 'SuSE': {
-          yumrepo { 'vmware-tools':
-            descr    => "VMware Tools ${tools_version} - SUSE${majdistrelease} ${vmwaretools::params::yum_basearch}",
-            enabled  => 1,
-            gpgcheck => 1,
-            gpgkey   => "${vmwaretools::params::yum_server}${vmwaretools::params::yum_path}/VMWARE-PACKAGING-GPG-KEY.pub",
-            baseurl  => "${vmwaretools::params::yum_server}${vmwaretools::params::yum_path}/esx/${tools_version}/suse${majdistrelease}/${vmwaretools::params::yum_basearch}/",
-            priority => $vmwaretools::params::yum_priority,
-            protect  => $vmwaretools::params::yum_protect,
-            before   => Package['vmware-tools'],
-          }
-        }
-
         default: { }
       }
 
@@ -159,8 +144,9 @@ class vmwaretools (
       # tools.syncTime = "FALSE" should be in the guest's vmx file and NTP
       # should be in use on the guest.  http://kb.vmware.com/kb/1006427
       # TODO: split vmware-tools.syncTime out to the NTP module??
+      # TODO: Confirm that vmtoolsd works the same as vmware-guestd.
       exec { 'vmware-tools.syncTime':
-        command     => 'vmware-guestd --cmd "vmx.set_option synctime 1 0" || true',
+        command     => "${service_pattern} --cmd 'vmx.set_option synctime 1 0' || true",
         path        => '/usr/bin:/usr/local/bin',
         returns     => [ 0, 1, ],
         require     => Package['vmware-tools'],

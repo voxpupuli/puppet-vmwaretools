@@ -68,7 +68,7 @@ describe 'vmwaretools' do
         }
         end
         it { should contain_yumrepo('vmware-tools').with(
-          :descr    => 'VMware Tools 3.5u3 - RHEL6 i686',
+          :descr    => 'VMware Tools 3.5u3 - rhel6 i686',
           :enabled  => '1',
           :gpgcheck => '1',
           :gpgkey   => 'http://packages.vmware.com/tools/VMWARE-PACKAGING-GPG-KEY.pub',
@@ -82,7 +82,7 @@ describe 'vmwaretools' do
 
     fedoraish.each do |os|
       describe "for operating system #{os}" do
-        #let(:params) {{ :tools_version => '4.1latest' }}
+        let(:params) {{ :tools_version => '4.1latest' }}
         let :facts do {
           :virtual                => 'vmware',
           :osfamily               => 'Redhat',
@@ -108,7 +108,7 @@ describe 'vmwaretools' do
         }
         end
         it { should contain_yumrepo('vmware-tools').with(
-          :descr    => 'VMware Tools 4.0latest - SUSE10 i586',
+          :descr    => 'VMware Tools 4.0latest - suse10 i586',
           :enabled  => '1',
           :gpgcheck => '1',
           :gpgkey   => 'http://packages.vmware.com/tools/VMWARE-PACKAGING-GPG-KEY.pub',
