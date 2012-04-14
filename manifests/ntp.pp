@@ -20,7 +20,7 @@
 #
 #   include vmwaretools::ntp
 #   package { 'ntp':
-#     notify => $virtual ? {
+#     notify => $::virtual ? {
 #       'vmware' => Exec['vmware-tools.syncTime'],
 #       default  => undef,
 #     },
