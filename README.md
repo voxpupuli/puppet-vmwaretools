@@ -11,8 +11,8 @@ This module manages the installation of the [VMware Operating System Specific Pa
 Actions:
 
 * Removes old VMwareTools package or runs vmware-uninstall-tools.pl if found.
-* Installs a vmware YUM repository, if needed.
-* Installs the OSP or open vmware tools.
+* Installs a vmware YUM repository.
+* Installs the OSP vmware tools.
 * Starts the vmware-tools service.
 
 OS Support:
@@ -39,7 +39,8 @@ Examples
 Notes
 -----
 
-* Only tested on CentOS 5.5 and CentOS 6.2.
+* Only tested on CentOS 5.5 and CentOS 6.2 x86_64 with 4.0latest.
+* Not supported on Fedora.
 
 Issues
 ------
@@ -55,5 +56,5 @@ TODO
 Copyright
 ---------
 
-Copyright (C) 2012 Mike Arnold <mike@razorsedge.org>
+Copyright (C) 2011 Mike Arnold <mike@razorsedge.org>
 

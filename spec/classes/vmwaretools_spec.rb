@@ -91,8 +91,13 @@ describe 'vmwaretools' do
           :operatingsystem        => os
         }
         end
-        it { should_not contain_yumrepo('vmware-tools') }
-        it { should contain_package('vmware-tools').with_name('open-vm-tools') }
+        it 'should fail' do
+          expect do
+            subject
+          end.should raise_error(/Unsupported platform: Fedora/)
+        end
+        #it { should_not contain_yumrepo('vmware-tools') }
+        #it { should contain_package('vmware-tools').with_name('open-vm-tools') }
       end
     end
 

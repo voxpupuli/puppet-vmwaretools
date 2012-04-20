@@ -23,6 +23,7 @@ class vmwaretools::params {
     'RedHat': {
       case $::operatingsystem {
         'Fedora': {
+          fail("Unsupported platform: ${::operatingsystem}")
           $package_name = 'open-vm-tools'
           $service_name = 'vmware-tools'
         }
