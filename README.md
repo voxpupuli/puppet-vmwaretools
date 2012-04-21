@@ -18,6 +18,7 @@ Actions:
 OS Support:
 
 * RedHat family - tested on CentOS 5.5 and CentOS 6.2
+* Fedora        - not supported
 * SuSE family   - untested (initial support for yumrepo)
 * Ubuntu        - presently unsupported
 * Debian        - presently unsupported
