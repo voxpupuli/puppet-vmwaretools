@@ -48,8 +48,8 @@
 # === Actions:
 #
 # Removes old VMwareTools package or runs vmware-uninstall-tools.pl if found.
-# Installs a vmware YUM repository, if needed.
-# Install the OSP or open vmware tools.
+# Installs a vmware YUM repository.
+# Installs the OSP.
 # Starts the vmware-tools service.
 #
 # === Requires:

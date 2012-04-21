@@ -1,5 +1,5 @@
 name 'razorsedge-vmwaretools'
-version '3.0.1'
+version '4.0.0'
 
 author 'razorsedge'
 license 'Apache 2.0'
@@ -11,12 +11,13 @@ description 'This module manages the installation of the VMware Operating System
 Actions:
 
     Removes old VMwareTools package or runs vmware-uninstall-tools.pl if found.
-    Installs a vmware YUM repository, if needed.
-    Installs the OSP or open vmware tools.
+    Installs a vmware YUM repository.
+    Installs the OSP.
     Starts the vmware-tools service.
 
 OS Support:
     RedHat family	- tested on CentOS 5.5 and CentOS 6.2
+    Fedora		- not supported
     SuSE family		- untested (initial support for yumrepo)
     Ubuntu		- presently unsupported
     Debian		- presently unsupported
