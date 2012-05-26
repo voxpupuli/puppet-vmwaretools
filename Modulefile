@@ -1,10 +1,10 @@
 name 'razorsedge-vmwaretools'
-version '4.0.0'
+version '4.0.1'
 
 author 'razorsedge'
 license 'Apache 2.0'
-project_page 'https://github.com/runningman/puppet-vmwaretools'
-source 'git://github.com/runningman/puppet-vmwaretools.git'
+project_page 'https://github.com/razorsedge/puppet-vmwaretools'
+source 'git://github.com/razorsedge/puppet-vmwaretools.git'
 summary 'Puppet module to manage VMware Operating System Specific Packages for VMware tools installation.'
 description 'This module manages the installation of the VMware Operating System Specific Packages for VMware tools.
 

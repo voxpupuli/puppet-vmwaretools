@@ -1,7 +1,7 @@
 Puppet VMware Tools OSP Module
 ==============================
 
-[![Build Status](https://secure.travis-ci.org/runningman/puppet-vmwaretools.png?branch=master)](http://travis-ci.org/runningman/puppet-vmwaretools)
+[![Build Status](https://secure.travis-ci.org/razorsedge/puppet-vmwaretools.png?branch=master)](http://travis-ci.org/razorsedge/puppet-vmwaretools)
 
 Introduction
 ------------
