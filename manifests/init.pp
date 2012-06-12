@@ -118,7 +118,7 @@ class vmwaretools (
       $package_name = $tools_version ? {
         /3\..+/ => $package_name_4x,
         /4\..+/ => $package_name_4x,
-        default => $package_name_4x,
+        default => $package_name_5x,
       }
 
       $service_name_real = $service_name ? {
