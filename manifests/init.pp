@@ -108,33 +108,39 @@ class vmwaretools (
   case $::virtual {
     'vmware': {
       $service_pattern = $tools_version ? {
-        /(4.1)/ => 'vmtoolsd',
-        /5\..+/ => 'vmtoolsd',
-        default => 'vmware-guestd',
+        /3\..+/   => 'vmware-guestd',
+        /(4.0).+/ => 'vmware-guestd',
+        default   => 'vmtoolsd',
       }
+
       $package_name = $tools_version ? {
+        /3\..+/ => $package_name_4x,
         /4\..+/ => $package_name_4x,
-        /5\..+/ => $package_name_5x,
-        default => $package_name_5x,
+        default => $package_name_4x,
       }
+
       $service_name_real = $service_name ? {
         undef => $tools_version ? {
+          /3\..+/ => $service_name_4x,
           /4\..+/ => $service_name_4x,
-          /5\..+/ => $service_name_5x,
           default => $service_name_5x,
         },
         default => $service_name,
       }
+
       $service_hassstatus_real = $service_hasstatus ? {
         undef => $tools_version ? {
+          /3\..+/ => $service_hasstatus_4x,
           /4\..+/ => $service_hasstatus_4x,
-          /4\..+/ => $service_hasstatus_5x,
           default => $service_hasstatus_5x,
         },
         default => $service_hasstatus,
       }
 
-      $majdistrelease = regsubst($::operatingsystemrelease,'^(\d+)\.(\d+)','\1')
+      $majdistrelease = $::lsbmajdistrelease ? {
+        ''      => regsubst($::operatingsystemrelease,'^(\d+)\.(\d+)','\1'),
+        default => $::lsbmajdistrelease,
+      }
 
       # We use $::operatingsystem and not $::osfamily because certain things
       # (like Fedora) need to be excluded.
