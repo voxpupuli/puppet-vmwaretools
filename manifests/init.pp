@@ -65,10 +65,12 @@
 # === Authors:
 #
 # Mike Arnold <mike@razorsedge.org>
+# Geoff Davis <gadavis@ucsd.edu>
 #
 # === Copyright:
 #
 # Copyright (C) 2011 Mike Arnold, unless otherwise noted.
+# Copyright (C) 2012 The Regents of the University of California
 #
 class vmwaretools (
   $tools_version      = '4.1latest',
