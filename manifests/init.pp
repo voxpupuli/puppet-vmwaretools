@@ -76,9 +76,9 @@ class vmwaretools (
   $autoupgrade        = false,
   $package            = $vmwaretools::params::package_name,
   $service_ensure     = 'running',
-  $service_name       = $vmwaretools::params::service_name,
+  $service_name       = undef,
   $service_enable     = true,
-  $service_hasstatus  = false,
+  $service_hasstatus  = undef,
   $service_hasrestart = true
 ) inherits vmwaretools::params {
 
@@ -109,7 +109,29 @@ class vmwaretools (
     'vmware': {
       $service_pattern = $tools_version ? {
         /(4.1)/ => 'vmtoolsd',
+        /5\..+/ => 'vmtoolsd',
         default => 'vmware-guestd',
+      }
+      $package_name = $tools_version ? {
+        /4\..+/ => $package_name_4x,
+        /5\..+/ => $package_name_5x,
+        default => $package_name_5x,
+      }
+      $service_name_real = $service_name ? {
+        undef => $tools_version ? {
+          /4\..+/ => $service_name_4x,
+          /5\..+/ => $service_name_5x,
+          default => $service_name_5x,
+        },
+        default => $service_name,
+      }
+      $service_hassstatus_real = $service_hasstatus ? {
+        undef => $tools_version ? {
+          /4\..+/ => $service_hasstatus_4x,
+          /4\..+/ => $service_hasstatus_5x,
+          default => $service_hasstatus_5x,
+        },
+        default => $service_hasstatus,
       }
 
       $majdistrelease = regsubst($::operatingsystemrelease,'^(\d+)\.(\d+)','\1')
@@ -122,11 +144,14 @@ class vmwaretools (
             descr    => "VMware Tools ${tools_version} - ${vmwaretools::params::baseurl_string}${majdistrelease} ${vmwaretools::params::yum_basearch}",
             enabled  => 1,
             gpgcheck => 1,
-            gpgkey   => "${vmwaretools::params::yum_server}${vmwaretools::params::yum_path}/VMWARE-PACKAGING-GPG-KEY.pub",
+            gpgkey   => [
+              "${vmwaretools::params::yum_server}${vmwaretools::params::yum_path}/keys/VMWARE-PACKAGING-GPG-DSA-KEY.pub",
+              "${vmwaretools::params::yum_server}${vmwaretools::params::yum_path}/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub",
+            ],
             baseurl  => "${vmwaretools::params::yum_server}${vmwaretools::params::yum_path}/esx/${tools_version}/${vmwaretools::params::baseurl_string}${majdistrelease}/${vmwaretools::params::yum_basearch}/",
             priority => $vmwaretools::params::yum_priority,
             protect  => $vmwaretools::params::yum_protect,
-            before   => Package['vmware-tools'],
+            before   => Package[$package_name],
           }
         }
         default: { }
@@ -134,14 +159,14 @@ class vmwaretools (
 
       package { 'VMwareTools':
         ensure => 'absent',
-        before => Package['vmware-tools'],
+        before => Package[$package_name],
       }
 
       exec { 'vmware-uninstall-tools':
         command => '/usr/bin/vmware-uninstall-tools.pl && rm -rf /usr/lib/vmware-tools',
         path    => '/bin:/sbin:/usr/bin:/usr/sbin',
         onlyif  => 'test -f /usr/bin/vmware-uninstall-tools.pl',
-        before  => [ Package['vmware-tools'], Package['VMwareTools'], ],
+        before  => [ Package[$package_name], Package['VMwareTools'], ],
       }
 
       # TODO: remove Exec["vmware-uninstall-tools-local"]
@@ -149,22 +174,20 @@ class vmwaretools (
         command => '/usr/local/bin/vmware-uninstall-tools.pl && rm -rf /usr/local/lib/vmware-tools',
         path    => '/bin:/sbin:/usr/bin:/usr/sbin',
         onlyif  => 'test -f /usr/local/bin/vmware-uninstall-tools.pl',
-        before  => [ Package['vmware-tools'], Package['VMwareTools'], ],
+        before  => [ Package[$package_name], Package['VMwareTools'], ],
       }
 
-      package { 'vmware-tools':
+      package { $package_name :
         ensure  => $package_ensure,
-        name    => $package,
       }
 
-      service { 'vmware-tools':
+      service { $service_name_real :
         ensure     => $service_ensure_real,
-        name       => $service_name,
         enable     => $service_enable,
         hasrestart => $service_hasrestart,
-        hasstatus  => false,
+        hasstatus  => $service_hasstatus_real,
         pattern    => $service_pattern,
-        require    => Package['vmware-tools'],
+        require    => Package[$package_name],
       }
 
     }

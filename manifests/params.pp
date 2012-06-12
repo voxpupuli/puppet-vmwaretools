@@ -24,12 +24,23 @@ class vmwaretools::params {
       case $::operatingsystem {
         'Fedora': {
           fail("Unsupported platform: ${::operatingsystem}")
-          $package_name = 'open-vm-tools'
-          $service_name = 'vmware-tools'
+          $package_name_4x = 'open-vm-tools'
+          $package_name_5x = $package_name
+          $service_name_4x = 'vmware-tools'
+          $service_name_5x = 'vmware-tools'
+          $service_hasstatus_4x = false
+          $service_hasstatus_5x = false
         }
         default: {
-          $package_name = 'vmware-tools-nox'
-          $service_name = 'vmware-tools'
+          $package_name_4x = 'vmware-tools-nox'
+          $package_name_5x = [
+            'vmware-tools-esx-nox',
+            'vmware-tools-esx-kmods',
+          ]
+          $service_name_4x = 'vmware-tools'
+          $service_name_5x = 'vmware-tools-services'
+          $service_hasstatus_4x = false
+          $service_hasstatus_5x = true
         }
       }
       $yum_basearch = $::architecture ? {
@@ -39,8 +50,12 @@ class vmwaretools::params {
       $baseurl_string = 'rhel'  # must be lower case
     }
     'Suse': {
-      $package_name = 'vmware-tools-nox'
-      $service_name = 'vmware-tools'
+      $package_name_4x = 'vmware-tools-nox'
+      $package_name_5x = 'vmware-tools-esx-nox'
+      $service_name_4x = 'vmware-tools'
+      $service_name_5x = 'vmware-tools-services'
+      $service_hasstatus_4x = false
+      $service_hasstatus_5x = true
       $yum_basearch = $::architecture ? {
         'i386'  => 'i586',
         default => $::architecture,
