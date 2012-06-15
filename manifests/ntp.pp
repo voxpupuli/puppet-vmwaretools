@@ -41,7 +41,7 @@ class vmwaretools::ntp {
 
   case $::virtual {
     'vmware': {
-      if $vmwaretools::package_name == '' {
+      if $vmwaretools::package == '' {
         fail ('class vmwaretools must be declared in order to use vmwaretools::ntp')
       }
       # tools.syncTime = "FALSE" should be in the guest's vmx file and NTP
