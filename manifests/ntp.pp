@@ -40,10 +40,10 @@
 class vmwaretools::ntp {
 
   case $::virtual {
-    if $::vmwaretools::package_name == '' {
-      fail('The class vmwaretools must be declared in the catalog in order to use this class')
-    }
     'vmware': {
+      if $::vmwaretools::package_name == '' {
+        fail('The class vmwaretools must be declared in the catalog in order to use this class')
+      }
       # tools.syncTime = "FALSE" should be in the guest's vmx file and NTP
       # should be in use on the guest.  http://kb.vmware.com/kb/1006427
       exec { 'vmware-tools.syncTime':
