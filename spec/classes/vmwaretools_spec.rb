@@ -82,6 +82,78 @@ describe 'vmwaretools' do
         it { should contain_package('vmware-tools-nox') }
         it { should contain_service('vmware-tools').with_pattern('vmware-guestd') }
       end
+
+      describe "for operating system #{os} with tools_version 4.0latest" do
+        let(:params) {{ :tools_version => '4.0latest' }}
+        let :facts do {
+          :virtual                => 'vmware',
+          :osfamily               => 'RedHat',
+          :operatingsystemrelease => '6.1',
+          :architecture           => 'i386',
+          :operatingsystem        => os
+        }
+        end
+        it { should contain_yumrepo('vmware-tools').with(
+          :descr    => 'VMware Tools 4.0latest - rhel6 i686',
+          :enabled  => '1',
+          :gpgcheck => '1',
+          :gpgkey   => "http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub",
+          :baseurl  => 'http://packages.vmware.com/tools/esx/4.0latest/rhel6/i686/',
+          :priority => '50',
+          :protect  => '0'
+        )}
+        it { should contain_package('vmware-tools-nox') }
+        it { should contain_service('vmware-tools').with_pattern('vmware-guestd') }
+      end
+
+      describe "for operating system #{os} with tools_version 4.1latest" do
+        let(:params) {{ :tools_version => '4.1latest' }}
+        let :facts do {
+          :virtual                => 'vmware',
+          :osfamily               => 'RedHat',
+          :operatingsystemrelease => '6.1',
+          :architecture           => 'i386',
+          :operatingsystem        => os
+        }
+        end
+        it { should contain_yumrepo('vmware-tools').with(
+          :descr    => 'VMware Tools 4.1latest - rhel6 i686',
+          :enabled  => '1',
+          :gpgcheck => '1',
+          :gpgkey   => "http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub",
+          :baseurl  => 'http://packages.vmware.com/tools/esx/4.1latest/rhel6/i686/',
+          :priority => '50',
+          :protect  => '0'
+        )}
+        it { should contain_package('vmware-tools-nox') }
+        it { should contain_service('vmware-tools').with_pattern('vmtoolsd') }
+      end
+
+      describe "for operating system #{os} with tools_version 5.0u1" do
+        let(:params) {{ :tools_version => '5.0u1' }}
+        let :facts do {
+          :virtual                => 'vmware',
+          :osfamily               => 'RedHat',
+          :operatingsystemrelease => '6.1',
+          :architecture           => 'i386',
+          :operatingsystem        => os
+        }
+        end
+        it { should contain_yumrepo('vmware-tools').with(
+          :descr    => 'VMware Tools 5.0u1 - rhel6 i686',
+          :enabled  => '1',
+          :gpgcheck => '1',
+          :gpgkey   => "http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub",
+          :baseurl  => 'http://packages.vmware.com/tools/esx/5.0u1/rhel6/i686/',
+          :priority => '50',
+          :protect  => '0'
+        )}
+        it { should contain_package('vmware-tools-esx-nox') }
+        it { should contain_package('vmware-tools-esx-kmods') }
+        it { should contain_service('vmware-tools-services').with_pattern('vmtoolsd') }
+      end
+
+
     end
 
     fedoraish.each do |os|
