@@ -18,10 +18,11 @@
 #
 # === Sample Usage:
 #
+#   include vmwaretools
 #   include vmwaretools::ntp
 #   package { 'ntp':
 #     notify => $::virtual ? {
-#       'vmware' => Exec['vmware-tools.syncTime'],
+#       'vmware' => Class['vmwaretools::ntp'],
 #       default  => undef,
 #     },
 #   }
@@ -29,26 +30,30 @@
 # === Authors:
 #
 # Mike Arnold <mike@razorsedge.org>
+# Geoff Davis <gadavis@ucsd.edu>
 #
 # === Copyright:
 #
 # Copyright (C) 2011 Mike Arnold, unless otherwise noted.
+# Copyright (c) 2012 The Regents of the University of California
 #
 class vmwaretools::ntp {
-  include vmwaretools
 
   case $::virtual {
     'vmware': {
+      if $::vmwaretools::package_name == '' {
+        fail('The class vmwaretools must be declared in the catalog in order to use this class')
+      }
       # tools.syncTime = "FALSE" should be in the guest's vmx file and NTP
       # should be in use on the guest.  http://kb.vmware.com/kb/1006427
       exec { 'vmware-tools.syncTime':
-        command     => $vmwaretools::service_pattern ? {
+        command     => $::vmwaretools::service_pattern ? {
           'vmtoolsd' => 'vmware-toolbox-cmd timesync disable',
           default    => 'vmware-guestd --cmd "vmx.set_option synctime 1 0" || true',
         },
         path        => '/usr/bin:/usr/sbin',
         returns     => [ 0, 1, ],
-        require     => Package['vmware-tools'],
+        require     => Package[$::vmwaretools::package_name],
         refreshonly => true,
       }
     }
