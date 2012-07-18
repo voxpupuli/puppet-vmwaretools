@@ -12,7 +12,7 @@ describe 'vmwaretools' do
     it 'should fail' do
       expect do
         subject
-      end.should raise_error(/Unsupported platform: foo/)
+      end.to raise_error(/Unsupported platform: foo/)
     end
   end
 
@@ -71,7 +71,7 @@ describe 'vmwaretools' do
           :descr    => 'VMware Tools 3.5u3 - rhel6 i686',
           :enabled  => '1',
           :gpgcheck => '1',
-          :gpgkey   => 'http://packages.vmware.com/tools/VMWARE-PACKAGING-GPG-KEY.pub',
+          :gpgkey   => 'http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub',
           :baseurl  => 'http://packages.vmware.com/tools/esx/3.5u3/rhel6/i686/',
           :priority => '50',
           :protect  => '0'
@@ -94,7 +94,7 @@ describe 'vmwaretools' do
         it 'should fail' do
           expect do
             subject
-          end.should raise_error(/Unsupported platform: Fedora/)
+          end.to raise_error(/Unsupported platform: Fedora/)
         end
         #it { should_not contain_yumrepo('vmware-tools') }
         #it { should contain_package('vmware-tools').with_name('open-vm-tools') }
@@ -116,7 +116,7 @@ describe 'vmwaretools' do
           :descr    => 'VMware Tools 4.0latest - suse10 i586',
           :enabled  => '1',
           :gpgcheck => '1',
-          :gpgkey   => 'http://packages.vmware.com/tools/VMWARE-PACKAGING-GPG-KEY.pub',
+          :gpgkey   => 'http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub',
           :baseurl  => 'http://packages.vmware.com/tools/esx/4.0latest/suse10/i586/',
           :priority => '50',
           :protect  => '0'

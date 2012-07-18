@@ -122,7 +122,7 @@ class vmwaretools (
             descr    => "VMware Tools ${tools_version} - ${vmwaretools::params::baseurl_string}${majdistrelease} ${vmwaretools::params::yum_basearch}",
             enabled  => 1,
             gpgcheck => 1,
-            gpgkey   => "${vmwaretools::params::yum_server}${vmwaretools::params::yum_path}/VMWARE-PACKAGING-GPG-KEY.pub",
+            gpgkey   => "${vmwaretools::params::yum_server}${vmwaretools::params::yum_path}/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub",
             baseurl  => "${vmwaretools::params::yum_server}${vmwaretools::params::yum_path}/esx/${tools_version}/${vmwaretools::params::baseurl_string}${majdistrelease}/${vmwaretools::params::yum_basearch}/",
             priority => $vmwaretools::params::yum_priority,
             protect  => $vmwaretools::params::yum_protect,

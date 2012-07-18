@@ -11,7 +11,7 @@ describe 'vmwaretools::ntp' do
     it 'should fail' do
       expect do
         subject
-      end.should raise_error(/Unsupported platform: foo/)
+      end.to raise_error(/Unsupported platform: foo/)
     end
   end
 
