@@ -58,7 +58,7 @@
 #
 # === Sample Usage:
 #
-#   class { vmwaretools':
+#   class { 'vmwaretools':
 #     tools_version => '4.0u3',
 #   }
 #
@@ -76,7 +76,7 @@ class vmwaretools (
   $tools_version      = '4.1latest',
   $ensure             = 'present',
   $autoupgrade        = false,
-  $package            = $vmwaretools::params::package_name,
+  $package            = undef,
   $service_ensure     = 'running',
   $service_name       = undef,
   $service_enable     = true,
@@ -115,26 +115,29 @@ class vmwaretools (
         default   => 'vmtoolsd',
       }
 
-      $package_name = $tools_version ? {
-        /3\..+/ => $package_name_4x,
-        /4\..+/ => $package_name_4x,
-        default => $package_name_5x,
+      $package_real = $package ? {
+        undef   => $tools_version ? {
+          /3\..+/ => $vmwaretools::params::package_name_4x,
+          /4\..+/ => $vmwaretools::params::package_name_4x,
+          default => $vmwaretools::params::package_name_5x,
+        },
+        default => $package,
       }
 
       $service_name_real = $service_name ? {
-        undef => $tools_version ? {
-          /3\..+/ => $service_name_4x,
-          /4\..+/ => $service_name_4x,
-          default => $service_name_5x,
+        undef   => $tools_version ? {
+          /3\..+/ => $vmwaretools::params::service_name_4x,
+          /4\..+/ => $vmwaretools::params::service_name_4x,
+          default => $vmwaretools::params::service_name_5x,
         },
         default => $service_name,
       }
 
-      $service_hassstatus_real = $service_hasstatus ? {
-        undef => $tools_version ? {
-          /3\..+/ => $service_hasstatus_4x,
-          /4\..+/ => $service_hasstatus_4x,
-          default => $service_hasstatus_5x,
+      $service_hasstatus_real = $service_hasstatus ? {
+        undef   => $tools_version ? {
+          /3\..+/ => $vmwaretools::params::service_hasstatus_4x,
+          /4\..+/ => $vmwaretools::params::service_hasstatus_4x,
+          default => $vmwaretools::params::service_hasstatus_5x,
         },
         default => $service_hasstatus,
       }
@@ -160,7 +163,7 @@ class vmwaretools (
             baseurl  => "${vmwaretools::params::yum_server}${vmwaretools::params::yum_path}/esx/${tools_version}/${vmwaretools::params::baseurl_string}${majdistrelease}/${vmwaretools::params::yum_basearch}/",
             priority => $vmwaretools::params::yum_priority,
             protect  => $vmwaretools::params::yum_protect,
-            before   => Package[$package_name],
+            before   => Package[$package_real],
           }
         }
         default: { }
@@ -168,25 +171,25 @@ class vmwaretools (
 
       package { 'VMwareTools':
         ensure => 'absent',
-        before => Package[$package_name],
+        before => Package[$package_real],
       }
 
       exec { 'vmware-uninstall-tools':
         command => '/usr/bin/vmware-uninstall-tools.pl && rm -rf /usr/lib/vmware-tools',
         path    => '/bin:/sbin:/usr/bin:/usr/sbin',
         onlyif  => 'test -f /usr/bin/vmware-uninstall-tools.pl',
-        before  => [ Package[$package_name], Package['VMwareTools'], ],
+        before  => [ Package[$package_real], Package['VMwareTools'], ],
       }
 
-      # TODO: remove Exec["vmware-uninstall-tools-local"]
+      # TODO: remove Exec["vmware-uninstall-tools-local"]?
       exec { 'vmware-uninstall-tools-local':
         command => '/usr/local/bin/vmware-uninstall-tools.pl && rm -rf /usr/local/lib/vmware-tools',
         path    => '/bin:/sbin:/usr/bin:/usr/sbin',
         onlyif  => 'test -f /usr/local/bin/vmware-uninstall-tools.pl',
-        before  => [ Package[$package_name], Package['VMwareTools'], ],
+        before  => [ Package[$package_real], Package['VMwareTools'], ],
       }
 
-      package { $package_name :
+      package { $package_real :
         ensure  => $package_ensure,
       }
 
@@ -196,7 +199,7 @@ class vmwaretools (
         hasrestart => $service_hasrestart,
         hasstatus  => $service_hasstatus_real,
         pattern    => $service_pattern,
-        require    => Package[$package_name],
+        require    => Package[$package_real],
       }
 
     }

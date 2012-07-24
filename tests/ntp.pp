@@ -1,8 +1,9 @@
+include vmwaretools
 include vmwaretools::ntp
-#package { 'ntp': notify => Exec['vmware-tools.syncTime'], }
-package { 'ntp':
+package { 'ntpd':
+  ensure => 'present',
   notify => $::virtual ? {
-    'vmware' => Exec['vmware-tools.syncTime'],
+    'vmware' => Class['vmwaretools::ntp'],
     default  => undef,
   },
 }

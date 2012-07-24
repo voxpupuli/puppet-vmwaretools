@@ -12,7 +12,7 @@ describe 'vmwaretools' do
     it 'should fail' do
       expect do
         subject
-      end.to raise_error(/Unsupported platform: foo/)
+      end.to raise_error(Puppet::Error, /Unsupported platform: foo/)
     end
   end
 
@@ -170,7 +170,7 @@ describe 'vmwaretools' do
         it 'should fail' do
           expect do
             subject
-          end.to raise_error(/Unsupported platform: Fedora/)
+          end.to raise_error(Puppet::Error, /Unsupported platform: Fedora/)
         end
         #it { should_not contain_yumrepo('vmware-tools') }
         #it { should contain_package('vmware-tools').with_name('open-vm-tools') }

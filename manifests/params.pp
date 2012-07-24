@@ -26,12 +26,9 @@ class vmwaretools::params {
       case $::operatingsystem {
         'Fedora': {
           fail("Unsupported platform: ${::operatingsystem}")
-          $package_name_4x = 'open-vm-tools'
-          $package_name_5x = $package_name
-          $service_name_4x = 'vmware-tools'
-          $service_name_5x = 'vmware-tools'
-          $service_hasstatus_4x = false
-          $service_hasstatus_5x = false
+          #$package_name = 'open-vm-tools'
+          #$service_name = 'vmware-tools'
+          #$service_hasstatus = false
         }
         default: {
           $package_name_4x = 'vmware-tools-nox'
