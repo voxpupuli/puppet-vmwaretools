@@ -39,7 +39,9 @@
 #
 # [*service_hasstatus*]
 #   Service has status command.
-#   Default: true
+#   Only set this if your platform is not supported or you know what you are
+#   doing.
+#   Default: auto-set, platform specific
 #
 # [*service_hasrestart*]
 #   Service has restart command.
@@ -73,16 +75,20 @@
 # Copyright (C) 2012 The Regents of the University of California
 #
 class vmwaretools (
-  $tools_version      = '4.1latest',
-  $ensure             = 'present',
-  $autoupgrade        = false,
-  $package            = undef,
-  $service_ensure     = 'running',
-  $service_name       = undef,
-  $service_enable     = true,
-  $service_hasstatus  = undef,
-  $service_hasrestart = true
+  $tools_version      = $vmwaretools::params::tools_version,
+  $ensure             = $vmwaretools::params::ensure,
+  $autoupgrade        = $vmwaretools::params::safe_autoupgrade,
+  $package            = $vmwaretools::params::package,
+  $service_ensure     = $vmwaretools::params::service_ensure,
+  $service_name       = $vmwaretools::params::service_name,
+  $service_enable     = $vmwaretools::params::safe_service_enable,
+  $service_hasstatus  = $vmwaretools::params::service_hasstatus,
+  $service_hasrestart = $vmwaretools::params::safe_service_hasrestart
 ) inherits vmwaretools::params {
+  # Validate our booleans
+  validate_bool($autoupgrade)
+  validate_bool($service_enable)
+  validate_bool($service_hasrestart)
 
   case $ensure {
     /(present)/: {

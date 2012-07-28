@@ -17,7 +17,7 @@ Actions:
 
 OS Support:
 
-* RedHat family - tested on CentOS 5.5 and CentOS 6.2
+* RedHat family - tested on CentOS 5.8 and CentOS 6.3
 * Fedora        - not supported
 * SuSE family   - untested (initial support for yumrepo)
 * Ubuntu        - presently unsupported
@@ -30,8 +30,12 @@ Examples
 
     include vmwaretools
 
+    # Top Scope variable (i.e. via Dashboard):
+    $vmwaretools_tools_version = '4.1'
+    $vmwaretools_autoupgrade = true
     class { 'vmwaretools': }
 
+    # Parameterized Class:
     class { 'vmwaretools':
       tools_version => '4.0u3',
       autoupgrade   => true,
@@ -40,13 +44,12 @@ Examples
 Notes
 -----
 
-* Only tested on CentOS 5.5 and CentOS 6.2 x86_64 with 4.0latest.
+* Only tested on CentOS 5.8 and CentOS 6.3 x86_64 with 4.0latest.
 * Not supported on Fedora.
 
 Issues
 ------
 
-* Does not yet work with version 5.0 OSP tools.
 * Does not install Desktop (X Window) components.
 
 TODO
@@ -57,5 +60,5 @@ TODO
 Copyright
 ---------
 
-Copyright (C) 2011 Mike Arnold <mike@razorsedge.org>
+Copyright (C) 2012 Mike Arnold <mike@razorsedge.org>
 

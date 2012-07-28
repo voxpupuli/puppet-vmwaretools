@@ -1,6 +1,9 @@
 # == Class: vmwaretools::params
 #
-# This class handles OS-specific configuration of the vmwaretools module.
+# This class handles OS-specific configuration of the vmwaretools module.  It
+# looks for variables in top scope (probably from an ENC such as Dashboard).  If
+# the variable doesn't exist in top scope, it falls back to a hard coded default
+# value.
 #
 # === Authors:
 #
@@ -21,6 +24,73 @@ class vmwaretools::params {
   $yum_protect  = '0'
 
 # These should not need to be changed.
+
+  # If we have a top scope variable defined, use it, otherwise fall back to a
+  # hardcoded value.
+  $tools_version = $::vmwaretools_tools_version ? {
+    undef   => '5.0latest',
+    default => $::vmwaretools_tools_version,
+  }
+  # Validate that tools version starts with a numeral.
+  #validate_re($tools_version, '^[^3-9]\.[0-9]*')
+
+  $ensure = $::vmwaretools_ensure ? {
+    undef   => 'present',
+    default => $::vmwaretools_ensure,
+  }
+
+  $package = $::vmwaretools_package ? {
+    undef   => undef,
+    default => $::vmwaretools_package,
+  }
+
+  $service_ensure = $::vmwaretools_service_ensure ? {
+    undef   => 'running',
+    default => $::vmwaretools_service_ensure,
+  }
+
+  $service_name = $::vmwaretools_service_name ? {
+    undef   => undef,
+    default => $::vmwaretools_service_name,
+  }
+
+  $service_hasstatus = $::vmwaretools_service_hasstatus ? {
+    undef   => undef,
+    default => $::vmwaretools_service_hasstatus,
+  }
+
+  # Since the top scope variable could be a string (if from an ENC), we might
+  # need to convert it to a boolean.
+  $autoupgrade = $::vmwaretools_autoupgrade ? {
+    undef   => false,
+    default => $::vmwaretools_autoupgrade,
+  }
+  if is_string($autoupgrade) {
+    $safe_autoupgrade = str2bool($autoupgrade)
+  } else {
+    $safe_autoupgrade = $autoupgrade
+  }
+
+  $service_enable = $::vmwaretools_service_enable ? {
+    undef   => true,
+    default => $::vmwaretools_service_enable,
+  }
+  if is_string($service_enable) {
+    $safe_service_enable = str2bool($service_enable)
+  } else {
+    $safe_service_enable = $service_enable
+  }
+
+  $service_hasrestart = $::vmwaretools_service_hasrestart ? {
+    undef   => true,
+    default => $::vmwaretools_service_hasrestart,
+  }
+  if is_string($service_hasrestart) {
+    $safe_service_hasrestart = str2bool($service_hasrestart)
+  } else {
+    $safe_service_hasrestart = $service_hasrestart
+  }
+
   case $::osfamily {
     'RedHat': {
       case $::operatingsystem {
