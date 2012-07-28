@@ -148,17 +148,16 @@ class vmwaretools (
         default => $service_hasstatus,
       }
 
-      $majdistrelease = $::lsbmajdistrelease ? {
-        ''      => regsubst($::operatingsystemrelease,'^(\d+)\.(\d+)','\1'),
-        default => $::lsbmajdistrelease,
-      }
-
       # We use $::operatingsystem and not $::osfamily because certain things
       # (like Fedora) need to be excluded.
       case $::operatingsystem {
         'RedHat', 'CentOS', 'Scientific', 'SLC', 'Ascendos', 'PSBM',
         'OracleLinux', 'OVS', 'OEL', 'SLES', 'SLED', 'OpenSuSE',
         'SuSE': {
+          $majdistrelease = $::lsbmajdistrelease ? {
+            ''      => regsubst($::operatingsystemrelease,'^(\d+)\.(\d+)','\1'),
+            default => $::lsbmajdistrelease,
+          }
           yumrepo { 'vmware-tools':
             descr    => "VMware Tools ${tools_version} - ${vmwaretools::params::baseurl_string}${majdistrelease} ${vmwaretools::params::yum_basearch}",
             enabled  => 1,
