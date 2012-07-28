@@ -59,7 +59,7 @@ describe 'vmwaretools::ntp' do
         describe "for service_pattern vmtoolsd" do
           let :pre_condition do
             "class { 'vmwaretools': 
-              package       => 'RandomData',
+              package       => [ 'RandomData', 'OtherData', ],
               tools_version => '4.1latest',
             }"
           end
