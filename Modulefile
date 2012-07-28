@@ -16,7 +16,7 @@ Actions:
     Starts the vmware-tools service.
 
 OS Support:
-    RedHat family	- tested on CentOS 5.8 and CentOS 6.2
+    RedHat family	- tested on CentOS 5.8 and CentOS 6.3
     Fedora		- not supported
     SuSE family		- untested (initial support for yumrepo)
     Ubuntu		- presently unsupported
