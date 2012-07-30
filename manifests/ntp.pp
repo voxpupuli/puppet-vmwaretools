@@ -42,7 +42,7 @@ class vmwaretools::ntp {
 
   case $::virtual {
     'vmware': {
-      if $::vmwaretools::package == '' {
+      if $::vmwaretools::package_real == '' {
         fail('The class vmwaretools must be declared in the catalog in order to use this class')
       }
       # tools.syncTime = "FALSE" should be in the guest's vmx file and NTP
@@ -55,7 +55,7 @@ class vmwaretools::ntp {
         },
         path        => '/usr/bin:/usr/sbin',
         returns     => [ 0, 1, ],
-        require     => Package[$::vmwaretools::package],
+        require     => Package[$::vmwaretools::package_real],
         refreshonly => true,
       }
     }

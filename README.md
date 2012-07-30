@@ -17,23 +17,21 @@ Actions:
 
 OS Support:
 
-* RedHat family - tested on CentOS 5.8 and CentOS 6.3
+* RedHat family - tested on CentOS 5.5+ and CentOS 6.2+
 * Fedora        - not supported
-* SuSE family   - untested (initial support for yumrepo)
-* Ubuntu        - presently unsupported
-* Debian        - presently unsupported
+* SuSE family   - untested (initial support for yumrepo) (patches welcome)
+* Ubuntu        - presently unsupported (patches welcome)
+* Debian        - presently unsupported (patches welcome)
 
 Class documentation is available via puppetdoc.
 
 Examples
 --------
 
-    include vmwaretools
-
     # Top Scope variable (i.e. via Dashboard):
     $vmwaretools_tools_version = '4.1'
     $vmwaretools_autoupgrade = true
-    class { 'vmwaretools': }
+    include 'vmwaretools'
 
     # Parameterized Class:
     class { 'vmwaretools':
@@ -44,8 +42,10 @@ Examples
 Notes
 -----
 
-* Only tested on CentOS 5.8 and CentOS 6.3 x86_64 with 4.0latest.
-* Not supported on Fedora.
+* Only tested on CentOS 5.5+ and CentOS 6.2+ x86_64 with 4.0latest.
+* Not supported on Fedora.  Attempts to work with open-vm-tools from the Fedora
+  repository were met with difficulty as the packages do not exist in newer
+  Fedora versions.
 
 Issues
 ------
@@ -55,7 +55,7 @@ Issues
 TODO
 ----
 
-* Support installation of Desktop packages.
+* Support installation of Desktop (X Window) packages.
 
 Copyright
 ---------

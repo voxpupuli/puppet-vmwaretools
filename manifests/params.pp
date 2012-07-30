@@ -102,6 +102,7 @@ class vmwaretools::params {
         }
         default: {
           $package_name_4x = 'vmware-tools-nox'
+          # TODO: OSP 5.0+ rhel5 i386 also has vmware-tools-esx-kmods-PAE
           $package_name_5x = [
             'vmware-tools-esx-nox',
             'vmware-tools-esx-kmods',
@@ -112,6 +113,7 @@ class vmwaretools::params {
           $service_hasstatus_5x = true
         }
       }
+      # TODO: OSP 5.0+ rhel does not have i686 directory
       $yum_basearch = $::architecture ? {
         'i386'  => 'i686',
         default => $::architecture,
