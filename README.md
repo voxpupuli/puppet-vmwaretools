@@ -56,6 +56,8 @@ TODO
 ----
 
 * Support installation of Desktop (X Window) packages.
+* Add logic to handle RHEL5 i386 PAE kernel on OSP 5.0+.
+* Add logic to handle OSP 5.0+ RHEL no longer having the i686 directory.
 
 Copyright
 ---------

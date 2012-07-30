@@ -16,11 +16,11 @@ Actions:
     Starts the vmware-tools service.
 
 OS Support:
-    RedHat family	- tested on CentOS 5.8 and CentOS 6.3
+    RedHat family	- tested on CentOS 5.5+ and CentOS 6.2+
     Fedora		- not supported
-    SuSE family		- untested (initial support for yumrepo)
-    Ubuntu		- presently unsupported
-    Debian		- presently unsupported
+    SuSE family		- untested (initial support for yumrepo) (patches welcome)
+    Ubuntu		- presently unsupported (patches welcome)
+    Debian		- presently unsupported (patches welcome)
 
 Class documentation is available via puppetdoc.'
 dependency 'puppetlabs/stdlib', '>=2.1.0'
