@@ -11,7 +11,7 @@ This module manages the installation of the [VMware Operating System Specific Pa
 Actions:
 
 * Removes old VMwareTools package or runs vmware-uninstall-tools.pl if found.
-* Installs a vmware YUM repository.
+* Installs a VMware YUM repository (defaults to the 'latest' package repository which is presently 5.0).
 * Installs the OSP vmware tools.
 * Starts the vmware-tools service.
 
@@ -57,7 +57,6 @@ TODO
 
 * Support installation of Desktop (X Window) packages.
 * Add logic to handle RHEL5 i386 PAE kernel on OSP 5.0+.
-* Add logic to handle OSP 5.0+ RHEL no longer having the i686 directory.
 
 Copyright
 ---------

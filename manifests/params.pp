@@ -23,12 +23,12 @@ class vmwaretools::params {
   $yum_priority = '50'
   $yum_protect  = '0'
 
-# These should not need to be changed.
+# The following parameters should not need to be changed.
 
   # If we have a top scope variable defined, use it, otherwise fall back to a
   # hardcoded value.
   $tools_version = $::vmwaretools_tools_version ? {
-    undef   => '5.0latest',
+    undef   => 'latest',
     default => $::vmwaretools_tools_version,
   }
   # Validate that tools version starts with a numeral.
@@ -113,9 +113,14 @@ class vmwaretools::params {
           $service_hasstatus_5x = true
         }
       }
-      # TODO: OSP 5.0+ rhel does not have i686 directory
-      $yum_basearch = $::architecture ? {
+      $yum_basearch_4x = $::architecture ? {
         'i386'  => 'i686',
+        'i586'  => 'i686',
+        default => $::architecture,
+      }
+      $yum_basearch_5x = $::architecture ? {
+        'i586'  => 'i386',
+        'i686'  => 'i386',
         default => $::architecture,
       }
       $baseurl_string = 'rhel'  # must be lower case
@@ -127,7 +132,11 @@ class vmwaretools::params {
       $service_name_5x = 'vmware-tools-services'
       $service_hasstatus_4x = false
       $service_hasstatus_5x = true
-      $yum_basearch = $::architecture ? {
+      $yum_basearch_4x = $::architecture ? {
+        'i386'  => 'i586',
+        default => $::architecture,
+      }
+      $yum_basearch_5x = $::architecture ? {
         'i386'  => 'i586',
         default => $::architecture,
       }

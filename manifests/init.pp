@@ -6,8 +6,9 @@
 # === Parameters:
 #
 # [*tools_version*]
-#   The version of VMware Tools to install.
-#   Default: 4.1latest
+#   The version of VMware Tools to install.  Possible values can be found here:
+#   http://packages.vmware.com/tools/esx/index.html
+#   Default: latest
 #
 # [*ensure*]
 #   Ensure if present or absent.
@@ -148,6 +149,12 @@ class vmwaretools (
         default => $service_hasstatus,
       }
 
+      $yum_basearch = $tools_version ? {
+        /3\..+/ => $vmwaretools::params::yum_basearch_4x,
+        /4\..+/ => $vmwaretools::params::yum_basearch_4x,
+        default => $vmwaretools::params::yum_basearch_5x,
+      }
+
       # We use $::operatingsystem and not $::osfamily because certain things
       # (like Fedora) need to be excluded.
       case $::operatingsystem {
@@ -159,13 +166,13 @@ class vmwaretools (
             default => $::lsbmajdistrelease,
           }
           yumrepo { 'vmware-tools':
-            descr    => "VMware Tools ${tools_version} - ${vmwaretools::params::baseurl_string}${majdistrelease} ${vmwaretools::params::yum_basearch}",
+            descr    => "VMware Tools ${tools_version} - ${vmwaretools::params::baseurl_string}${majdistrelease} ${yum_basearch}",
             enabled  => 1,
             gpgcheck => 1,
             # gpgkey has to be a string value with an indented second line
             # per http://projects.puppetlabs.com/issues/8867
             gpgkey   => "${vmwaretools::params::yum_server}${vmwaretools::params::yum_path}/keys/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    ${vmwaretools::params::yum_server}${vmwaretools::params::yum_path}/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub",
-            baseurl  => "${vmwaretools::params::yum_server}${vmwaretools::params::yum_path}/esx/${tools_version}/${vmwaretools::params::baseurl_string}${majdistrelease}/${vmwaretools::params::yum_basearch}/",
+            baseurl  => "${vmwaretools::params::yum_server}${vmwaretools::params::yum_path}/esx/${tools_version}/${vmwaretools::params::baseurl_string}${majdistrelease}/${yum_basearch}/",
             priority => $vmwaretools::params::yum_priority,
             protect  => $vmwaretools::params::yum_protect,
             before   => Package[$package_real],

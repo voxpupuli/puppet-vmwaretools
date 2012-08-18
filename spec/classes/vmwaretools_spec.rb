@@ -140,11 +140,11 @@ describe 'vmwaretools' do
         }
         end
         it { should contain_yumrepo('vmware-tools').with(
-          :descr    => 'VMware Tools 5.0u1 - rhel6 i686',
+          :descr    => 'VMware Tools 5.0u1 - rhel6 i386',
           :enabled  => '1',
           :gpgcheck => '1',
           :gpgkey   => "http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub",
-          :baseurl  => 'http://packages.vmware.com/tools/esx/5.0u1/rhel6/i686/',
+          :baseurl  => 'http://packages.vmware.com/tools/esx/5.0u1/rhel6/i386/',
           :priority => '50',
           :protect  => '0'
         )}
