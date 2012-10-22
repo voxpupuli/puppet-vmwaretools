@@ -122,6 +122,13 @@ class vmwaretools (
         default   => 'vmtoolsd',
       }
 
+      $rhel_upstart = $tools_version ? {
+        /3\..+/   => false,
+        /4\..+/   => false,
+        /(5.0).+/ => false,
+        default   => true,
+      }
+
       $package_real = $package ? {
         undef   => $tools_version ? {
           /3\..+/ => $vmwaretools::params::package_name_4x,
@@ -205,13 +212,28 @@ class vmwaretools (
         ensure  => $package_ensure,
       }
 
-      service { $service_name_real :
-        ensure     => $service_ensure_real,
-        enable     => $service_enable,
-        hasrestart => $service_hasrestart,
-        hasstatus  => $service_hasstatus_real,
-        pattern    => $service_pattern,
-        require    => Package[$package_real],
+      if ($::osfamily == 'RedHat') and ($majdistrelease == '6') and ($rhel_upstart == true) {
+        # VMware-tools 5.1 on EL6 is now using upstart and not System V init.
+        # http://projects.puppetlabs.com/issues/11989#note-7
+        service { $service_name_real :
+          ensure     => $service_ensure_real,
+          hasrestart => true,
+          hasstatus  => true,
+          start      => "/sbin/start ${service_name_real}",
+          stop       => "/sbin/stop ${service_name_real}",
+          status     => "/sbin/status ${service_name_real} | grep -q 'start/'",
+          restart    => "/sbin/restart ${service_name_real}",
+          require    => Package[$package_real],
+        }
+      } else {
+        service { $service_name_real :
+          ensure     => $service_ensure_real,
+          enable     => $service_enable,
+          hasrestart => $service_hasrestart,
+          hasstatus  => $service_hasstatus_real,
+          pattern    => $service_pattern,
+          require    => Package[$package_real],
+        }
       }
 
     }
