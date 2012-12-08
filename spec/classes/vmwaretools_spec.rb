@@ -36,6 +36,7 @@ describe 'vmwaretools' do
         it { should_not contain_package('vmware-tools-esx-kmods') }
         it { should_not contain_exec('vmware-uninstall-tools') }
         it { should_not contain_exec('vmware-uninstall-tools-local') }
+        it { should_not contain_file_line('disable-tools-version') }
         it { should_not contain_service('vmware-tools') }
         it { should_not contain_service('vmware-tools-services') }
       end
@@ -56,6 +57,10 @@ describe 'vmwaretools' do
         end
         it { should contain_exec('vmware-uninstall-tools').with_command('/usr/bin/vmware-uninstall-tools.pl && rm -rf /usr/lib/vmware-tools') }
         it { should contain_exec('vmware-uninstall-tools-local').with_command('/usr/local/bin/vmware-uninstall-tools.pl && rm -rf /usr/local/lib/vmware-tools') }
+        it { should contain_file_line('disable-tools-version').with(
+          :path => '/etc/vmware-tools/tools.conf',
+          :line => 'disable-tools-version = "true"'
+        )}
       end
     end
 

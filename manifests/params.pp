@@ -61,6 +61,16 @@ class vmwaretools::params {
 
   # Since the top scope variable could be a string (if from an ENC), we might
   # need to convert it to a boolean.
+  $disable_tools_version = $::vmwaretools_disable_tools_version ? {
+    undef   => true,
+    default => $::vmwaretools_disable_tools_version,
+  }
+  if is_string($disable_tools_version) {
+    $safe_disable_tools_version = str2bool($disable_tools_version)
+  } else {
+    $safe_disable_tools_version = $disable_tools_version
+  }
+
   $autoupgrade = $::vmwaretools_autoupgrade ? {
     undef   => false,
     default => $::vmwaretools_autoupgrade,
