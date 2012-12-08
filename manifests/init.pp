@@ -10,6 +10,10 @@
 #   http://packages.vmware.com/tools/esx/index.html
 #   Default: latest
 #
+# [*disable_tools_version*]
+#   Whether to report the version of the tools back to vCenter/ESX.
+#   Default: true (ie do not report)
+#
 # [*ensure*]
 #   Ensure if present or absent.
 #   Default: present
@@ -76,17 +80,19 @@
 # Copyright (C) 2012 The Regents of the University of California
 #
 class vmwaretools (
-  $tools_version      = $vmwaretools::params::tools_version,
-  $ensure             = $vmwaretools::params::ensure,
-  $autoupgrade        = $vmwaretools::params::safe_autoupgrade,
-  $package            = $vmwaretools::params::package,
-  $service_ensure     = $vmwaretools::params::service_ensure,
-  $service_name       = $vmwaretools::params::service_name,
-  $service_enable     = $vmwaretools::params::safe_service_enable,
-  $service_hasstatus  = $vmwaretools::params::service_hasstatus,
-  $service_hasrestart = $vmwaretools::params::safe_service_hasrestart
+  $tools_version         = $vmwaretools::params::tools_version,
+  $disable_tools_version = $vmwaretools::params::safe_disable_tools_version,
+  $ensure                = $vmwaretools::params::ensure,
+  $autoupgrade           = $vmwaretools::params::safe_autoupgrade,
+  $package               = $vmwaretools::params::package,
+  $service_ensure        = $vmwaretools::params::service_ensure,
+  $service_name          = $vmwaretools::params::service_name,
+  $service_enable        = $vmwaretools::params::safe_service_enable,
+  $service_hasstatus     = $vmwaretools::params::service_hasstatus,
+  $service_hasrestart    = $vmwaretools::params::safe_service_hasrestart
 ) inherits vmwaretools::params {
   # Validate our booleans
+  validate_bool($disable_tools_version)
   validate_bool($autoupgrade)
   validate_bool($service_enable)
   validate_bool($service_hasrestart)
@@ -210,6 +216,17 @@ class vmwaretools (
 
       package { $package_real :
         ensure  => $package_ensure,
+      }
+
+      file_line { 'disable-tools-version':
+        path    => '/etc/vmware-tools/tools.conf',
+        line    => $disable_tools_version ? {
+          false    => 'disable-tools-version = "false"',
+          default  => 'disable-tools-version = "true"',
+        },
+        match   => '^disable-tools-version\s*=.*$',
+        require => Package[$package_real],
+        notify  => Service[$service_name_real],
       }
 
       if ($::osfamily == 'RedHat') and ($majdistrelease == '6') and ($rhel_upstart == true) {
