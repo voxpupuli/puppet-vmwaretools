@@ -1,7 +1,8 @@
 Puppet VMware Tools OSP Module
 ==============================
 
-[![Build Status](https://secure.travis-ci.org/razorsedge/puppet-vmwaretools.png?branch=master)](http://travis-ci.org/razorsedge/puppet-vmwaretools)
+master branch: [![Build Status](https://secure.travis-ci.org/razorsedge/puppet-vmwaretools.png?branch=master)](http://travis-ci.org/razorsedge/puppet-vmwaretools)
+develop branch: [![Build Status](https://secure.travis-ci.org/razorsedge/puppet-vmwaretools.png?branch=develop)](http://travis-ci.org/razorsedge/puppet-vmwaretools)
 
 Introduction
 ------------
@@ -62,4 +63,8 @@ Copyright
 ---------
 
 Copyright (C) 2012 Mike Arnold <mike@razorsedge.org>
+
+[razorsedge/puppet-vmwaretools on GitHub](https://github.com/razorsedge/puppet-vmwaretools)
+
+[razorsedge/vmwaretools on Puppet Forge](http://forge.puppetlabs.com/razorsedge/vmwaretools)
 
