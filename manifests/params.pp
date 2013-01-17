@@ -157,8 +157,8 @@ class vmwaretools::params {
       $package_name_5x = 'open-vm-tools'
       $service_name_4x = 'open-vm-tools'
       $service_name_5x = 'open-vm-tools'
-      $service_hasstatus_4x = true
-      $service_hasstatus_5x = true
+      $service_hasstatus_4x = false
+      $service_hasstatus_5x = false
     }
     default: {
       fail("Unsupported platform: ${::operatingsystem}")
