@@ -16,17 +16,43 @@
 # Copyright (C) 2012 The Regents of the University of California
 #
 class vmwaretools::params {
-  # Customize these values if you (for example) mirror public YUM repos to your
-  # internal network.
-  $yum_server   = 'http://packages.vmware.com'
-  $yum_path     = '/tools'
-  $yum_priority = '50'
-  $yum_protect  = '0'
-
-# The following parameters should not need to be changed.
-
   # If we have a top scope variable defined, use it, otherwise fall back to a
   # hardcoded value.
+  $yum_server = $::vmwaretools_yum_server ? {
+    undef   => 'http://packages.vmware.com',
+    default => $::vmwaretools_yum_server,
+  }
+
+  $yum_path = $::vmwaretools_yum_path ? {
+    undef   => '/tools',
+    default => $::vmwaretools_yum_path,
+  }
+
+  $yum_priority = $::vmwaretools_yum_priority ? {
+    undef => '50',
+    default => $::vmwaretools_yum_priority,
+  }
+
+  $yum_protect = $::vmwaretools_yum_protect ? {
+    undef => '0',
+    default => $::vmwaretools_yum_protect,
+  }
+
+  $proxy = $::vmwaretools_proxy ? {
+    undef => 'absent',
+    default => $::vmwaretools_proxy,
+  }
+
+  $proxy_username = $::vmwaretools_proxy_username ? {
+    undef => 'absent',
+    default => $::vmwaretools_proxy_username,
+  }
+
+  $proxy_password = $::vmwaretools_proxy_password ? {
+    undef => 'absent',
+    default => $::vmwaretools_proxy_password,
+  }
+
   $tools_version = $::vmwaretools_tools_version ? {
     undef   => 'latest',
     default => $::vmwaretools_tools_version,
@@ -61,6 +87,16 @@ class vmwaretools::params {
 
   # Since the top scope variable could be a string (if from an ENC), we might
   # need to convert it to a boolean.
+  $just_prepend_yum_path = $::just_prepend_yum_path ? {
+    undef   => false,
+    default => $::vmwaretools_just_prepend_yum_path,
+  }
+  if is_string($just_prepend_yum_path) {
+    $safe_just_prepend_yum_path = str2bool($just_prepend_yum_path)
+  } else {
+    $safe_just_prepend_yum_path = $just_prepend_yum_path
+  }
+
   $disable_tools_version = $::vmwaretools_disable_tools_version ? {
     undef   => true,
     default => $::vmwaretools_disable_tools_version,

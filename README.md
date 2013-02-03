@@ -29,16 +29,29 @@ Class documentation is available via puppetdoc.
 Examples
 --------
 
-    # Top Scope variable (i.e. via Dashboard):
-    $vmwaretools_tools_version = '4.1'
-    $vmwaretools_autoupgrade = true
-    include 'vmwaretools'
+Top Scope variable (i.e. via Dashboard):
+```puppet
+$vmwaretools_tools_version = '4.1'
+$vmwaretools_autoupgrade = true
+include 'vmwaretools'
+```
 
-    # Parameterized Class:
-    class { 'vmwaretools':
-      tools_version => '4.0u3',
-      autoupgrade   => true,
-    }
+Parameterized Class:
+```puppet
+class { 'vmwaretools':
+  tools_version => '4.0u3',
+  autoupgrade   => true,
+}
+```
+
+Mirror packages.vmware.com to a local host and point the vmwaretools class at it.
+```puppet
+class { 'vmwaretools':
+  yum_server            => 'http://yumserver.example.lan',
+  yum_path              => '/yumdir/v2.3.0',
+  just_prepend_yum_path => true,
+}
+```
 
 Notes
 -----
@@ -47,6 +60,8 @@ Notes
 * Not supported on Fedora.  Attempts to work with open-vm-tools from the Fedora
   repository were met with difficulty as the packages do not exist in newer
   Fedora versions.
+* Supports yumrepo proxy, proxy_username, proxy_password, yum priorities, yum repo
+  protection, and using a local mirror for the yum_server and yum_path.
 
 Issues
 ------
