@@ -14,6 +14,43 @@
 #   Whether to report the version of the tools back to vCenter/ESX.
 #   Default: true (ie do not report)
 #
+# [*yum_server*]
+#   The server which holds the YUM repository.  Customize this if you mirror
+#   public YUM repos to your internal network.
+#   Default: http://packages.vmware.com
+#
+# [*yum_path*]
+#   The path on *yum_server* where the repository can be found.  Customize
+#   this if you mirror public YUM repos to your internal network.
+#   Default: /tools
+#
+# [*just_prepend_yum_path*]
+#   Whether to prepend the overridden *yum_path* onto the default *yum_path*
+#   or completely replace it.  Only works if *yum_path* is specified.
+#   Default: 0 (false)
+#
+# [*priority*]
+#   Give packages in this YUM repository a different weight.  Requires
+#   yum-plugin-priorities to be installed.
+#   Default: 50
+#
+# [*protect*]
+#   Protect packages in this YUM repository from being overridden by packages
+#   in non-protected repositories.
+#   Default: 0 (false)
+#
+# [*proxy*]
+#   The URL to the proxy server for this repository.
+#   Default: absent
+#
+# [*proxy_username*]
+#   The username for the proxy.
+#   Default: absent
+#
+# [*proxy_password*]
+#   The password for the proxy.
+#   Default: absent
+#
 # [*ensure*]
 #   Ensure if present or absent.
 #   Default: present
@@ -82,6 +119,14 @@
 class vmwaretools (
   $tools_version         = $vmwaretools::params::tools_version,
   $disable_tools_version = $vmwaretools::params::safe_disable_tools_version,
+  $yum_server            = $vmwaretools::params::yum_server,
+  $yum_path              = $vmwaretools::params::yum_path,
+  $just_prepend_yum_path = $vmwaretools::params::safe_just_prepend_yum_path,
+  $priority              = $vmwaretools::params::yum_priority,
+  $protect               = $vmwaretools::params::yum_protect,
+  $proxy                 = $vmwaretools::params::proxy,
+  $proxy_username        = $vmwaretools::params::proxy_username,
+  $proxy_password        = $vmwaretools::params::proxy_password,
   $ensure                = $vmwaretools::params::ensure,
   $autoupgrade           = $vmwaretools::params::safe_autoupgrade,
   $package               = $vmwaretools::params::package,
@@ -93,6 +138,7 @@ class vmwaretools (
 ) inherits vmwaretools::params {
   # Validate our booleans
   validate_bool($disable_tools_version)
+  validate_bool($just_prepend_yum_path)
   validate_bool($autoupgrade)
   validate_bool($service_enable)
   validate_bool($service_hasrestart)
@@ -110,10 +156,12 @@ class vmwaretools (
       } else {
         fail('service_ensure parameter must be running or stopped')
       }
+      $yumrepo_enabled = '1'
     }
     /(absent)/: {
       $package_ensure = 'absent'
       $service_ensure_real = 'stopped'
+      $yumrepo_enabled = '0'
     }
     default: {
       fail('ensure parameter must be present or absent')
@@ -178,17 +226,29 @@ class vmwaretools (
             ''      => regsubst($::operatingsystemrelease,'^(\d+)\.(\d+)','\1'),
             default => $::lsbmajdistrelease,
           }
+
+          if ( $yum_path == $vmwaretools::params::yum_path ) or ( $just_prepend_yum_path == true ) {
+            $gpgkey_url  = "${yum_server}${yum_path}/keys/"
+            $baseurl_url = "${yum_server}${yum_path}/esx/${tools_version}/${vmwaretools::params::baseurl_string}${majdistrelease}/${yum_basearch}/"
+          } else {
+            $gpgkey_url  = "${yum_server}${yum_path}/"
+            $baseurl_url = "${yum_server}${yum_path}/"
+          }
+
           yumrepo { 'vmware-tools':
-            descr    => "VMware Tools ${tools_version} - ${vmwaretools::params::baseurl_string}${majdistrelease} ${yum_basearch}",
-            enabled  => 1,
-            gpgcheck => 1,
+            descr          => "VMware Tools ${tools_version} - ${vmwaretools::params::baseurl_string}${majdistrelease} ${yum_basearch}",
+            enabled        => $yumrepo_enabled,
+            gpgcheck       => '1',
             # gpgkey has to be a string value with an indented second line
             # per http://projects.puppetlabs.com/issues/8867
-            gpgkey   => "${vmwaretools::params::yum_server}${vmwaretools::params::yum_path}/keys/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    ${vmwaretools::params::yum_server}${vmwaretools::params::yum_path}/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub",
-            baseurl  => "${vmwaretools::params::yum_server}${vmwaretools::params::yum_path}/esx/${tools_version}/${vmwaretools::params::baseurl_string}${majdistrelease}/${yum_basearch}/",
-            priority => $vmwaretools::params::yum_priority,
-            protect  => $vmwaretools::params::yum_protect,
-            before   => Package[$package_real],
+            gpgkey         => "${gpgkey_url}VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    ${gpgkey_url}VMWARE-PACKAGING-GPG-RSA-KEY.pub",
+            baseurl        => $baseurl_url,
+            priority       => $priority,
+            protect        => $protect,
+            proxy          => $proxy,
+            proxy_username => $proxy_username,
+            proxy_password => $proxy_password,
+            before         => Package[$package_real],
           }
         }
         default: { }
