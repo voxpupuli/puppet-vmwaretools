@@ -23,4 +23,4 @@ OS Support:
     Debian		- presently unsupported (patches welcome)
 
 Class documentation is available via puppetdoc.'
-dependency 'puppetlabs/stdlib', '>=2.1.0'
+dependency 'puppetlabs/stdlib', '>=2.3.0'
