@@ -16,17 +16,31 @@
 # Copyright (C) 2012 The Regents of the University of California
 #
 class vmwaretools::params {
-  # Customize these values if you (for example) mirror public YUM repos to your
-  # internal network.
-  $yum_server   = 'http://packages.vmware.com'
-  $yum_path     = '/tools'
-  $yum_priority = '50'
-  $yum_protect  = '0'
 
 # The following parameters should not need to be changed.
 
   # If we have a top scope variable defined, use it, otherwise fall back to a
   # hardcoded value.
+  $yum_server = $::vmwaretools_yum_server ? {
+    undef   => 'http://packages.vmware.com',
+    default => $::vmwaretools_yum_server,
+  }
+
+  $yum_path = $::vmwaretools_yum_path ? {
+    undef   => '/tools',
+    default => $::vmwaretools_yum_path,
+  }
+
+  $yum_priority = $::vmwaretools_yum_priority ? {
+    undef   => '50',
+    default => $::vmwaretools_yum_priority,
+  }
+
+  $yum_protect = $::vmwaretools_yum_protect ? {
+    undef   => '0',
+    default => $::vmwaretools_yum_protect,
+  }
+
   $tools_version = $::vmwaretools_tools_version ? {
     undef   => 'latest',
     default => $::vmwaretools_tools_version,

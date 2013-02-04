@@ -5,6 +5,22 @@
 #
 # === Parameters:
 #
+# [*yum_server*]
+#   YUM server to install from
+#   Default: http://packages.vmware.com
+#
+# [*yum_path*]
+#   Path where VMware Tools esx folder is located
+#   Default: /tools
+#
+# [*yum_priority*]
+#   Priority given to the repository
+#   Default: 50
+#
+# [*yum_protect*]
+#   Whether the repository is protected 1 or not 0
+#   Default: 0
+#
 # [*tools_version*]
 #   The version of VMware Tools to install.  Possible values can be found here:
 #   http://packages.vmware.com/tools/esx/index.html
@@ -80,6 +96,10 @@
 # Copyright (C) 2012 The Regents of the University of California
 #
 class vmwaretools (
+  $yum_server            = $vmwaretools::params::yum_server,
+  $yum_path              = $vmwaretools::params::yum_path,
+  $yum_priority          = $vmwaretools::params::yum_priority,
+  $yum_protect           = $vmwaretools::params::yum_protect,
   $tools_version         = $vmwaretools::params::tools_version,
   $disable_tools_version = $vmwaretools::params::safe_disable_tools_version,
   $ensure                = $vmwaretools::params::ensure,
@@ -184,10 +204,10 @@ class vmwaretools (
             gpgcheck => 1,
             # gpgkey has to be a string value with an indented second line
             # per http://projects.puppetlabs.com/issues/8867
-            gpgkey   => "${vmwaretools::params::yum_server}${vmwaretools::params::yum_path}/keys/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    ${vmwaretools::params::yum_server}${vmwaretools::params::yum_path}/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub",
-            baseurl  => "${vmwaretools::params::yum_server}${vmwaretools::params::yum_path}/esx/${tools_version}/${vmwaretools::params::baseurl_string}${majdistrelease}/${yum_basearch}/",
-            priority => $vmwaretools::params::yum_priority,
-            protect  => $vmwaretools::params::yum_protect,
+            gpgkey   => "${yum_server}${yum_path}/keys/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    ${yum_server}${yum_path}/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub",
+            baseurl  => "${yum_server}${yum_path}/esx/${tools_version}/${vmwaretools::params::baseurl_string}${majdistrelease}/${yum_basearch}/",
+            priority => $yum_priority,
+            protect  => $yum_protect,
             before   => Package[$package_real],
           }
         }
