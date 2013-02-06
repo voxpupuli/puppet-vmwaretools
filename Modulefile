@@ -1,5 +1,5 @@
 name 'razorsedge-vmwaretools'
-version '4.2.0'
+version '4.3.0'
 
 author 'razorsedge'
 license 'Apache 2.0'
@@ -23,4 +23,4 @@ OS Support:
     Debian		- presently unsupported (patches welcome)
 
 Class documentation is available via puppetdoc.'
-dependency 'puppetlabs/stdlib', '>=2.1.0'
+dependency 'puppetlabs/stdlib', '>=2.3.0'

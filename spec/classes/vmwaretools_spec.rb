@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe 'vmwaretools' do
+describe 'vmwaretools', :type => 'class' do
 
-  describe 'on a non-supported osfamily' do
+  context 'on a non-supported osfamily' do
     let(:params) {{}}
     let :facts do {
       :osfamily        => 'foo',
@@ -20,7 +20,7 @@ describe 'vmwaretools' do
   fedoraish = ['Fedora']
   suseish   = ['SLES', 'SLED', 'OpenSuSE', 'SuSE']
 
-  describe 'on a supported osfamily, non-vmware platform' do
+  context 'on a supported osfamily, non-vmware platform' do
     (['RedHat', 'SuSE']).each do |osf|
       describe "for osfamily #{osf}" do
         let(:params) {{}}
@@ -43,7 +43,7 @@ describe 'vmwaretools' do
     end
   end
 
-  describe 'on a supported osfamily, vmware platform' do
+  context 'on a supported osfamily, vmware platform' do
     (['RedHat', 'SuSE']).each do |osf|
       describe "for osfamily #{osf}" do
         let(:params) {{}}
@@ -228,6 +228,70 @@ describe 'vmwaretools' do
         )}
         it { should contain_package('vmware-tools-nox') }
       end
+    end
+  end
+
+  context 'on a supported operatingsystem, custom parameters' do
+    let :facts do {
+      :virtual                => 'vmware',
+      :osfamily               => 'RedHat',
+      :operatingsystem        => 'RedHat',
+      :operatingsystemrelease => '6.1',
+      :architecture           => 'x86_64'
+    }
+    end
+
+    describe 'ensure => absent' do
+      let(:params) {{ :ensure => 'absent' }}
+      it { should contain_yumrepo('vmware-tools').with_enabled('0') }
+     #it { should contain_package('vmware-tools').with_ensure('absent') }
+     #it { should contain_package('vmware-tools-nox').with_ensure('absent') }
+      it { should contain_package('vmware-tools-esx-nox').with_ensure('absent') }
+      it { should contain_package('vmware-tools-esx-kmods').with_ensure('absent') }
+      it { should contain_file_line('disable-tools-version') }
+     #it { should contain_service('vmware-tools').with_ensure('stopped') }
+      it { should contain_service('vmware-tools-services').with_ensure('stopped') }
+    end
+
+    describe 'yum_server => http://localhost:8000' do
+      let(:params) {{ :yum_server => 'http://localhost:8000' }}
+      it { should contain_yumrepo('vmware-tools').with(
+        :gpgkey   => "http://localhost:8000/tools/keys/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    http://localhost:8000/tools/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub",
+        :baseurl  => 'http://localhost:8000/tools/esx/latest/rhel6/x86_64/'
+      )}
+    end
+
+    describe 'yum_path => /some/path' do
+      let(:params) {{ :yum_path => '/some/path' }}
+      it { should contain_yumrepo('vmware-tools').with(
+        :gpgkey   => "http://packages.vmware.com/some/path/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    http://packages.vmware.com/some/path/VMWARE-PACKAGING-GPG-RSA-KEY.pub",
+        :baseurl  => 'http://packages.vmware.com/some/path/'
+      )}
+    end
+
+    describe 'yum_server => http://localhost:8000 and yum_path => /some/path' do
+      let :params do {
+        :yum_server => 'http://localhost:8000',
+        :yum_path   => '/some/path'
+      }
+      end
+      it { should contain_yumrepo('vmware-tools').with(
+        :gpgkey   => "http://localhost:8000/some/path/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    http://localhost:8000/some/path/VMWARE-PACKAGING-GPG-RSA-KEY.pub",
+        :baseurl  => 'http://localhost:8000/some/path/'
+      )}
+    end
+
+    describe 'yum_server => http://localhost:8000 and yum_path => /some/path and just_prepend_yum_path => true' do
+      let :params do {
+        :yum_server            => 'http://localhost:8000',
+        :yum_path              => '/some/path',
+        :just_prepend_yum_path => true
+      }
+      end
+      it { should contain_yumrepo('vmware-tools').with(
+        :gpgkey   => "http://localhost:8000/some/path/keys/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    http://localhost:8000/some/path/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub",
+        :baseurl  => 'http://localhost:8000/some/path/esx/latest/rhel6/x86_64/'
+      )}
     end
   end
 end
