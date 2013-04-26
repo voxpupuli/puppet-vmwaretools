@@ -188,6 +188,14 @@ class vmwaretools::params {
       }
       $baseurl_string = 'suse'  # must be lower case
     }
+    'Debian': {
+      $package_name_4x = 'open-vm-tools'
+      $package_name_5x = 'open-vm-tools'
+      $service_name_4x = 'open-vm-tools'
+      $service_name_5x = 'open-vm-tools'
+      $service_hasstatus_4x = false
+      $service_hasstatus_5x = false
+    }
     default: {
       fail("Unsupported platform: ${::operatingsystem}")
     }

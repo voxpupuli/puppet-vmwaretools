@@ -21,8 +21,8 @@ OS Support:
 * RedHat family - tested on CentOS 5.5+ and CentOS 6.2+
 * Fedora        - not supported
 * SuSE family   - untested (initial support for yumrepo) (patches welcome)
-* Ubuntu        - presently unsupported (patches welcome)
-* Debian        - presently unsupported (patches welcome)
+* Ubuntu        - initial support using opem-vm-tools, currently untested (patches welcome)
+* Debian        - initial support using opem-vm-tools, currently "works for me" status (patches welcome)
 
 Class documentation is available via puppetdoc.
 
@@ -73,6 +73,7 @@ TODO
 
 * Support installation of Desktop (X Window) packages.
 * Add logic to handle RHEL5 i386 PAE kernel on OSP 5.0+.
+* Add support for Ubuntu OSP packages
 
 Copyright
 ---------
