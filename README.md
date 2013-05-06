@@ -28,17 +28,20 @@ Examples
 --------
 
 Top Scope variable (i.e. via Dashboard):
+
     $vmwaretools_tools_version = '4.1'
     $vmwaretools_autoupgrade = true
     include 'vmwaretools'
 
 Parameterized Class:
+
     class { 'vmwaretools':
       tools_version => '4.0u3',
       autoupgrade   => true,
     }
 
 Mirror packages.vmware.com to a local host and point the vmwaretools class at it.
+
     class { 'vmwaretools':
       yum_server            => 'http://yumserver.example.lan',
       yum_path              => '/yumdir/v2.3.0',
@@ -46,6 +49,7 @@ Mirror packages.vmware.com to a local host and point the vmwaretools class at it
     }
 
 Turn off configuration of the software repository so that some other tool (ie RHN Satellite) or class can take care of it.
+
     class { 'vmwaretools':
       manage_repository => false,
     }
