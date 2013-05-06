@@ -293,5 +293,13 @@ describe 'vmwaretools', :type => 'class' do
         :baseurl  => 'http://localhost:8000/some/path/esx/latest/rhel6/x86_64/'
       )}
     end
+
+    describe 'manage_repository => false' do
+      let :params do {
+        :manage_repository => false
+      }
+      end
+      it { should_not contain_yumrepo('vmware-tools') }
+    end
   end
 end
