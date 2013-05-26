@@ -7,7 +7,7 @@ develop branch: [![Build Status](https://secure.travis-ci.org/razorsedge/puppet-
 Introduction
 ------------
 
-This module manages the installation of the [VMware Operating System Specific Packages](http://packages.vmware.com/) for VMware tools.
+This module manages the installation of the [Operating System Specific Packages](http://packages.vmware.com/) for VMware Tools.  This allows you to use your operating system's native tools to install and update the VMware Tools.
 
 Actions:
 
