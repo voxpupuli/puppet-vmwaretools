@@ -14,6 +14,11 @@
 #   Whether to report the version of the tools back to vCenter/ESX.
 #   Default: true (ie do not report)
 #
+# [*manage_repository*]
+#   Whether to allow the yumrepo to be manged by the module or out of band (ie
+#   RHN Satellite).
+#   Default: true (ie let the module manage it)
+#
 # [*yum_server*]
 #   The server which holds the YUM repository.  Customize this if you mirror
 #   public YUM repos to your internal network.
@@ -119,6 +124,7 @@
 class vmwaretools (
   $tools_version         = $vmwaretools::params::tools_version,
   $disable_tools_version = $vmwaretools::params::safe_disable_tools_version,
+  $manage_repository     = $vmwaretools::params::safe_manage_repository,
   $yum_server            = $vmwaretools::params::yum_server,
   $yum_path              = $vmwaretools::params::yum_path,
   $just_prepend_yum_path = $vmwaretools::params::safe_just_prepend_yum_path,
@@ -137,6 +143,7 @@ class vmwaretools (
   $service_hasrestart    = $vmwaretools::params::safe_service_hasrestart
 ) inherits vmwaretools::params {
   # Validate our booleans
+  validate_bool($manage_repository)
   validate_bool($disable_tools_version)
   validate_bool($just_prepend_yum_path)
   validate_bool($autoupgrade)
@@ -216,42 +223,44 @@ class vmwaretools (
         default => $vmwaretools::params::yum_basearch_5x,
       }
 
-      # We use $::operatingsystem and not $::osfamily because certain things
-      # (like Fedora) need to be excluded.
-      case $::operatingsystem {
-        'RedHat', 'CentOS', 'Scientific', 'SLC', 'Ascendos', 'PSBM',
-        'OracleLinux', 'OVS', 'OEL', 'SLES', 'SLED', 'OpenSuSE',
-        'SuSE': {
-          $majdistrelease = $::lsbmajdistrelease ? {
-            ''      => regsubst($::operatingsystemrelease,'^(\d+)\.(\d+)','\1'),
-            default => $::lsbmajdistrelease,
-          }
+      if $manage_repository {
+        # We use $::operatingsystem and not $::osfamily because certain things
+        # (like Fedora) need to be excluded.
+        case $::operatingsystem {
+          'RedHat', 'CentOS', 'Scientific', 'SLC', 'Ascendos', 'PSBM',
+          'OracleLinux', 'OVS', 'OEL', 'SLES', 'SLED', 'OpenSuSE',
+          'SuSE': {
+            $majdistrelease = $::lsbmajdistrelease ? {
+              ''      => regsubst($::operatingsystemrelease,'^(\d+)\.(\d+)','\1'),
+              default => $::lsbmajdistrelease,
+            }
 
-          if ( $yum_path == $vmwaretools::params::yum_path ) or ( $just_prepend_yum_path == true ) {
-            $gpgkey_url  = "${yum_server}${yum_path}/keys/"
-            $baseurl_url = "${yum_server}${yum_path}/esx/${tools_version}/${vmwaretools::params::baseurl_string}${majdistrelease}/${yum_basearch}/"
-          } else {
-            $gpgkey_url  = "${yum_server}${yum_path}/"
-            $baseurl_url = "${yum_server}${yum_path}/"
-          }
+            if ( $yum_path == $vmwaretools::params::yum_path ) or ( $just_prepend_yum_path == true ) {
+              $gpgkey_url  = "${yum_server}${yum_path}/keys/"
+              $baseurl_url = "${yum_server}${yum_path}/esx/${tools_version}/${vmwaretools::params::baseurl_string}${majdistrelease}/${yum_basearch}/"
+            } else {
+              $gpgkey_url  = "${yum_server}${yum_path}/"
+              $baseurl_url = "${yum_server}${yum_path}/"
+            }
 
-          yumrepo { 'vmware-tools':
-            descr          => "VMware Tools ${tools_version} - ${vmwaretools::params::baseurl_string}${majdistrelease} ${yum_basearch}",
-            enabled        => $yumrepo_enabled,
-            gpgcheck       => '1',
-            # gpgkey has to be a string value with an indented second line
-            # per http://projects.puppetlabs.com/issues/8867
-            gpgkey         => "${gpgkey_url}VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    ${gpgkey_url}VMWARE-PACKAGING-GPG-RSA-KEY.pub",
-            baseurl        => $baseurl_url,
-            priority       => $priority,
-            protect        => $protect,
-            proxy          => $proxy,
-            proxy_username => $proxy_username,
-            proxy_password => $proxy_password,
-            before         => Package[$package_real],
+            yumrepo { 'vmware-tools':
+              descr          => "VMware Tools ${tools_version} - ${vmwaretools::params::baseurl_string}${majdistrelease} ${yum_basearch}",
+              enabled        => $yumrepo_enabled,
+              gpgcheck       => '1',
+              # gpgkey has to be a string value with an indented second line
+              # per http://projects.puppetlabs.com/issues/8867
+              gpgkey         => "${gpgkey_url}VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    ${gpgkey_url}VMWARE-PACKAGING-GPG-RSA-KEY.pub",
+              baseurl        => $baseurl_url,
+              priority       => $priority,
+              protect        => $protect,
+              proxy          => $proxy,
+              proxy_username => $proxy_username,
+              proxy_password => $proxy_password,
+              before         => Package[$package_real],
+            }
           }
+          default: { }
         }
-        default: { }
       }
 
       package { 'VMwareTools':

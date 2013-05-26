@@ -97,6 +97,16 @@ class vmwaretools::params {
     $safe_just_prepend_yum_path = $just_prepend_yum_path
   }
 
+  $manage_repository = $::manage_repository ? {
+    undef   => true,
+    default => $::vmwaretools_manage_repository,
+  }
+  if is_string($manage_repository) {
+    $safe_manage_repository = str2bool($manage_repository)
+  } else {
+    $safe_manage_repository = $manage_repository
+  }
+
   $disable_tools_version = $::vmwaretools_disable_tools_version ? {
     undef   => true,
     default => $::vmwaretools_disable_tools_version,
