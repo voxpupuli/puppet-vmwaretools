@@ -1,3 +1,5 @@
+#!/usr/bin/env rspec
+
 require 'spec_helper'
 
 describe 'vmwaretools', :type => 'class' do
@@ -29,7 +31,7 @@ describe 'vmwaretools', :type => 'class' do
           :virtual  => 'foo'
         }
         end
-        it { should_not contain_yumrepo('vmware-tools') }
+        it { should_not contain_class('vmwaretools::repo') }
         it { should_not contain_package('vmware-tools') }
         it { should_not contain_package('vmware-tools-nox') }
         it { should_not contain_package('vmware-tools-esx-nox') }
@@ -52,6 +54,18 @@ describe 'vmwaretools', :type => 'class' do
           :virtual  => 'vmware'
         }
         end
+        it { should contain_class('vmwaretools::repo').with(
+          :tools_version         => 'latest',
+          :yum_server            => 'http://packages.vmware.com',
+          :yum_path              => '/tools',
+          :just_prepend_yum_path => 'false',
+          :priority              => '50',
+          :protect               => '0',
+          :proxy                 => 'absent',
+          :proxy_username        => 'absent',
+          :proxy_password        => 'absent',
+          :ensure                => 'present'
+        )}
         it 'should remove Package[VMwareTools]' do
           should contain_package('VMwareTools').with_ensure('absent')
         end
@@ -75,15 +89,6 @@ describe 'vmwaretools', :type => 'class' do
           :operatingsystem        => os
         }
         end
-        it { should contain_yumrepo('vmware-tools').with(
-          :descr    => 'VMware Tools 3.5u3 - rhel6 i686',
-          :enabled  => '1',
-          :gpgcheck => '1',
-          :gpgkey   => "http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub",
-          :baseurl  => 'http://packages.vmware.com/tools/esx/3.5u3/rhel6/i686/',
-          :priority => '50',
-          :protect  => '0'
-        )}
         it { should contain_package('vmware-tools-nox') }
         it { should contain_service('vmware-tools').with_pattern('vmware-guestd') }
       end
@@ -98,15 +103,6 @@ describe 'vmwaretools', :type => 'class' do
           :operatingsystem        => os
         }
         end
-        it { should contain_yumrepo('vmware-tools').with(
-          :descr    => 'VMware Tools 4.0latest - rhel6 i686',
-          :enabled  => '1',
-          :gpgcheck => '1',
-          :gpgkey   => "http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub",
-          :baseurl  => 'http://packages.vmware.com/tools/esx/4.0latest/rhel6/i686/',
-          :priority => '50',
-          :protect  => '0'
-        )}
         it { should contain_package('vmware-tools-nox') }
         it { should contain_service('vmware-tools').with_pattern('vmware-guestd') }
       end
@@ -121,15 +117,6 @@ describe 'vmwaretools', :type => 'class' do
           :operatingsystem        => os
         }
         end
-        it { should contain_yumrepo('vmware-tools').with(
-          :descr    => 'VMware Tools 4.1latest - rhel6 i686',
-          :enabled  => '1',
-          :gpgcheck => '1',
-          :gpgkey   => "http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub",
-          :baseurl  => 'http://packages.vmware.com/tools/esx/4.1latest/rhel6/i686/',
-          :priority => '50',
-          :protect  => '0'
-        )}
         it { should contain_package('vmware-tools-nox') }
         it { should contain_service('vmware-tools').with_pattern('vmtoolsd') }
       end
@@ -144,15 +131,6 @@ describe 'vmwaretools', :type => 'class' do
           :operatingsystem        => os
         }
         end
-        it { should contain_yumrepo('vmware-tools').with(
-          :descr    => 'VMware Tools 5.0u1 - rhel6 i386',
-          :enabled  => '1',
-          :gpgcheck => '1',
-          :gpgkey   => "http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub",
-          :baseurl  => 'http://packages.vmware.com/tools/esx/5.0u1/rhel6/i386/',
-          :priority => '50',
-          :protect  => '0'
-        )}
         it { should contain_package('vmware-tools-esx-nox') }
         it { should contain_package('vmware-tools-esx-kmods') }
         it { should contain_service('vmware-tools-services').with_pattern('vmtoolsd') }
@@ -169,15 +147,6 @@ describe 'vmwaretools', :type => 'class' do
           :operatingsystem        => os
         }
         end
-        it { should contain_yumrepo('vmware-tools').with(
-          :descr    => 'VMware Tools 5.1 - rhel6 i386',
-          :enabled  => '1',
-          :gpgcheck => '1',
-          :gpgkey   => "http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub",
-          :baseurl  => 'http://packages.vmware.com/tools/esx/5.1/rhel6/i386/',
-          :priority => '50',
-          :protect  => '0'
-        )}
         it { should contain_package('vmware-tools-esx-nox') }
         it { should contain_package('vmware-tools-esx-kmods') }
         it { should_not contain_service('vmware-tools-services').with_pattern('vmtoolsd') }
@@ -201,8 +170,6 @@ describe 'vmwaretools', :type => 'class' do
             subject
           end.to raise_error(Puppet::Error, /Unsupported platform: Fedora/)
         end
-        #it { should_not contain_yumrepo('vmware-tools') }
-        #it { should contain_package('vmware-tools').with_name('open-vm-tools') }
       end
     end
 
@@ -217,15 +184,6 @@ describe 'vmwaretools', :type => 'class' do
           :operatingsystem        => os
         }
         end
-        it { should contain_yumrepo('vmware-tools').with(
-          :descr    => 'VMware Tools 4.0latest - suse10 i586',
-          :enabled  => '1',
-          :gpgcheck => '1',
-          :gpgkey   => "http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub",
-          :baseurl  => 'http://packages.vmware.com/tools/esx/4.0latest/suse10/i586/',
-          :priority => '50',
-          :protect  => '0'
-        )}
         it { should contain_package('vmware-tools-nox') }
       end
     end
@@ -241,65 +199,19 @@ describe 'vmwaretools', :type => 'class' do
     }
     end
 
+    describe 'manage_repository => false' do
+      let(:params) {{ :manage_repository => false }}
+      it { should_not contain_class('vmwaretools::repo') }
+    end
+
     describe 'ensure => absent' do
       let(:params) {{ :ensure => 'absent' }}
-      it { should contain_yumrepo('vmware-tools').with_enabled('0') }
-     #it { should contain_package('vmware-tools').with_ensure('absent') }
-     #it { should contain_package('vmware-tools-nox').with_ensure('absent') }
+      it { should contain_class('vmwaretools::repo').with_ensure('absent') }
       it { should contain_package('vmware-tools-esx-nox').with_ensure('absent') }
       it { should contain_package('vmware-tools-esx-kmods').with_ensure('absent') }
       it { should contain_file_line('disable-tools-version') }
-     #it { should contain_service('vmware-tools').with_ensure('stopped') }
       it { should contain_service('vmware-tools-services').with_ensure('stopped') }
     end
-
-    describe 'yum_server => http://localhost:8000' do
-      let(:params) {{ :yum_server => 'http://localhost:8000' }}
-      it { should contain_yumrepo('vmware-tools').with(
-        :gpgkey   => "http://localhost:8000/tools/keys/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    http://localhost:8000/tools/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub",
-        :baseurl  => 'http://localhost:8000/tools/esx/latest/rhel6/x86_64/'
-      )}
-    end
-
-    describe 'yum_path => /some/path' do
-      let(:params) {{ :yum_path => '/some/path' }}
-      it { should contain_yumrepo('vmware-tools').with(
-        :gpgkey   => "http://packages.vmware.com/some/path/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    http://packages.vmware.com/some/path/VMWARE-PACKAGING-GPG-RSA-KEY.pub",
-        :baseurl  => 'http://packages.vmware.com/some/path/'
-      )}
-    end
-
-    describe 'yum_server => http://localhost:8000 and yum_path => /some/path' do
-      let :params do {
-        :yum_server => 'http://localhost:8000',
-        :yum_path   => '/some/path'
-      }
-      end
-      it { should contain_yumrepo('vmware-tools').with(
-        :gpgkey   => "http://localhost:8000/some/path/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    http://localhost:8000/some/path/VMWARE-PACKAGING-GPG-RSA-KEY.pub",
-        :baseurl  => 'http://localhost:8000/some/path/'
-      )}
-    end
-
-    describe 'yum_server => http://localhost:8000 and yum_path => /some/path and just_prepend_yum_path => true' do
-      let :params do {
-        :yum_server            => 'http://localhost:8000',
-        :yum_path              => '/some/path',
-        :just_prepend_yum_path => true
-      }
-      end
-      it { should contain_yumrepo('vmware-tools').with(
-        :gpgkey   => "http://localhost:8000/some/path/keys/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    http://localhost:8000/some/path/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub",
-        :baseurl  => 'http://localhost:8000/some/path/esx/latest/rhel6/x86_64/'
-      )}
-    end
-
-    describe 'manage_repository => false' do
-      let :params do {
-        :manage_repository => false
-      }
-      end
-      it { should_not contain_yumrepo('vmware-tools') }
-    end
   end
+
 end
