@@ -180,7 +180,10 @@ class vmwaretools::params {
     }
     'Suse': {
       $package_name_4x = 'vmware-tools-nox'
-      $package_name_5x = 'vmware-tools-esx-nox'
+      $package_name_5x = [
+        'vmware-tools-esx-nox',
+        'vmware-tools-esx-kmods-default',
+      ]
       $service_name_4x = 'vmware-tools'
       $service_name_5x = 'vmware-tools-services'
       $service_hasstatus_4x = false
