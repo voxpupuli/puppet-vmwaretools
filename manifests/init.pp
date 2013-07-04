@@ -223,6 +223,7 @@ class vmwaretools (
 
       if $manage_repository {
         class { 'vmwaretools::repo':
+          ensure                => $ensure,
           tools_version         => $tools_version,
           yum_server            => $yum_server,
           yum_path              => $yum_path,
@@ -232,7 +233,6 @@ class vmwaretools (
           proxy                 => $proxy,
           proxy_username        => $proxy_username,
           proxy_password        => $proxy_password,
-          ensure                => $ensure,
           before                => Package[$package_real],
         }
       }
