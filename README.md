@@ -12,7 +12,7 @@ This module manages the installation of the [Operating System Specific Packages]
 Actions:
 
 * Removes old VMwareTools package or runs vmware-uninstall-tools.pl if found.
-* Installs a VMware YUM repository (defaults to the 'latest' package repository which is presently 5.0).
+* Installs a VMware YUM repository (defaults to the 'latest' package repository).
 * Installs the OSP VMware Tools.
 * Starts the vmware-tools service.
 
@@ -62,7 +62,7 @@ Notes
 * Supports yumrepo proxy, proxy_username, proxy_password, yum priorities, yum repo
   protection, and using a local mirror for the yum_server and yum_path.
 * Supports not managing the yumrepo configuration via `manage_repository => false`.
-* No other VM tools (ie [Open Virtual Machine Tools](http://open-vm-tools.sourceforge.net/) will be supported.
+* No other VM tools (ie [Open Virtual Machine Tools](http://open-vm-tools.sourceforge.net/)) will be supported.
 
 Issues
 ------

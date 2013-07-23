@@ -147,14 +147,21 @@ class vmwaretools::params {
     $safe_service_hasrestart = $service_hasrestart
   }
 
+  if $::operatingsystemmajrelease { # facter 1.7+
+    $majdistrelease = $::operatingsystemmajrelease
+  } elsif $::lsbmajdistrelease {    # requires LSB to already be installed
+    $majdistrelease = $::lsbmajdistrelease
+  } elsif $::os_maj_version {       # requires stahnma/epel
+    $majdistrelease = $::os_maj_version
+  } else {
+    $majdistrelease = regsubst($::operatingsystemrelease,'^(\d+)\.(\d+)','\1')
+  }
+
   case $::osfamily {
     'RedHat': {
       case $::operatingsystem {
         'Fedora': {
           fail("Unsupported platform: ${::operatingsystem}")
-          #$package_name = 'open-vm-tools'
-          #$service_name = 'vmware-tools'
-          #$service_hasstatus = false
         }
         default: {
           $package_name_4x = 'vmware-tools-nox'
@@ -183,7 +190,10 @@ class vmwaretools::params {
     }
     'Suse': {
       $package_name_4x = 'vmware-tools-nox'
-      $package_name_5x = 'vmware-tools-esx-nox'
+      $package_name_5x = [
+        'vmware-tools-esx-nox',
+        'vmware-tools-esx-kmods-default',
+      ]
       $service_name_4x = 'vmware-tools'
       $service_name_5x = 'vmware-tools-services'
       $service_hasstatus_4x = false

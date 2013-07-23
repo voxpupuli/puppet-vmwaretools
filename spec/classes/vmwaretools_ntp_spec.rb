@@ -1,6 +1,9 @@
+#!/usr/bin/env rspec
+
 require 'spec_helper'
 
-describe 'vmwaretools::ntp' do
+describe 'vmwaretools::ntp', :type => 'class' do
+
   describe 'without base class defined, non-vmware platform' do
     let(:params) {{}}
     let :facts do {
@@ -56,6 +59,7 @@ describe 'vmwaretools::ntp' do
           end
           it { should contain_exec('vmware-tools.syncTime').with_command('vmware-guestd --cmd "vmx.set_option synctime 1 0" || true') }
         end
+
         describe "for service_pattern vmtoolsd" do
           let :pre_condition do
             "class { 'vmwaretools': 
@@ -74,4 +78,5 @@ describe 'vmwaretools::ntp' do
       end
     end
   end
+
 end

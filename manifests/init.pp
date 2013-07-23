@@ -163,12 +163,10 @@ class vmwaretools (
       } else {
         fail('service_ensure parameter must be running or stopped')
       }
-      $yumrepo_enabled = '1'
     }
     /(absent)/: {
       $package_ensure = 'absent'
       $service_ensure_real = 'stopped'
-      $yumrepo_enabled = '0'
     }
     default: {
       fail('ensure parameter must be present or absent')
@@ -224,42 +222,18 @@ class vmwaretools (
       }
 
       if $manage_repository {
-        # We use $::operatingsystem and not $::osfamily because certain things
-        # (like Fedora) need to be excluded.
-        case $::operatingsystem {
-          'RedHat', 'CentOS', 'Scientific', 'SLC', 'Ascendos', 'PSBM',
-          'OracleLinux', 'OVS', 'OEL', 'SLES', 'SLED', 'OpenSuSE',
-          'SuSE': {
-            $majdistrelease = $::lsbmajdistrelease ? {
-              ''      => regsubst($::operatingsystemrelease,'^(\d+)\.(\d+)','\1'),
-              default => $::lsbmajdistrelease,
-            }
-
-            if ( $yum_path == $vmwaretools::params::yum_path ) or ( $just_prepend_yum_path == true ) {
-              $gpgkey_url  = "${yum_server}${yum_path}/keys/"
-              $baseurl_url = "${yum_server}${yum_path}/esx/${tools_version}/${vmwaretools::params::baseurl_string}${majdistrelease}/${yum_basearch}/"
-            } else {
-              $gpgkey_url  = "${yum_server}${yum_path}/"
-              $baseurl_url = "${yum_server}${yum_path}/"
-            }
-
-            yumrepo { 'vmware-tools':
-              descr          => "VMware Tools ${tools_version} - ${vmwaretools::params::baseurl_string}${majdistrelease} ${yum_basearch}",
-              enabled        => $yumrepo_enabled,
-              gpgcheck       => '1',
-              # gpgkey has to be a string value with an indented second line
-              # per http://projects.puppetlabs.com/issues/8867
-              gpgkey         => "${gpgkey_url}VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    ${gpgkey_url}VMWARE-PACKAGING-GPG-RSA-KEY.pub",
-              baseurl        => $baseurl_url,
-              priority       => $priority,
-              protect        => $protect,
-              proxy          => $proxy,
-              proxy_username => $proxy_username,
-              proxy_password => $proxy_password,
-              before         => Package[$package_real],
-            }
-          }
-          default: { }
+        class { 'vmwaretools::repo':
+          ensure                => $ensure,
+          tools_version         => $tools_version,
+          yum_server            => $yum_server,
+          yum_path              => $yum_path,
+          just_prepend_yum_path => $just_prepend_yum_path,
+          priority              => $priority,
+          protect               => $protect,
+          proxy                 => $proxy,
+          proxy_username        => $proxy_username,
+          proxy_password        => $proxy_password,
+          before                => Package[$package_real],
         }
       }
 
@@ -298,7 +272,7 @@ class vmwaretools (
         notify  => Service[$service_name_real],
       }
 
-      if ($::osfamily == 'RedHat') and ($majdistrelease == '6') and ($rhel_upstart == true) {
+      if ($::osfamily == 'RedHat') and ($vmwaretools::params::majdistrelease == '6') and ($rhel_upstart == true) {
         # VMware-tools 5.1 on EL6 is now using upstart and not System V init.
         # http://projects.puppetlabs.com/issues/11989#note-7
         service { $service_name_real :
