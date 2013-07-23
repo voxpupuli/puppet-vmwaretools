@@ -272,12 +272,7 @@ class vmwaretools (
         notify  => Service[$service_name_real],
       }
 
-      $majdistrelease = $::lsbmajdistrelease ? {
-        ''      => regsubst($::operatingsystemrelease,'^(\d+)\.(\d+)','\1'),
-        default => $::lsbmajdistrelease,
-      }
-
-      if ($::osfamily == 'RedHat') and ($majdistrelease == '6') and ($rhel_upstart == true) {
+      if ($::osfamily == 'RedHat') and ($vmwaretools::params::majdistrelease == '6') and ($rhel_upstart == true) {
         # VMware-tools 5.1 on EL6 is now using upstart and not System V init.
         # http://projects.puppetlabs.com/issues/11989#note-7
         service { $service_name_real :

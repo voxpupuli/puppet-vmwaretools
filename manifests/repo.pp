@@ -115,21 +115,16 @@ class vmwaretools::repo (
         'RedHat', 'CentOS', 'Scientific', 'SLC', 'Ascendos', 'PSBM',
         'OracleLinux', 'OVS', 'OEL', 'SLES', 'SLED', 'OpenSuSE',
         'SuSE': {
-          $majdistrelease = $::lsbmajdistrelease ? {
-            ''      => regsubst($::operatingsystemrelease,'^(\d+)\.(\d+)','\1'),
-            default => $::lsbmajdistrelease,
-          }
-
           if ( $yum_path == $vmwaretools::params::yum_path ) or ( $just_prepend_yum_path == true ) {
             $gpgkey_url  = "${yum_server}${yum_path}/keys/"
-            $baseurl_url = "${yum_server}${yum_path}/esx/${tools_version}/${vmwaretools::params::baseurl_string}${majdistrelease}/${yum_basearch}/"
+            $baseurl_url = "${yum_server}${yum_path}/esx/${tools_version}/${vmwaretools::params::baseurl_string}${vmwaretools::params::majdistrelease}/${yum_basearch}/"
           } else {
             $gpgkey_url  = "${yum_server}${yum_path}/"
             $baseurl_url = "${yum_server}${yum_path}/"
           }
 
           yumrepo { 'vmware-tools':
-            descr          => "VMware Tools ${tools_version} - ${vmwaretools::params::baseurl_string}${majdistrelease} ${yum_basearch}",
+            descr          => "VMware Tools ${tools_version} - ${vmwaretools::params::baseurl_string}${vmwaretools::params::majdistrelease} ${yum_basearch}",
             enabled        => $yumrepo_enabled,
             gpgcheck       => '1',
             # gpgkey has to be a string value with an indented second line
