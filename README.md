@@ -69,16 +69,21 @@ Issues
 
 * Does not install Desktop (X Window) components.
 
-Contributing
-------------
-
-* Please see DEVELOP.md for contribution information
-
 TODO
 ----
 
 * Support installation of Desktop (X Window) packages.
 * Add logic to handle RHEL5 i386 PAE kernel on OSP 5.0+.
+
+Contributing
+------------
+
+Please see DEVELOP.md for contribution information.
+
+License
+-------
+
+Please see LICENSE file.
 
 Copyright
 ---------
