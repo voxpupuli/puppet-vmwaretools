@@ -69,6 +69,11 @@ Issues
 
 * Does not install Desktop (X Window) components.
 
+Contributing
+------------
+
+* Please see DEVELOP.md for contribution information
+
 TODO
 ----
 
