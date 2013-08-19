@@ -1,5 +1,5 @@
 name 'razorsedge-vmwaretools'
-version '4.5.0'
+version '4.6.0'
 
 author 'razorsedge'
 license 'Apache License, Version 2.0'
