@@ -161,7 +161,8 @@ class vmwaretools::params {
     'RedHat': {
       case $::operatingsystem {
         'Fedora': {
-          fail("Unsupported platform: ${::operatingsystem}")
+          notify("Unsupported platform: ${::operatingsystem}")
+          $supported = false
         }
         default: {
           $package_name_4x = 'vmware-tools-nox'
@@ -174,6 +175,7 @@ class vmwaretools::params {
           $service_name_5x = 'vmware-tools-services'
           $service_hasstatus_4x = false
           $service_hasstatus_5x = true
+          $supported = true
         }
       }
       $yum_basearch_4x = $::architecture ? {
@@ -207,9 +209,11 @@ class vmwaretools::params {
         default => $::architecture,
       }
       $baseurl_string = 'suse'  # must be lower case
+      $supported = true
     }
     default: {
-      fail("Unsupported platform: ${::operatingsystem}")
+      notify("Unsupported platform: ${::operatingsystem}")
+      $supported = false
     }
   }
 }
