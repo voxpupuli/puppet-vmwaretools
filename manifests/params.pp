@@ -29,27 +29,27 @@ class vmwaretools::params {
   }
 
   $yum_priority = $::vmwaretools_yum_priority ? {
-    undef => '50',
+    undef   => '50',
     default => $::vmwaretools_yum_priority,
   }
 
   $yum_protect = $::vmwaretools_yum_protect ? {
-    undef => '0',
+    undef   => '0',
     default => $::vmwaretools_yum_protect,
   }
 
   $proxy = $::vmwaretools_proxy ? {
-    undef => 'absent',
+    undef   => 'absent',
     default => $::vmwaretools_proxy,
   }
 
   $proxy_username = $::vmwaretools_proxy_username ? {
-    undef => 'absent',
+    undef   => 'absent',
     default => $::vmwaretools_proxy_username,
   }
 
   $proxy_password = $::vmwaretools_proxy_password ? {
-    undef => 'absent',
+    undef   => 'absent',
     default => $::vmwaretools_proxy_password,
   }
 
