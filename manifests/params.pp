@@ -161,7 +161,7 @@ class vmwaretools::params {
     'RedHat': {
       case $::operatingsystem {
         'Fedora': {
-          notify {"Unsupported platform: ${::operatingsystem}"}
+          notify {"Unsupported platform: ${::operatingsystem}":}
           $supported = false
         }
         default: {
@@ -212,7 +212,7 @@ class vmwaretools::params {
       $supported = true
     }
     default: {
-      notify {"Unsupported platform: ${::operatingsystem}"}
+      notify {"Unsupported platform: ${::operatingsystem}":}
       $supported = false
     }
   }
