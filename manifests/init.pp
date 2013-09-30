@@ -94,9 +94,6 @@
 #   Service has restart command.
 #   Default: true
 #
-# [*supported*]
-#    Boolean for conditional execution on supported platfoms
-#
 # === Actions:
 #
 # Removes old VMwareTools package or runs vmware-uninstall-tools.pl if found.
@@ -143,9 +140,11 @@ class vmwaretools (
   $service_name          = $vmwaretools::params::service_name,
   $service_enable        = $vmwaretools::params::safe_service_enable,
   $service_hasstatus     = $vmwaretools::params::service_hasstatus,
-  $service_hasrestart    = $vmwaretools::params::safe_service_hasrestart,
-  $supported             = $vmwaretools::params::supported,
+  $service_hasrestart    = $vmwaretools::params::safe_service_hasrestart
 ) inherits vmwaretools::params {
+
+  $supported = $vmwaretools::params::supported
+
   # Validate our booleans
   validate_bool($manage_repository)
   validate_bool($disable_tools_version)
