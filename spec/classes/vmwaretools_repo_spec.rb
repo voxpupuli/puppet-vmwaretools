@@ -31,6 +31,7 @@ describe 'vmwaretools::repo', :type => 'class' do
         }
         end
         it { should_not contain_yumrepo('vmware-tools') }
+        it { should_not contain_file('/etc/yum.repos.d/vmware-tools.repo') }
       end
     end
   end
@@ -58,6 +59,7 @@ describe 'vmwaretools::repo', :type => 'class' do
           :proxy_username  => 'absent',
           :proxy_password  => 'absent'
         )}
+        it { should contain_file('/etc/yum.repos.d/vmware-tools.repo') }
       end
     end
 
@@ -83,6 +85,7 @@ describe 'vmwaretools::repo', :type => 'class' do
           :proxy_username  => 'absent',
           :proxy_password  => 'absent'
         )}
+        it { should contain_file('/etc/yum.repos.d/vmware-tools.repo') }
       end
     end
   end
