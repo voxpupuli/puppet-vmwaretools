@@ -19,7 +19,7 @@ describe 'vmwaretools::ntp', :type => 'class' do
       :virtual => 'vmware',
     }
     end
-    it 'should fail' do
+    it do
       expect {
         subject
       }.to raise_error(Puppet::Error, /The class vmwaretools must be declared/)

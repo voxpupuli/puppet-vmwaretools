@@ -11,7 +11,7 @@ describe 'vmwaretools', :type => 'class' do
       :operatingsystem => 'foo'
     }
     end
-    it 'should fail' do
+    it do
       expect do
         subject
       end.to raise_error(Puppet::Error, /Unsupported platform: foo/)
@@ -45,7 +45,7 @@ describe 'vmwaretools', :type => 'class' do
         :operatingsystem => 'Fedora'
       }
       end
-      it 'should fail' do
+      it do
         expect do
           subject
         end.to raise_error(Puppet::Error, /Unsupported platform: Fedora/)
