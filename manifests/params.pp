@@ -161,7 +161,7 @@ class vmwaretools::params {
     'RedHat': {
       case $::operatingsystem {
         'Fedora': {
-          notice "Unsupported platform: ${::operatingsystem}"
+          notice "Your operating system ${::operatingsystem} is unsupported and will not have the VMware Tools installed."
           $supported = false
         }
         default: {
@@ -212,7 +212,7 @@ class vmwaretools::params {
       $supported = true
     }
     default: {
-      notice "Unsupported platform: ${::operatingsystem}"
+      notice "Your operating system ${::operatingsystem} is unsupported and will not have the VMware Tools installed."
       $supported = false
     }
   }
