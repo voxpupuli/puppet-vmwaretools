@@ -29,27 +29,27 @@ class vmwaretools::params {
   }
 
   $yum_priority = $::vmwaretools_yum_priority ? {
-    undef => '50',
+    undef   => '50',
     default => $::vmwaretools_yum_priority,
   }
 
   $yum_protect = $::vmwaretools_yum_protect ? {
-    undef => '0',
+    undef   => '0',
     default => $::vmwaretools_yum_protect,
   }
 
   $proxy = $::vmwaretools_proxy ? {
-    undef => 'absent',
+    undef   => 'absent',
     default => $::vmwaretools_proxy,
   }
 
   $proxy_username = $::vmwaretools_proxy_username ? {
-    undef => 'absent',
+    undef   => 'absent',
     default => $::vmwaretools_proxy_username,
   }
 
   $proxy_password = $::vmwaretools_proxy_password ? {
-    undef => 'absent',
+    undef   => 'absent',
     default => $::vmwaretools_proxy_password,
   }
 
@@ -161,7 +161,8 @@ class vmwaretools::params {
     'RedHat': {
       case $::operatingsystem {
         'Fedora': {
-          fail("Unsupported platform: ${::operatingsystem}")
+          notice "Your operating system ${::operatingsystem} is unsupported and will not have the VMware Tools installed."
+          $supported = false
         }
         default: {
           $package_name_4x = 'vmware-tools-nox'
@@ -174,6 +175,7 @@ class vmwaretools::params {
           $service_name_5x = 'vmware-tools-services'
           $service_hasstatus_4x = false
           $service_hasstatus_5x = true
+          $supported = true
         }
       }
       $yum_basearch_4x = $::architecture ? {
@@ -207,9 +209,11 @@ class vmwaretools::params {
         default => $::architecture,
       }
       $baseurl_string = 'suse'  # must be lower case
+      $supported = true
     }
     default: {
-      fail("Unsupported platform: ${::operatingsystem}")
+      notice "Your operating system ${::operatingsystem} is unsupported and will not have the VMware Tools installed."
+      $supported = false
     }
   }
 }
