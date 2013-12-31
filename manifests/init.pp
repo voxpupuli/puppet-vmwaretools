@@ -189,7 +189,7 @@ class vmwaretools (
         $rhel_upstart = $tools_version ? {
           /3\..+/   => false,
           /4\..+/   => false,
-          /(5.0).+/ => false,
+          /(5.0).*/ => false,
           default   => true,
         }
 
