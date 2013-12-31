@@ -261,6 +261,9 @@ class vmwaretools (
         ensure  => $package_ensure,
       }
 
+      file { "/etc/vmware-tools/tools.conf":
+        ensure => present
+      } ->
       file_line { 'disable-tools-version':
         path    => '/etc/vmware-tools/tools.conf',
         line    => $disable_tools_version ? {
