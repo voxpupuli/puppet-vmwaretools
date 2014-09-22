@@ -137,6 +137,14 @@ class vmwaretools::repo (
             proxy_username => $proxy_username,
             proxy_password => $proxy_password,
           }
+
+          # Deal with the people who wipe /etc/yum.repos.d .
+          file { '/etc/yum.repos.d/vmware-tools.repo':
+            ensure => 'file',
+            owner  => 'root',
+            group  => 'root',
+            mode   => '0644',
+          }
         }
         default: { }
       }

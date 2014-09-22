@@ -1,0 +1,44 @@
+{
+  "name": "razorsedge-vmwaretools",
+  "version": "4.7.0",
+  "author": "razorsedge",
+  "summary": "VMware Tools OSP installation.",
+  "license": "Apache License, Version 2.0",
+  "project_page": "https://github.com/razorsedge/puppet-vmwaretools",
+  "issues_url": "https://github.com/razorsedge/puppet-vmwaretoolsi/issues",
+  "source": "https://github.com/razorsedge/puppet-vmwaretools.git",
+  "dependencies": [
+    {
+      "name": "puppetlabs/stdlib",
+      "version_requirement": ">=2.3.0"
+    },
+    {
+      "name": "wolfspyre/vmware_puppetfact",
+      "version_requirement": ">=0.2.1"
+    }
+  ],
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "RedHat",
+      "operatingsystemrelease": [ "5", "6" ]
+    },
+    {
+      "operatingsystem": "CentOS",
+      "operatingsystemrelease": [ "5", "6" ]
+    },
+    {
+      "operatingsystem": "OracleLinux",
+      "operatingsystemrelease": [ "5", "6" ]
+    }
+  ],
+  "requirements": [
+    {
+      "name": "pe",
+      "version_requirement": "3.x"
+    },
+    {
+      "name": "puppet",
+      "version_requirement": ">=2.7.20 <4.0.0"
+    }
+  ]
+}

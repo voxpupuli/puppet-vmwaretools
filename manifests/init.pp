@@ -142,6 +142,9 @@ class vmwaretools (
   $service_hasstatus     = $vmwaretools::params::service_hasstatus,
   $service_hasrestart    = $vmwaretools::params::safe_service_hasrestart
 ) inherits vmwaretools::params {
+
+  $supported = $vmwaretools::params::supported
+
   # Validate our booleans
   validate_bool($manage_repository)
   validate_bool($disable_tools_version)
@@ -149,6 +152,7 @@ class vmwaretools (
   validate_bool($autoupgrade)
   validate_bool($service_enable)
   validate_bool($service_hasrestart)
+  validate_bool($supported)
 
   case $ensure {
     /(present)/: {
@@ -175,127 +179,128 @@ class vmwaretools (
 
   case $::virtual {
     'vmware': {
-      $service_pattern = $tools_version ? {
-        /3\..+/   => 'vmware-guestd',
-        /(4.0).+/ => 'vmware-guestd',
-        default   => 'vmtoolsd',
-      }
+      if $supported {
+        $service_pattern = $tools_version ? {
+          /3\..+/   => 'vmware-guestd',
+          /(4.0).+/ => 'vmware-guestd',
+          default   => 'vmtoolsd',
+        }
 
-      $rhel_upstart = $tools_version ? {
-        /3\..+/   => false,
-        /4\..+/   => false,
-        /(5.0).+/ => false,
-        default   => true,
-      }
+        $rhel_upstart = $tools_version ? {
+          /3\..+/   => false,
+          /4\..+/   => false,
+          /(5.0).*/ => false,
+          default   => true,
+        }
 
-      $package_real = $package ? {
-        undef   => $tools_version ? {
-          /3\..+/ => $vmwaretools::params::package_name_4x,
-          /4\..+/ => $vmwaretools::params::package_name_4x,
-          default => $vmwaretools::params::package_name_5x,
-        },
-        default => $package,
-      }
+        $package_real = $package ? {
+          undef   => $tools_version ? {
+            /3\..+/ => $vmwaretools::params::package_name_4x,
+            /4\..+/ => $vmwaretools::params::package_name_4x,
+            default => $vmwaretools::params::package_name_5x,
+          },
+          default => $package,
+        }
 
-      $service_name_real = $service_name ? {
-        undef   => $tools_version ? {
-          /3\..+/ => $vmwaretools::params::service_name_4x,
-          /4\..+/ => $vmwaretools::params::service_name_4x,
-          default => $vmwaretools::params::service_name_5x,
-        },
-        default => $service_name,
-      }
+        $service_name_real = $service_name ? {
+          undef   => $tools_version ? {
+            /3\..+/ => $vmwaretools::params::service_name_4x,
+            /4\..+/ => $vmwaretools::params::service_name_4x,
+            default => $vmwaretools::params::service_name_5x,
+          },
+          default => $service_name,
+        }
 
-      $service_hasstatus_real = $service_hasstatus ? {
-        undef   => $tools_version ? {
-          /3\..+/ => $vmwaretools::params::service_hasstatus_4x,
-          /4\..+/ => $vmwaretools::params::service_hasstatus_4x,
-          default => $vmwaretools::params::service_hasstatus_5x,
-        },
-        default => $service_hasstatus,
-      }
+        $service_hasstatus_real = $service_hasstatus ? {
+          undef   => $tools_version ? {
+            /3\..+/ => $vmwaretools::params::service_hasstatus_4x,
+            /4\..+/ => $vmwaretools::params::service_hasstatus_4x,
+            default => $vmwaretools::params::service_hasstatus_5x,
+          },
+          default => $service_hasstatus,
+        }
 
-      $yum_basearch = $tools_version ? {
-        /3\..+/ => $vmwaretools::params::yum_basearch_4x,
-        /4\..+/ => $vmwaretools::params::yum_basearch_4x,
-        default => $vmwaretools::params::yum_basearch_5x,
-      }
+        $yum_basearch = $tools_version ? {
+          /3\..+/ => $vmwaretools::params::yum_basearch_4x,
+          /4\..+/ => $vmwaretools::params::yum_basearch_4x,
+          default => $vmwaretools::params::yum_basearch_5x,
+        }
 
-      if $manage_repository {
-        class { 'vmwaretools::repo':
-          ensure                => $ensure,
-          tools_version         => $tools_version,
-          yum_server            => $yum_server,
-          yum_path              => $yum_path,
-          just_prepend_yum_path => $just_prepend_yum_path,
-          priority              => $priority,
-          protect               => $protect,
-          proxy                 => $proxy,
-          proxy_username        => $proxy_username,
-          proxy_password        => $proxy_password,
-          before                => Package[$package_real],
+        if $manage_repository {
+          class { 'vmwaretools::repo':
+            ensure                => $ensure,
+            tools_version         => $tools_version,
+            yum_server            => $yum_server,
+            yum_path              => $yum_path,
+            just_prepend_yum_path => $just_prepend_yum_path,
+            priority              => $priority,
+            protect               => $protect,
+            proxy                 => $proxy,
+            proxy_username        => $proxy_username,
+            proxy_password        => $proxy_password,
+            before                => Package[$package_real],
+          }
+        }
+
+        package { 'VMwareTools':
+          ensure => 'absent',
+          before => Package[$package_real],
+        }
+
+        exec { 'vmware-uninstall-tools':
+          command => '/usr/bin/vmware-uninstall-tools.pl && rm -rf /usr/lib/vmware-tools',
+          path    => '/bin:/sbin:/usr/bin:/usr/sbin',
+          onlyif  => 'test -f /usr/bin/vmware-uninstall-tools.pl',
+          before  => [ Package[$package_real], Package['VMwareTools'], ],
+        }
+
+        # TODO: remove Exec["vmware-uninstall-tools-local"]?
+        exec { 'vmware-uninstall-tools-local':
+          command => '/usr/local/bin/vmware-uninstall-tools.pl && rm -rf /usr/local/lib/vmware-tools',
+          path    => '/bin:/sbin:/usr/bin:/usr/sbin',
+          onlyif  => 'test -f /usr/local/bin/vmware-uninstall-tools.pl',
+          before  => [ Package[$package_real], Package['VMwareTools'], ],
+        }
+
+        package { $package_real :
+          ensure  => $package_ensure,
+        }
+
+        file_line { 'disable-tools-version':
+          path    => '/etc/vmware-tools/tools.conf',
+          line    => $disable_tools_version ? {
+            false    => 'disable-tools-version = "false"',
+            default  => 'disable-tools-version = "true"',
+          },
+          match   => '^disable-tools-version\s*=.*$',
+          require => Package[$package_real],
+          notify  => Service[$service_name_real],
+        }
+
+        if ($::osfamily == 'RedHat') and ($vmwaretools::params::majdistrelease == '6') and ($rhel_upstart == true) {
+          # VMware-tools 5.1 on EL6 is now using upstart and not System V init.
+          # http://projects.puppetlabs.com/issues/11989#note-7
+          service { $service_name_real :
+            ensure     => $service_ensure_real,
+            hasrestart => true,
+            hasstatus  => true,
+            start      => "/sbin/start ${service_name_real}",
+            stop       => "/sbin/stop ${service_name_real}",
+            status     => "/sbin/status ${service_name_real} | grep -q 'start/'",
+            restart    => "/sbin/restart ${service_name_real}",
+            require    => Package[$package_real],
+          }
+        } else {
+          service { $service_name_real :
+            ensure     => $service_ensure_real,
+            enable     => $service_enable,
+            hasrestart => $service_hasrestart,
+            hasstatus  => $service_hasstatus_real,
+            pattern    => $service_pattern,
+            require    => Package[$package_real],
+          }
         }
       }
-
-      package { 'VMwareTools':
-        ensure => 'absent',
-        before => Package[$package_real],
-      }
-
-      exec { 'vmware-uninstall-tools':
-        command => '/usr/bin/vmware-uninstall-tools.pl && rm -rf /usr/lib/vmware-tools',
-        path    => '/bin:/sbin:/usr/bin:/usr/sbin',
-        onlyif  => 'test -f /usr/bin/vmware-uninstall-tools.pl',
-        before  => [ Package[$package_real], Package['VMwareTools'], ],
-      }
-
-      # TODO: remove Exec["vmware-uninstall-tools-local"]?
-      exec { 'vmware-uninstall-tools-local':
-        command => '/usr/local/bin/vmware-uninstall-tools.pl && rm -rf /usr/local/lib/vmware-tools',
-        path    => '/bin:/sbin:/usr/bin:/usr/sbin',
-        onlyif  => 'test -f /usr/local/bin/vmware-uninstall-tools.pl',
-        before  => [ Package[$package_real], Package['VMwareTools'], ],
-      }
-
-      package { $package_real :
-        ensure  => $package_ensure,
-      }
-
-      file_line { 'disable-tools-version':
-        path    => '/etc/vmware-tools/tools.conf',
-        line    => $disable_tools_version ? {
-          false    => 'disable-tools-version = "false"',
-          default  => 'disable-tools-version = "true"',
-        },
-        match   => '^disable-tools-version\s*=.*$',
-        require => Package[$package_real],
-        notify  => Service[$service_name_real],
-      }
-
-      if ($::osfamily == 'RedHat') and ($vmwaretools::params::majdistrelease == '6') and ($rhel_upstart == true) {
-        # VMware-tools 5.1 on EL6 is now using upstart and not System V init.
-        # http://projects.puppetlabs.com/issues/11989#note-7
-        service { $service_name_real :
-          ensure     => $service_ensure_real,
-          hasrestart => true,
-          hasstatus  => true,
-          start      => "/sbin/start ${service_name_real}",
-          stop       => "/sbin/stop ${service_name_real}",
-          status     => "/sbin/status ${service_name_real} | grep -q 'start/'",
-          restart    => "/sbin/restart ${service_name_real}",
-          require    => Package[$package_real],
-        }
-      } else {
-        service { $service_name_real :
-          ensure     => $service_ensure_real,
-          enable     => $service_enable,
-          hasrestart => $service_hasrestart,
-          hasstatus  => $service_hasstatus_real,
-          pattern    => $service_pattern,
-          require    => Package[$package_real],
-        }
-      }
-
     }
     # If we are not on VMware, do not do anything.
     default: { }

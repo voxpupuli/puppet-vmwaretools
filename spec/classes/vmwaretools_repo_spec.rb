@@ -11,11 +11,14 @@ describe 'vmwaretools::repo', :type => 'class' do
       :operatingsystem => 'foo'
     }
     end
-    it 'should fail' do
-      expect do
-        subject
-      end.to raise_error(Puppet::Error, /Unsupported platform: foo/)
-    end
+    #it { should run.with_params("Your operating system #{osfamily} is unsupported and will not have the VMware Tools installed.").and_return('Your operating system foo is unsupported and will not have the VMware Tools installed.') }
+    it { should_not contain_yumrepo('vmware-tools') }
+    it { should_not contain_file('/etc/yum.repos.d/vmware-tools.repo') }
+#    it do
+#      expect do
+#        subject
+#      end.to raise_error(Puppet::Error, /Unsupported platform: foo/)
+#    end
   end
 
   redhatish = ['RedHat', 'CentOS', 'Scientific', 'SLC', 'Ascendos', 'PSBM', 'OracleLinux', 'OVS', 'OEL']
@@ -31,6 +34,7 @@ describe 'vmwaretools::repo', :type => 'class' do
         }
         end
         it { should_not contain_yumrepo('vmware-tools') }
+        it { should_not contain_file('/etc/yum.repos.d/vmware-tools.repo') }
       end
     end
   end
@@ -58,6 +62,7 @@ describe 'vmwaretools::repo', :type => 'class' do
           :proxy_username  => 'absent',
           :proxy_password  => 'absent'
         )}
+        it { should contain_file('/etc/yum.repos.d/vmware-tools.repo') }
       end
     end
 
@@ -83,6 +88,7 @@ describe 'vmwaretools::repo', :type => 'class' do
           :proxy_username  => 'absent',
           :proxy_password  => 'absent'
         )}
+        it { should contain_file('/etc/yum.repos.d/vmware-tools.repo') }
       end
     end
   end

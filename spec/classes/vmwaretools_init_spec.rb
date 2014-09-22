@@ -11,11 +11,21 @@ describe 'vmwaretools', :type => 'class' do
       :operatingsystem => 'foo'
     }
     end
-    it 'should fail' do
-      expect do
-        subject
-      end.to raise_error(Puppet::Error, /Unsupported platform: foo/)
-    end
+#    it do
+#      expect do
+#        subject
+#      end.to raise_error(Puppet::Error, /Unsupported platform: foo/)
+#    end
+    it { should_not contain_class('vmwaretools::repo') }
+    it { should_not contain_package('vmware-tools') }
+    it { should_not contain_package('vmware-tools-nox') }
+    it { should_not contain_package('vmware-tools-esx-nox') }
+    it { should_not contain_package('vmware-tools-esx-kmods') }
+    it { should_not contain_exec('vmware-uninstall-tools') }
+    it { should_not contain_exec('vmware-uninstall-tools-local') }
+    it { should_not contain_file_line('disable-tools-version') }
+    it { should_not contain_service('vmware-tools') }
+    it { should_not contain_service('vmware-tools-services') }
   end
 
   context 'on a supported osfamily, non-vmware platform' do
@@ -45,11 +55,21 @@ describe 'vmwaretools', :type => 'class' do
         :operatingsystem => 'Fedora'
       }
       end
-      it 'should fail' do
-        expect do
-          subject
-        end.to raise_error(Puppet::Error, /Unsupported platform: Fedora/)
-      end
+#      it do
+#        expect do
+#          subject
+#        end.to raise_error(Puppet::Error, /Unsupported platform: Fedora/)
+#      end
+      it { should_not contain_class('vmwaretools::repo') }
+      it { should_not contain_package('vmware-tools') }
+      it { should_not contain_package('vmware-tools-nox') }
+      it { should_not contain_package('vmware-tools-esx-nox') }
+      it { should_not contain_package('vmware-tools-esx-kmods') }
+      it { should_not contain_exec('vmware-uninstall-tools') }
+      it { should_not contain_exec('vmware-uninstall-tools-local') }
+      it { should_not contain_file_line('disable-tools-version') }
+      it { should_not contain_service('vmware-tools') }
+      it { should_not contain_service('vmware-tools-services') }
     end
   end
 
@@ -172,8 +192,8 @@ describe 'vmwaretools', :type => 'class' do
       it { should contain_class('vmwaretools::repo').with_tools_version('5.0') }
       it { should contain_package('vmware-tools-esx-nox') }
       it { should contain_package('vmware-tools-esx-kmods') }
-      it { should_not contain_service('vmware-tools-services').with_pattern('vmtoolsd') }
-      it { should contain_service('vmware-tools-services').with_start('/sbin/start vmware-tools-services') }
+      it { should contain_service('vmware-tools-services').with_pattern('vmtoolsd') }
+      it { should_not contain_service('vmware-tools-services').with_start('/sbin/start vmware-tools-services') }
     end
 
     describe 'tools_version => 5.1 and operatingsystem => RedHat 6' do
