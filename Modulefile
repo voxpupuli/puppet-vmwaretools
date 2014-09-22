@@ -8,6 +8,7 @@ source 'https://github.com/razorsedge/puppet-vmwaretools.git'
 summary 'VMware Tools OSP installation.'
 description 'This module manages the installation of the VMware Tools Operating System Specific Packages.'
 dependency 'puppetlabs/stdlib', '>=2.3.0'
+dependency 'wolfspyre/vmware_puppetfact', '>=0.2.1'
 
 # Generate the changelog file
 #system("git-log-to-changelog > CHANGELOG")
