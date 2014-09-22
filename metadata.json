@@ -6,6 +6,7 @@
   "license": "Apache License, Version 2.0",
   "project_page": "https://github.com/razorsedge/puppet-vmwaretools",
   "issues_url": "https://github.com/razorsedge/puppet-vmwaretoolsi/issues",
+  "tags": [ "RHEL", "rhel", "OEL", "CentOS", "virtualization", "SuSE", "vmware", "vmware-tools", "vmware_tools", "vmtools" ],
   "source": "https://github.com/razorsedge/puppet-vmwaretools.git",
   "dependencies": [
     {
