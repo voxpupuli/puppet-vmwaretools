@@ -31,8 +31,9 @@ describe 'vmwaretools', :type => 'class' do
   context 'on a supported osfamily, non-vmware platform' do
     let(:params) {{}}
     let :facts do {
-      :osfamily => 'RedHat',
-      :virtual  => 'foo'
+      :osfamily        => 'RedHat',
+      :operatingsystem => 'RedHat',
+      :virtual         => 'foo'
     }
     end
     it { should_not contain_class('vmwaretools::repo') }
@@ -74,38 +75,36 @@ describe 'vmwaretools', :type => 'class' do
   end
 
   context 'on a supported osfamily, vmware platform, default parameters' do
-    (['RedHat', 'SuSE']).each do |osf|
-      describe "for osfamily #{osf}" do
-        let(:params) {{}}
-        let :facts do {
-          :virtual  => 'vmware',
-          :osfamily => osf
-        }
-        end
-        it { should contain_class('vmwaretools::repo').with(
-          :tools_version         => 'latest',
-          :yum_server            => 'http://packages.vmware.com',
-          :yum_path              => '/tools',
-          :just_prepend_yum_path => 'false',
-          :priority              => '50',
-          :protect               => '0',
-          :proxy                 => 'absent',
-          :proxy_username        => 'absent',
-          :proxy_password        => 'absent',
-          :ensure                => 'present'
-        )}
-        it 'should remove Package[VMwareTools]' do
-          should contain_package('VMwareTools').with_ensure('absent')
-        end
-        it { should contain_exec('vmware-uninstall-tools').with_command('/usr/bin/vmware-uninstall-tools.pl && rm -rf /usr/lib/vmware-tools') }
-        it { should contain_exec('vmware-uninstall-tools-local').with_command('/usr/local/bin/vmware-uninstall-tools.pl && rm -rf /usr/local/lib/vmware-tools') }
-        it { should contain_file_line('disable-tools-version').with(
-          :path => '/etc/vmware-tools/tools.conf',
-          :line => 'disable-tools-version = "true"'
-        )}
-        it { should contain_package('vmware-tools-esx-nox') }
-      end
+    let(:params) {{}}
+    let :facts do {
+      :virtual                   => 'vmware',
+      :osfamily                  => 'RedHat',
+      :operatingsystem           => 'RedHat',
+      :operatingsystemmajrelease => '6'
+    }
     end
+    it { should contain_class('vmwaretools::repo').with(
+      :tools_version         => 'latest',
+      :yum_server            => 'http://packages.vmware.com',
+      :yum_path              => '/tools',
+      :just_prepend_yum_path => 'false',
+      :priority              => '50',
+      :protect               => '0',
+      :proxy                 => 'absent',
+      :proxy_username        => 'absent',
+      :proxy_password        => 'absent',
+      :ensure                => 'present'
+    )}
+    it 'should remove Package[VMwareTools]' do
+      should contain_package('VMwareTools').with_ensure('absent')
+    end
+    it { should contain_exec('vmware-uninstall-tools').with_command('/usr/bin/vmware-uninstall-tools.pl && rm -rf /usr/lib/vmware-tools') }
+    it { should contain_exec('vmware-uninstall-tools-local').with_command('/usr/local/bin/vmware-uninstall-tools.pl && rm -rf /usr/local/lib/vmware-tools') }
+    it { should contain_file_line('disable-tools-version').with(
+      :path => '/etc/vmware-tools/tools.conf',
+      :line => 'disable-tools-version = "true"'
+    )}
+    it { should contain_package('vmware-tools-esx-nox') }
 
     describe 'for osfamily RedHat and operatingsystem RedHat 5' do
       let :facts do {

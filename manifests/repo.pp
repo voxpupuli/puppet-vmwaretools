@@ -112,9 +112,7 @@ class vmwaretools::repo (
       # We use $::operatingsystem and not $::osfamily because certain things
       # (like Fedora) need to be excluded.
       case $::operatingsystem {
-        'RedHat', 'CentOS', 'Scientific', 'SLC', 'Ascendos', 'PSBM',
-        'OracleLinux', 'OVS', 'OEL', 'SLES', 'SLED', 'OpenSuSE',
-        'SuSE': {
+        'RedHat', 'CentOS', 'Scientific', 'OracleLinux', 'OEL', 'SLES', 'SLED': {
           if ( $yum_path == $vmwaretools::params::yum_path ) or ( $just_prepend_yum_path == true ) {
             $gpgkey_url  = "${yum_server}${yum_path}/keys/"
             $baseurl_url = "${yum_server}${yum_path}/esx/${tools_version}/${vmwaretools::params::baseurl_string}${vmwaretools::params::majdistrelease}/${yum_basearch}/"
