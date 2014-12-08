@@ -1,11 +1,12 @@
 {
   "name": "razorsedge-vmwaretools",
-  "version": "4.7.0",
+  "version": "4.8.0",
   "author": "razorsedge",
   "summary": "VMware Tools OSP installation.",
   "license": "Apache License, Version 2.0",
   "project_page": "https://github.com/razorsedge/puppet-vmwaretools",
-  "issues_url": "https://github.com/razorsedge/puppet-vmwaretoolsi/issues",
+  "issues_url": "https://github.com/razorsedge/puppet-vmwaretools/issues",
+  "tags": [ "RHEL", "rhel", "OEL", "CentOS", "virtualization", "SuSE", "vmware", "vmware-tools", "vmware_tools", "vmtools" ],
   "source": "https://github.com/razorsedge/puppet-vmwaretools.git",
   "dependencies": [
     {
