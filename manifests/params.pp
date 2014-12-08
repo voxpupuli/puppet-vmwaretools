@@ -160,11 +160,16 @@ class vmwaretools::params {
   case $::osfamily {
     'RedHat': {
       case $::operatingsystem {
-        'Fedora': {
-          notice "Your operating system ${::operatingsystem} is unsupported and will not have the VMware Tools installed."
-          $supported = false
-        }
-        default: {
+        'RedHat', 'CentOS', 'OEL', 'OracleLinux', 'Scientific': {
+          case $majdistrelease {
+            '3', '4', '5', '6': {
+              $supported = true
+            }
+            default: {
+              notice "Your operating system ${::operatingsystem} is unsupported and will not have the VMware Tools OSP installed."
+              $supported = false
+            }
+          }
           $package_name_4x = 'vmware-tools-nox'
           # TODO: OSP 5.0+ rhel5 i386 also has vmware-tools-esx-kmods-PAE
           $package_name_5x = [
@@ -175,7 +180,10 @@ class vmwaretools::params {
           $service_name_5x = 'vmware-tools-services'
           $service_hasstatus_4x = false
           $service_hasstatus_5x = true
-          $supported = true
+        }
+        default: {
+          notice "Your operating system ${::operatingsystem} is unsupported and will not have the VMware Tools OSP installed."
+          $supported = false
         }
       }
       $yum_basearch_4x = $::architecture ? {
@@ -191,28 +199,44 @@ class vmwaretools::params {
       $baseurl_string = 'rhel'  # must be lower case
     }
     'Suse': {
-      $package_name_4x = 'vmware-tools-nox'
-      $package_name_5x = [
-        'vmware-tools-esx-nox',
-        'vmware-tools-esx-kmods-default',
-      ]
-      $service_name_4x = 'vmware-tools'
-      $service_name_5x = 'vmware-tools-services'
-      $service_hasstatus_4x = false
-      $service_hasstatus_5x = true
-      $yum_basearch_4x = $::architecture ? {
-        'i386'  => 'i586',
-        default => $::architecture,
+      case $::operatingsystem {
+        'SLES', 'SLED': {
+          case $majdistrelease {
+            '9', '10', '11': {
+              $supported = true
+            }
+            default: {
+              notice "Your operating system ${::operatingsystem} is unsupported and will not have the VMware Tools OSP installed."
+              $supported = false
+            }
+          }
+          $package_name_4x = 'vmware-tools-nox'
+          $package_name_5x = [
+            'vmware-tools-esx-nox',
+            'vmware-tools-esx-kmods-default',
+          ]
+          $service_name_4x = 'vmware-tools'
+          $service_name_5x = 'vmware-tools-services'
+          $service_hasstatus_4x = false
+          $service_hasstatus_5x = true
+          $yum_basearch_4x = $::architecture ? {
+            'i386'  => 'i586',
+            default => $::architecture,
+          }
+          $yum_basearch_5x = $::architecture ? {
+            'i386'  => 'i586',
+            default => $::architecture,
+          }
+          $baseurl_string = 'suse'  # must be lower case
+        }
+        default: {
+          notice "Your operating system ${::operatingsystem} is unsupported and will not have the VMware Tools OSP installed."
+          $supported = false
+        }
       }
-      $yum_basearch_5x = $::architecture ? {
-        'i386'  => 'i586',
-        default => $::architecture,
-      }
-      $baseurl_string = 'suse'  # must be lower case
-      $supported = true
     }
     default: {
-      notice "Your operating system ${::operatingsystem} is unsupported and will not have the VMware Tools installed."
+      notice "Your operating system ${::operatingsystem} is unsupported and will not have the VMware Tools OSP installed."
       $supported = false
     }
   }

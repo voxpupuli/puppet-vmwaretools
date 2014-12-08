@@ -11,7 +11,7 @@ describe 'vmwaretools::repo', :type => 'class' do
       :operatingsystem => 'foo'
     }
     end
-    #it { should run.with_params("Your operating system #{osfamily} is unsupported and will not have the VMware Tools installed.").and_return('Your operating system foo is unsupported and will not have the VMware Tools installed.') }
+    #it { should run.with_params("Your operating system #{osfamily} is unsupported and will not have the VMware Tools OSP installed.").and_return('Your operating system foo is unsupported and will not have the VMware Tools OSP installed.') }
     it { should_not contain_yumrepo('vmware-tools') }
     it { should_not contain_file('/etc/yum.repos.d/vmware-tools.repo') }
 #    it do
@@ -21,16 +21,17 @@ describe 'vmwaretools::repo', :type => 'class' do
 #    end
   end
 
-  redhatish = ['RedHat', 'CentOS', 'Scientific', 'SLC', 'Ascendos', 'PSBM', 'OracleLinux', 'OVS', 'OEL']
-  suseish   = ['SLES', 'SLED', 'OpenSuSE', 'SuSE']
+  redhatish = ['RedHat', 'CentOS', 'Scientific', 'OracleLinux', 'OEL']
+  suseish   = ['SLES', 'SLED']
 
   context 'on a supported osfamily, non-vmware platform' do
-    (['RedHat', 'SuSE']).each do |osf|
-      describe "for osfamily #{osf}" do
+    ({'RedHat' => 'CentOS', 'SuSE' => 'SLES'}).each do |osf, os|
+      describe "for osfamily #{osf} operatingsystem #{os}" do
         let(:params) {{}}
         let :facts do {
-          :osfamily => osf,
-          :virtual  => 'foo'
+          :osfamily        => osf,
+          :operatingsystem => os,
+          :virtual         => 'foo'
         }
         end
         it { should_not contain_yumrepo('vmware-tools') }
