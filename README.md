@@ -59,6 +59,7 @@ Notes
 
 * Only tested on CentOS 5.5+ and CentOS 6.2+ x86_64 with 4.0latest.
 * Not supported on Fedora or Debian as these distros are not supported by the OSP.
+* Not supported on RHEL/CentOS/OEL 7+ or SLES 12 as VMware is [recommending open-vm-tools](http://kb.vmware.com/kb/2073803) instead.
 * Supports yumrepo proxy, proxy_username, proxy_password, yum priorities, yum repo
   protection, and using a local mirror for the yum_server and yum_path.
 * Supports not managing the yumrepo configuration via `manage_repository => false`.
