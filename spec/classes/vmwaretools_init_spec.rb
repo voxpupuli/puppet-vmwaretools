@@ -204,6 +204,15 @@ describe 'vmwaretools', :type => 'class' do
       it { should contain_service('vmware-tools-services').with_start('/sbin/start vmware-tools-services') }
     end
 
+    describe 'tools_version => 5.5p02 and operatingsystem => RedHat 6' do
+      let(:params) {{ :tools_version => '5.5p02' }}
+      it { should contain_class('vmwaretools::repo').with_tools_version('5.5p02') }
+      it { should contain_package('vmware-tools-esx-nox') }
+      it { should contain_package('vmware-tools-esx-kmods') }
+      it { should_not contain_service('vmware-tools-services').with_pattern('vmtoolsd') }
+      it { should contain_service('vmware-tools-services').with_start('/sbin/start vmware-tools-services') }
+    end
+
     describe 'tools_version => 5.1 and operatingsystem => SLES' do
       let(:params) {{ :tools_version => '5.1' }}
       let :facts do {
