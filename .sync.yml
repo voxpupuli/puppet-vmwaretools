@@ -1,0 +1,7 @@
+---
+Rakefile:
+  extra_disabled_lint_checks:
+  - 'disable_selector_inside_resource'
+.puppet-lint.rc:
+  extra_disabled_lint_checks:
+  - '--no-selector_inside_resource-check'
