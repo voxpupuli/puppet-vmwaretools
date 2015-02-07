@@ -13,7 +13,7 @@ describe 'vmwaretools', :type => 'class' do
     end
 #    it do
 #      expect do
-#        subject
+#        catalogue
 #      end.to raise_error(Puppet::Error, /Unsupported platform: foo/)
 #    end
     it { should_not contain_class('vmwaretools::repo') }
@@ -58,7 +58,7 @@ describe 'vmwaretools', :type => 'class' do
       end
 #      it do
 #        expect do
-#          subject
+#          catalogue
 #        end.to raise_error(Puppet::Error, /Unsupported platform: Fedora/)
 #      end
       it { should_not contain_class('vmwaretools::repo') }

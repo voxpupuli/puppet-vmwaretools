@@ -21,7 +21,7 @@ describe 'vmwaretools::ntp', :type => 'class' do
     end
     it do
       expect {
-        subject
+        catalogue
       }.to raise_error(Puppet::Error, /The class vmwaretools must be declared/)
     end
   end

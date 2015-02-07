@@ -16,7 +16,7 @@ describe 'vmwaretools::repo', :type => 'class' do
     it { should_not contain_file('/etc/yum.repos.d/vmware-tools.repo') }
 #    it do
 #      expect do
-#        subject
+#        catalogue
 #      end.to raise_error(Puppet::Error, /Unsupported platform: foo/)
 #    end
   end
