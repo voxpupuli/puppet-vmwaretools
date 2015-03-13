@@ -171,6 +171,7 @@ class vmwaretools::params {
             }
           }
           $package_name_4x = 'vmware-tools-nox'
+          $package_name_4x_kmod ='vmware-open-vm-tools-kmod'
           # TODO: OSP 5.0+ rhel5 i386 also has vmware-tools-esx-kmods-PAE
           $package_name_5x = [
             'vmware-tools-esx-nox',
@@ -211,6 +212,7 @@ class vmwaretools::params {
             }
           }
           $package_name_4x = 'vmware-tools-nox'
+          $package_name_4x_kmod = 'vmware-open-vm-tools-kmod'
           $package_name_5x = [
             'vmware-tools-esx-nox',
             'vmware-tools-esx-kmods-default',

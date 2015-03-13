@@ -247,6 +247,13 @@ class vmwaretools (
           before => Package[$package_real],
         }
 
+        if $package_real == $vmwaretools::params::package_name_5x {
+          exec { "yum -y remove ${vmwaretools::params::package_name_4x_kmod}":
+            onlyif => "rpm -q ${vmwaretools::params::package_name_4x_kmod}",
+            before => Package[$package_real],
+          }
+        }
+
         exec { 'vmware-uninstall-tools':
           command => '/usr/bin/vmware-uninstall-tools.pl && rm -rf /usr/lib/vmware-tools',
           path    => '/bin:/sbin:/usr/bin:/usr/sbin',
