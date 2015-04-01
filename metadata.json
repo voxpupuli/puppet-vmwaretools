@@ -2,11 +2,11 @@
   "name": "razorsedge-vmwaretools",
   "version": "4.8.1",
   "author": "razorsedge",
-  "summary": "Install VMware Tools Operating System Specific Packages. OSPs are an alternative to installing VMware Tools from the VI Client. VMware Tools OSPs allow you to use your Operating System's native update mechanisms to automatically download, install, and manage VMware Tools for these supported Operating Systems. This enables managing VMware Tools from within the guest in the same way as other standard software.",
+  "summary": "Install VMware Tools Operating System Specific Packages (OSP) on VMware guests.",
   "license": "Apache-2.0",
   "project_page": "https://github.com/razorsedge/puppet-vmwaretools",
   "issues_url": "https://github.com/razorsedge/puppet-vmwaretools/issues",
-  "tags": [ "virtualization", "vmware", "vmware-tools", "vmware_tools", "vmtools", "RHEL", "rhel", "OEL", "CentOS", "SuSE" ],
+  "tags": [ "virtualization", "vmware", "vmware-tools", "vmware_tools", "vmtools" ],
   "source": "https://github.com/razorsedge/puppet-vmwaretools.git",
   "dependencies": [
     {
