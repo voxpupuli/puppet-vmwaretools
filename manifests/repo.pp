@@ -112,7 +112,7 @@ class vmwaretools::repo (
       # We use $::operatingsystem and not $::osfamily because certain things
       # (like Fedora) need to be excluded.
       case $::operatingsystem {
-        'RedHat', 'CentOS', 'Scientific', 'OracleLinux', 'OEL', 'SLES', 'SLED': {
+        'RedHat', 'CentOS', 'Scientific', 'OracleLinux', 'OEL': {
           if ( $yum_path == $vmwaretools::params::yum_path ) or ( $just_prepend_yum_path == true ) {
             $gpgkey_url  = "${yum_server}${yum_path}/keys/"
             $baseurl_url = "${yum_server}${yum_path}/esx/${tools_version}/${vmwaretools::params::baseurl_string}${vmwaretools::params::majdistrelease}/${yum_basearch}/"
@@ -142,6 +142,41 @@ class vmwaretools::repo (
             owner  => 'root',
             group  => 'root',
             mode   => '0644',
+          }
+        }
+        'SLES', 'SLED': {
+          if ( $yum_path == $vmwaretools::params::yum_path ) or ( $just_prepend_yum_path == true ) {
+            $gpgkey_url  = "${yum_server}${yum_path}/keys/"
+            $baseurl_url = "${yum_server}${yum_path}/esx/${tools_version}/${vmwaretools::params::baseurl_string}${vmwaretools::params::distrelease}/${yum_basearch}/"
+          } else {
+            $gpgkey_url  = "${yum_server}${yum_path}/"
+            $baseurl_url = "${yum_server}${yum_path}/"
+          }
+
+          zypprepo { 'vmware-tools':
+            descr       => "VMware Tools ${tools_version} - ${vmwaretools::params::baseurl_string}${vmwaretools::params::distrelease} ${yum_basearch}",
+            enabled     => $yumrepo_enabled,
+            gpgcheck    => '1',
+            # gpgkey has to be a string value with an indented second line
+            # per http://projects.puppetlabs.com/issues/8867
+            gpgkey      => "${gpgkey_url}VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    ${gpgkey_url}VMWARE-PACKAGING-GPG-RSA-KEY.pub",
+            baseurl     => $baseurl_url,
+            priority    => $priority,
+            autorefresh => 1,
+            notify      => Exec['vmware-import-gpgkey'],
+          }
+
+          file { '/etc/zypp/repos.d/vmware-tools.repo':
+            ensure => 'file',
+            owner  => 'root',
+            group  => 'root',
+            mode   => '0644',
+          }
+
+          exec { 'vmware-import-gpgkey':
+            path        => '/bin:/usr/bin:/sbin:/usr/sbin',
+            command     => "rpm --import ${gpgkey_url}VMWARE-PACKAGING-GPG-DSA-KEY.pub; rpm --import ${gpgkey_url}VMWARE-PACKAGING-GPG-RSA-KEY.pub",
+            refreshonly => true,
           }
         }
         default: { }

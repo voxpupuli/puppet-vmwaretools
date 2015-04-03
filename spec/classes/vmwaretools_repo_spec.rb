@@ -14,11 +14,8 @@ describe 'vmwaretools::repo', :type => 'class' do
     #it { should run.with_params("Your operating system #{osfamily} is unsupported and will not have the VMware Tools OSP installed.").and_return('Your operating system foo is unsupported and will not have the VMware Tools OSP installed.') }
     it { should_not contain_yumrepo('vmware-tools') }
     it { should_not contain_file('/etc/yum.repos.d/vmware-tools.repo') }
-#    it do
-#      expect do
-#        catalogue
-#      end.to raise_error(Puppet::Error, /Unsupported platform: foo/)
-#    end
+    it { should_not contain_zypprepo('vmware-tools') }
+    it { should_not contain_file('/etc/zypp/repos.d/vmware-tools.repo') }
   end
 
   redhatish = ['RedHat', 'CentOS', 'Scientific', 'OracleLinux', 'OEL']
@@ -36,6 +33,8 @@ describe 'vmwaretools::repo', :type => 'class' do
         end
         it { should_not contain_yumrepo('vmware-tools') }
         it { should_not contain_file('/etc/yum.repos.d/vmware-tools.repo') }
+        it { should_not contain_zypprepo('vmware-tools') }
+        it { should_not contain_file('/etc/zypp/repos.d/vmware-tools.repo') }
       end
     end
   end
@@ -77,19 +76,17 @@ describe 'vmwaretools::repo', :type => 'class' do
           :operatingsystem        => os
         }
         end
-        it { should contain_yumrepo('vmware-tools').with(
-          :descr           => 'VMware Tools latest - suse10 i586',
-          :enabled         => '1',
-          :gpgcheck        => '1',
-          :gpgkey          => "http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub",
-          :baseurl         => 'http://packages.vmware.com/tools/esx/latest/suse10/i586/',
-          :priority        => '50',
-          :protect         => '0',
-          :proxy           => 'absent',
-          :proxy_username  => 'absent',
-          :proxy_password  => 'absent'
+        it { should contain_zypprepo('vmware-tools').with(
+          :descr       => 'VMware Tools latest - sles10 i586',
+          :enabled     => '1',
+          :gpgcheck    => '1',
+          :gpgkey      => "http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub",
+          :baseurl     => 'http://packages.vmware.com/tools/esx/latest/sles10/i586/',
+          :priority    => '50',
+          :autorefresh => '1',
+          :notify      => 'Exec[vmware-import-gpgkey]'
         )}
-        it { should contain_file('/etc/yum.repos.d/vmware-tools.repo') }
+        it { should contain_file('/etc/zypp/repos.d/vmware-tools.repo') }
       end
     end
   end
