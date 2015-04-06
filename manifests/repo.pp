@@ -112,7 +112,7 @@ class vmwaretools::repo (
       # We use $::operatingsystem and not $::osfamily because certain things
       # (like Fedora) need to be excluded.
       case $::operatingsystem {
-        'RedHat', 'CentOS', 'Scientific', 'OracleLinux', 'OEL', 'SLES', 'SLED': {
+        'RedHat', 'CentOS', 'Scientific', 'OracleLinux', 'OEL': {
           if ( $yum_path == $vmwaretools::params::yum_path ) or ( $just_prepend_yum_path == true ) {
             $gpgkey_url  = "${yum_server}${yum_path}/keys/"
             $baseurl_url = "${yum_server}${yum_path}/esx/${tools_version}/${vmwaretools::params::baseurl_string}${vmwaretools::params::majdistrelease}/${yum_basearch}/"
@@ -142,6 +142,59 @@ class vmwaretools::repo (
             owner  => 'root',
             group  => 'root',
             mode   => '0644',
+          }
+        }
+        'SLES', 'SLED': {
+          if ( $yum_path == $vmwaretools::params::yum_path ) or ( $just_prepend_yum_path == true ) {
+            $gpgkey_url  = "${yum_server}${yum_path}/keys/"
+            $baseurl_url = "${yum_server}${yum_path}/esx/${tools_version}/${vmwaretools::params::baseurl_string}${vmwaretools::params::distrelease}/${yum_basearch}/"
+          } else {
+            $gpgkey_url  = "${yum_server}${yum_path}/"
+            $baseurl_url = "${yum_server}${yum_path}/"
+          }
+
+          zypprepo { 'vmware-tools':
+            descr       => "VMware Tools ${tools_version} - ${vmwaretools::params::baseurl_string}${vmwaretools::params::distrelease} ${yum_basearch}",
+            enabled     => $yumrepo_enabled,
+            gpgcheck    => '1',
+            gpgkey      => "${gpgkey_url}VMWARE-PACKAGING-GPG-RSA-KEY.pub",
+            baseurl     => $baseurl_url,
+            priority    => $priority,
+            autorefresh => 1,
+            notify      => Exec['vmware-import-gpgkey'],
+          }
+
+          file { '/etc/zypp/repos.d/vmware-tools.repo':
+            ensure => 'file',
+            owner  => 'root',
+            group  => 'root',
+            mode   => '0644',
+          }
+
+          exec { 'vmware-import-gpgkey':
+            path        => '/bin:/usr/bin:/sbin:/usr/sbin',
+            command     => "rpm --import ${gpgkey_url}VMWARE-PACKAGING-GPG-RSA-KEY.pub",
+            refreshonly => true,
+          }
+        }
+        'Ubuntu': {
+          if ( $yum_path == $vmwaretools::params::yum_path ) or ( $just_prepend_yum_path == true ) {
+            $gpgkey_url  = "${yum_server}${yum_path}/keys/"
+            $baseurl_url = "${yum_server}${yum_path}/esx/${tools_version}/${vmwaretools::params::baseurl_string}"
+          } else {
+            $gpgkey_url  = "${yum_server}${yum_path}/"
+            $baseurl_url = "${yum_server}${yum_path}/"
+          }
+
+          include '::apt'
+          apt::source { 'vmware-tools':
+            ensure      => $ensure,
+            comment     => "VMware Tools ${tools_version} - ${vmwaretools::params::baseurl_string} ${::lsbdistcodename}",
+            location    => $baseurl_url,
+            key_source  => "${gpgkey_url}VMWARE-PACKAGING-GPG-RSA-KEY.pub",
+            #key         => '0xC0B5E0AB66FD4949',
+            key         => '36E47E1CC4DCC5E8152D115CC0B5E0AB66FD4949',
+            include_src => false,
           }
         }
         default: { }

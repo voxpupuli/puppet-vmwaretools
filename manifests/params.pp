@@ -201,6 +201,12 @@ class vmwaretools::params {
     'Suse': {
       case $::operatingsystem {
         'SLES', 'SLED': {
+          # TODO: tools 3.5 and 4.x use either sles11 or sles11sp1 while tools >=5 use sles11.1
+          if ($majdistrelease == '9') or  ($majdistrelease == '11') {
+            $distrelease = $::operatingsystemrelease
+          } else {
+            $distrelease = $majdistrelease
+          }
           case $majdistrelease {
             '9', '10', '11': {
               $supported = true
@@ -227,7 +233,37 @@ class vmwaretools::params {
             'i386'  => 'i586',
             default => $::architecture,
           }
-          $baseurl_string = 'suse'  # must be lower case
+          $baseurl_string = 'sles'  # must be lower case
+        }
+        default: {
+          notice "Your operating system ${::operatingsystem} is unsupported and will not have the VMware Tools OSP installed."
+          $supported = false
+        }
+      }
+    }
+    'Debian': {
+      case $::operatingsystem {
+        'Ubuntu': {
+          case $::lsbdistcodename {
+            'hardy', 'intrepid', 'jaunty', 'karmic', 'lucid', 'maverick', 'natty', 'oneric', 'precise': {
+              $supported = true
+            }
+            default: {
+              notice "Your operating system ${::operatingsystem} is unsupported and will not have the VMware Tools OSP installed."
+              $supported = false
+            }
+          }
+          $package_name_4x = 'vmware-tools-nox'
+          $package_name_5x = [
+            'vmware-tools-esx-nox',
+            'vmware-tools-esx-kmods-3.8.0-29-generic',
+            #"vmware-tools-esx-kmods-${::kernelrelease}",
+          ]
+          $service_name_4x = 'vmware-tools'
+          $service_name_5x = 'vmware-tools-services'
+          $service_hasstatus_4x = false
+          $service_hasstatus_5x = true
+          $baseurl_string = 'ubuntu'  # must be lower case
         }
         default: {
           notice "Your operating system ${::operatingsystem} is unsupported and will not have the VMware Tools OSP installed."

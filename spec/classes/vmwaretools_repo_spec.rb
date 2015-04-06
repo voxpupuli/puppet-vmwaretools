@@ -14,18 +14,15 @@ describe 'vmwaretools::repo', :type => 'class' do
     #it { should run.with_params("Your operating system #{osfamily} is unsupported and will not have the VMware Tools OSP installed.").and_return('Your operating system foo is unsupported and will not have the VMware Tools OSP installed.') }
     it { should_not contain_yumrepo('vmware-tools') }
     it { should_not contain_file('/etc/yum.repos.d/vmware-tools.repo') }
-#    it do
-#      expect do
-#        subject
-#      end.to raise_error(Puppet::Error, /Unsupported platform: foo/)
-#    end
+    it { should_not contain_zypprepo('vmware-tools') }
+    it { should_not contain_file('/etc/zypp/repos.d/vmware-tools.repo') }
   end
 
   redhatish = ['RedHat', 'CentOS', 'Scientific', 'OracleLinux', 'OEL']
   suseish   = ['SLES', 'SLED']
 
   context 'on a supported osfamily, non-vmware platform' do
-    ({'RedHat' => 'CentOS', 'SuSE' => 'SLES'}).each do |osf, os|
+    ({'RedHat' => 'CentOS', 'SuSE' => 'SLES', 'Debian' => 'Ubuntu'}).each do |osf, os|
       describe "for osfamily #{osf} operatingsystem #{os}" do
         let(:params) {{}}
         let :facts do {
@@ -36,6 +33,9 @@ describe 'vmwaretools::repo', :type => 'class' do
         end
         it { should_not contain_yumrepo('vmware-tools') }
         it { should_not contain_file('/etc/yum.repos.d/vmware-tools.repo') }
+        it { should_not contain_zypprepo('vmware-tools') }
+        it { should_not contain_file('/etc/zypp/repos.d/vmware-tools.repo') }
+        it { should_not contain_apt__source('vmware-tools') }
       end
     end
   end
@@ -77,20 +77,42 @@ describe 'vmwaretools::repo', :type => 'class' do
           :operatingsystem        => os
         }
         end
-        it { should contain_yumrepo('vmware-tools').with(
-          :descr           => 'VMware Tools latest - suse10 i586',
-          :enabled         => '1',
-          :gpgcheck        => '1',
-          :gpgkey          => "http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub",
-          :baseurl         => 'http://packages.vmware.com/tools/esx/latest/suse10/i586/',
-          :priority        => '50',
-          :protect         => '0',
-          :proxy           => 'absent',
-          :proxy_username  => 'absent',
-          :proxy_password  => 'absent'
+        it { should contain_zypprepo('vmware-tools').with(
+          :descr       => 'VMware Tools latest - sles10 i586',
+          :enabled     => '1',
+          :gpgcheck    => '1',
+          :gpgkey      => 'http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub',
+          :baseurl     => 'http://packages.vmware.com/tools/esx/latest/sles10/i586/',
+          :priority    => '50',
+          :autorefresh => '1',
+          :notify      => 'Exec[vmware-import-gpgkey]'
         )}
-        it { should contain_file('/etc/yum.repos.d/vmware-tools.repo') }
+        it { should contain_file('/etc/zypp/repos.d/vmware-tools.repo') }
+        it { should contain_exec('vmware-import-gpgkey') }
       end
+    end
+
+    describe "for operating system Ubuntu" do
+      let(:pre_condition) { "class { 'apt': }" }
+      let :facts do {
+        :virtual                => 'vmware',
+        :osfamily               => 'Debian',
+        :operatingsystemrelease => '12.04',
+        :architecture           => 'amd64',
+        :operatingsystem        => 'Ubuntu',
+        :lsbdistcodename        => 'precise',
+        :lsbdistid              => 'Ubuntu'
+      }
+      end
+      it { should contain_apt__source('vmware-tools').with(
+        :comment     => 'VMware Tools latest - ubuntu precise',
+        :ensure      => 'present',
+        :location    => 'http://packages.vmware.com/tools/esx/latest/ubuntu',
+        :key_source  => 'http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub',
+       #:key         => '0xC0B5E0AB66FD4949',
+        :key         => '36E47E1CC4DCC5E8152D115CC0B5E0AB66FD4949',
+        :include_src => false
+      )}
     end
   end
 

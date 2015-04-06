@@ -227,7 +227,7 @@ class vmwaretools (
         }
 
         if $manage_repository {
-          class { 'vmwaretools::repo':
+          class { '::vmwaretools::repo':
             ensure                => $ensure,
             tools_version         => $tools_version,
             yum_server            => $yum_server,

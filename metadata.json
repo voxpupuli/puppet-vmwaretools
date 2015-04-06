@@ -1,17 +1,25 @@
 {
   "name": "razorsedge-vmwaretools",
-  "version": "4.8.1",
+  "version": "4.9.0",
   "author": "razorsedge",
-  "summary": "VMware Tools OSP installation.",
+  "summary": "Install VMware Tools Operating System Specific Packages (OSP) on VMware guests.",
   "license": "Apache-2.0",
   "project_page": "https://github.com/razorsedge/puppet-vmwaretools",
   "issues_url": "https://github.com/razorsedge/puppet-vmwaretools/issues",
-  "tags": [ "RHEL", "rhel", "OEL", "CentOS", "virtualization", "SuSE", "vmware", "vmware-tools", "vmware_tools", "vmtools" ],
+  "tags": [ "virtualization", "vmware", "vmware-tools", "vmware_tools", "vmtools" ],
   "source": "https://github.com/razorsedge/puppet-vmwaretools.git",
   "dependencies": [
     {
       "name": "puppetlabs/stdlib",
       "version_requirement": ">=2.3.0 <5.0.0"
+    },
+    {
+      "version_requirement": "1.x",
+      "name": "darin/zypprepo"
+    },
+    {
+      "name": "puppetlabs/apt",
+      "version_requirement": "1.x"
     },
     {
       "name": "wolfspyre/vmware_puppetfact",
@@ -30,6 +38,18 @@
     {
       "operatingsystem": "OracleLinux",
       "operatingsystemrelease": [ "5", "6" ]
+    },
+    {
+      "operatingsystem": "SLES",
+      "operatingsystemrelease": [ "10", "11" ]
+    },
+    {
+      "operatingsystem": "SLED",
+      "operatingsystemrelease": [ "10", "11" ]
+    },
+    {
+      "operatingsystem": "Ubuntu",
+      "operatingsystemrelease": [ "10.04", "10.10", "11.04", "11.10", "12.04" ]
     }
   ],
   "requirements": [
