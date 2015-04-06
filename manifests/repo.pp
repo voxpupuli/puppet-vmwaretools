@@ -144,6 +144,26 @@ class vmwaretools::repo (
             mode   => '0644',
           }
         }
+        'Ubuntu': {
+          if ( $yum_path == $vmwaretools::params::yum_path ) or ( $just_prepend_yum_path == true ) {
+            $gpgkey_url  = "${yum_server}${yum_path}/keys/"
+            $baseurl_url = "${yum_server}${yum_path}/esx/${tools_version}/${vmwaretools::params::baseurl_string}"
+          } else {
+            $gpgkey_url  = "${yum_server}${yum_path}/"
+            $baseurl_url = "${yum_server}${yum_path}/"
+          }
+
+          include '::apt'
+          apt::source { 'vmware-tools':
+            ensure      => $ensure,
+            comment     => "VMware Tools ${tools_version} - ${vmwaretools::params::baseurl_string} ${::lsbdistcodename}",
+            location    => $baseurl_url,
+            key_source  => "${gpgkey_url}VMWARE-PACKAGING-GPG-RSA-KEY.pub",
+            #key         => '0xC0B5E0AB66FD4949',
+            key         => '36E47E1CC4DCC5E8152D115CC0B5E0AB66FD4949',
+            include_src => false,
+          }
+        }
         default: { }
       }
     }

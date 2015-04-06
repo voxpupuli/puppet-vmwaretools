@@ -2,5 +2,6 @@ fixtures:
   repositories:
     stdlib: "https://github.com/puppetlabs/puppetlabs-stdlib.git"
     vmware_puppetfact: "https://github.com/wolfspyre/vmware_puppetfact.git"
+    apt: "https://github.com/puppetlabs/puppetlabs-apt.git"
   symlinks:
     vmwaretools: "#{source_dir}"

@@ -25,7 +25,7 @@ describe 'vmwaretools::repo', :type => 'class' do
   suseish   = ['SLES', 'SLED']
 
   context 'on a supported osfamily, non-vmware platform' do
-    ({'RedHat' => 'CentOS', 'SuSE' => 'SLES'}).each do |osf, os|
+    ({'RedHat' => 'CentOS', 'SuSE' => 'SLES', 'Debian' => 'Ubuntu'}).each do |osf, os|
       describe "for osfamily #{osf} operatingsystem #{os}" do
         let(:params) {{}}
         let :facts do {
@@ -36,6 +36,7 @@ describe 'vmwaretools::repo', :type => 'class' do
         end
         it { should_not contain_yumrepo('vmware-tools') }
         it { should_not contain_file('/etc/yum.repos.d/vmware-tools.repo') }
+        it { should_not contain_apt__source('vmware-tools') }
       end
     end
   end
@@ -91,6 +92,29 @@ describe 'vmwaretools::repo', :type => 'class' do
         )}
         it { should contain_file('/etc/yum.repos.d/vmware-tools.repo') }
       end
+    end
+
+    describe "for operating system Ubuntu" do
+      let(:pre_condition) { "class { 'apt': }" }
+      let :facts do {
+        :virtual                => 'vmware',
+        :osfamily               => 'Debian',
+        :operatingsystemrelease => '12.04',
+        :architecture           => 'amd64',
+        :operatingsystem        => 'Ubuntu',
+        :lsbdistcodename        => 'precise',
+        :lsbdistid              => 'Ubuntu'
+      }
+      end
+      it { should contain_apt__source('vmware-tools').with(
+        :comment     => 'VMware Tools latest - ubuntu precise',
+        :ensure      => 'present',
+        :location    => 'http://packages.vmware.com/tools/esx/latest/ubuntu',
+        :key_source  => 'http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub',
+       #:key         => '0xC0B5E0AB66FD4949',
+        :key         => '36E47E1CC4DCC5E8152D115CC0B5E0AB66FD4949',
+        :include_src => false
+      )}
     end
   end
 
