@@ -19,7 +19,7 @@ Actions:
 OS Support:
 
 * RedHat family - tested on CentOS 5.5+, CentOS 6.2+, RHEL 5.9, RHEL 6.4, and OEL 5.5+
-* SuSE family   - untested (initial support for yumrepo) (patches welcome)
+* SuSE family   - tested on SLES 11.1
 * Ubuntu        - presently unsupported (patches welcome)
 
 Class documentation is available via puppetdoc.

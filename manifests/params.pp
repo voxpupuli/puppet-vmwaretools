@@ -201,6 +201,12 @@ class vmwaretools::params {
     'Suse': {
       case $::operatingsystem {
         'SLES', 'SLED': {
+          # TODO: tools 3.5 and 4.x use either sles11 or sles11sp1 while tools >=5 use sles11.1
+          if ($majdistrelease == '9') or  ($majdistrelease == '11') {
+            $distrelease = $::operatingsystemrelease
+          } else {
+            $distrelease = $majdistrelease
+          }
           case $majdistrelease {
             '9', '10', '11': {
               $supported = true
@@ -227,7 +233,7 @@ class vmwaretools::params {
             'i386'  => 'i586',
             default => $::architecture,
           }
-          $baseurl_string = 'suse'  # must be lower case
+          $baseurl_string = 'sles'  # must be lower case
         }
         default: {
           notice "Your operating system ${::operatingsystem} is unsupported and will not have the VMware Tools OSP installed."
