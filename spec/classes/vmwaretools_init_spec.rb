@@ -11,11 +11,6 @@ describe 'vmwaretools', :type => 'class' do
       :operatingsystem => 'foo'
     }
     end
-#    it do
-#      expect do
-#        catalogue
-#      end.to raise_error(Puppet::Error, /Unsupported platform: foo/)
-#    end
     it { should_not contain_class('vmwaretools::repo') }
     it { should_not contain_package('vmware-tools') }
     it { should_not contain_package('vmware-tools-nox') }
@@ -56,11 +51,6 @@ describe 'vmwaretools', :type => 'class' do
         :operatingsystem => 'Fedora'
       }
       end
-#      it do
-#        expect do
-#          catalogue
-#        end.to raise_error(Puppet::Error, /Unsupported platform: Fedora/)
-#      end
       it { should_not contain_class('vmwaretools::repo') }
       it { should_not contain_package('vmware-tools') }
       it { should_not contain_package('vmware-tools-nox') }
@@ -150,6 +140,24 @@ describe 'vmwaretools', :type => 'class' do
         :before => [ 'Package[vmware-tools-esx-nox]', 'Package[vmware-tools-esx-kmods-default]' ]
       )}
       it { should contain_package('vmware-tools-esx-kmods-default') }
+      it { should contain_service('vmware-tools-services').with_pattern('vmtoolsd') }
+      it { should_not contain_service('vmware-tools-services').with_start('/sbin/start vmware-tools-services') }
+    end
+
+    describe 'for osfamily Debian and operatingsystem Ubuntu' do
+      let :facts do {
+        :virtual                => 'vmware',
+        :osfamily               => 'Debian',
+        :operatingsystem        => 'Ubuntu',
+        :operatingsystemrelease => '12.04',
+        :lsbdistcodename        => 'precise',
+        :lsbdistid              => 'Ubuntu'
+      }
+      end
+      it { should contain_class('vmwaretools::repo').with(
+        :before => [ 'Package[vmware-tools-esx-nox]', 'Package[vmware-tools-esx-kmods-3.8.0-29-generic]' ]
+      )}
+      it { should contain_package('vmware-tools-esx-kmods-3.8.0-29-generic') }
       it { should contain_service('vmware-tools-services').with_pattern('vmtoolsd') }
       it { should_not contain_service('vmware-tools-services').with_start('/sbin/start vmware-tools-services') }
     end
