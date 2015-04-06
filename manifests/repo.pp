@@ -157,9 +157,7 @@ class vmwaretools::repo (
             descr       => "VMware Tools ${tools_version} - ${vmwaretools::params::baseurl_string}${vmwaretools::params::distrelease} ${yum_basearch}",
             enabled     => $yumrepo_enabled,
             gpgcheck    => '1',
-            # gpgkey has to be a string value with an indented second line
-            # per http://projects.puppetlabs.com/issues/8867
-            gpgkey      => "${gpgkey_url}VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    ${gpgkey_url}VMWARE-PACKAGING-GPG-RSA-KEY.pub",
+            gpgkey      => "${gpgkey_url}VMWARE-PACKAGING-GPG-RSA-KEY.pub",
             baseurl     => $baseurl_url,
             priority    => $priority,
             autorefresh => 1,
@@ -175,7 +173,7 @@ class vmwaretools::repo (
 
           exec { 'vmware-import-gpgkey':
             path        => '/bin:/usr/bin:/sbin:/usr/sbin',
-            command     => "rpm --import ${gpgkey_url}VMWARE-PACKAGING-GPG-DSA-KEY.pub; rpm --import ${gpgkey_url}VMWARE-PACKAGING-GPG-RSA-KEY.pub",
+            command     => "rpm --import ${gpgkey_url}VMWARE-PACKAGING-GPG-RSA-KEY.pub",
             refreshonly => true,
           }
         }

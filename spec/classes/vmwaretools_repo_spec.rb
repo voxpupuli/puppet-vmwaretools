@@ -80,13 +80,14 @@ describe 'vmwaretools::repo', :type => 'class' do
           :descr       => 'VMware Tools latest - sles10 i586',
           :enabled     => '1',
           :gpgcheck    => '1',
-          :gpgkey      => "http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub",
+          :gpgkey      => 'http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub',
           :baseurl     => 'http://packages.vmware.com/tools/esx/latest/sles10/i586/',
           :priority    => '50',
           :autorefresh => '1',
           :notify      => 'Exec[vmware-import-gpgkey]'
         )}
         it { should contain_file('/etc/zypp/repos.d/vmware-tools.repo') }
+        it { should contain_exec('vmware-import-gpgkey') }
       end
     end
   end
