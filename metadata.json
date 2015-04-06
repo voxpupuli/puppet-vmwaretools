@@ -18,6 +18,10 @@
       "name": "darin/zypprepo"
     },
     {
+      "name": "puppetlabs/apt",
+      "version_requirement": "1.x"
+    },
+    {
       "name": "wolfspyre/vmware_puppetfact",
       "version_requirement": ">=0.2.1"
     }

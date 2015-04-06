@@ -241,6 +241,36 @@ class vmwaretools::params {
         }
       }
     }
+    'Debian': {
+      case $::operatingsystem {
+        'Ubuntu': {
+          case $::lsbdistcodename {
+            'hardy', 'intrepid', 'jaunty', 'karmic', 'lucid', 'maverick', 'natty', 'oneric', 'precise': {
+              $supported = true
+            }
+            default: {
+              notice "Your operating system ${::operatingsystem} is unsupported and will not have the VMware Tools OSP installed."
+              $supported = false
+            }
+          }
+          $package_name_4x = 'vmware-tools-nox'
+          $package_name_5x = [
+            'vmware-tools-esx-nox',
+            'vmware-tools-esx-kmods-3.8.0-29-generic',
+            #"vmware-tools-esx-kmods-${::kernelrelease}",
+          ]
+          $service_name_4x = 'vmware-tools'
+          $service_name_5x = 'vmware-tools-services'
+          $service_hasstatus_4x = false
+          $service_hasstatus_5x = true
+          $baseurl_string = 'ubuntu'  # must be lower case
+        }
+        default: {
+          notice "Your operating system ${::operatingsystem} is unsupported and will not have the VMware Tools OSP installed."
+          $supported = false
+        }
+      }
+    }
     default: {
       notice "Your operating system ${::operatingsystem} is unsupported and will not have the VMware Tools OSP installed."
       $supported = false
