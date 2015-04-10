@@ -11,13 +11,13 @@
 #   Default: latest
 #
 # [*reposerver*]
-#   The server which holds the YUM repository.  Customize this if you mirror
-#   public YUM repos to your internal network.
+#   The server which holds the package repository.  Customize this if you mirror
+#   public repos to your internal network.
 #   Default: http://packages.vmware.com
 #
 # [*repopath*]
 #   The path on *reposerver* where the repository can be found.  Customize
-#   this if you mirror public YUM repos to your internal network.
+#   this if you mirror public repos to your internal network.
 #   Default: /tools
 #
 # [*just_prepend_repopath*]
@@ -26,12 +26,12 @@
 #   Default: 0 (false)
 #
 # [*priority*]
-#   Give packages in this YUM repository a different weight.  Requires
+#   Give packages in this repository a different weight.  Requires
 #   yum-plugin-priorities to be installed.
 #   Default: 50
 #
 # [*protect*]
-#   Protect packages in this YUM repository from being overridden by packages
+#   Protect packages in this repository from being overridden by packages
 #   in non-protected repositories.
 #   Default: 0 (false)
 #
@@ -53,7 +53,8 @@
 #
 # === Actions:
 #
-# Installs a vmware YUM repository.
+# Installs a vmware package repository.
+# Imports a GPG signing key if needed.
 #
 # === Requires:
 #
@@ -91,10 +92,10 @@ class vmwaretools::repo (
 
   case $ensure {
     /(present)/: {
-      $yumrepo_enabled = '1'
+      $repo_enabled = '1'
     }
     /(absent)/: {
-      $yumrepo_enabled = '0'
+      $repo_enabled = '0'
     }
     default: {
       fail('ensure parameter must be present or absent')
@@ -123,7 +124,7 @@ class vmwaretools::repo (
 
           yumrepo { 'vmware-tools':
             descr          => "VMware Tools ${tools_version} - ${vmwaretools::params::baseurl_string}${vmwaretools::params::majdistrelease} ${repobasearch}",
-            enabled        => $yumrepo_enabled,
+            enabled        => $repo_enabled,
             gpgcheck       => '1',
             # gpgkey has to be a string value with an indented second line
             # per http://projects.puppetlabs.com/issues/8867
@@ -155,7 +156,7 @@ class vmwaretools::repo (
 
           zypprepo { 'vmware-tools':
             descr       => "VMware Tools ${tools_version} - ${vmwaretools::params::baseurl_string}${vmwaretools::params::distrelease} ${repobasearch}",
-            enabled     => $yumrepo_enabled,
+            enabled     => $repo_enabled,
             gpgcheck    => '1',
             gpgkey      => "${gpgkey_url}VMWARE-PACKAGING-GPG-RSA-KEY.pub",
             baseurl     => $baseurl_url,

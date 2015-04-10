@@ -12,7 +12,7 @@ This module manages the installation of the [Operating System Specific Packages]
 Actions:
 
 * Removes old VMwareTools package or runs vmware-uninstall-tools.pl if found.
-* Installs a VMware YUM repository (defaults to the 'latest' package repository).
+* Installs a VMware package repository (defaults to the 'latest' package repository).
 * Installs the OSP VMware Tools.
 * Starts the vmware-tools service.
 
@@ -60,9 +60,9 @@ Notes
 * Only tested on CentOS 5.5+ and CentOS 6.2+ x86_64 with 4.0latest.
 * Not supported on Fedora or Debian as these distros are not supported by the OSP.
 * Not supported on RHEL/CentOS/OEL 7+ or SLES 12 as VMware is [recommending open-vm-tools](http://kb.vmware.com/kb/2073803) instead.
-* Supports yumrepo proxy, proxy_username, proxy_password, yum priorities, yum repo
+* Supports repo proxy, proxy_username, proxy_password, priorities, yum repo
   protection, and using a local mirror for the reposerver and repopath.
-* Supports not managing the yumrepo configuration via `manage_repository => false`.
+* Supports not managing the repo configuration via `manage_repository => false`.
 * No other VM tools (ie [Open Virtual Machine Tools](http://open-vm-tools.sourceforge.net/)) will be supported.
 
 Issues
@@ -75,6 +75,31 @@ TODO
 
 * Support installation of Desktop (X Window) packages.
 * Add logic to handle RHEL5 i386 PAE kernel on OSP 5.0+.
+
+Deprecation Warning
+-------------------
+
+The parameters `yum_server`, `yum_path`, and `just_prepend_yum_path` will be renamed to be `reposerver`, `repopath`, and `just_prepend_repopath` respectively in version 5.0.0 of this module.  Please be aware that your manifests may need to change to account for the new syntax.
+
+This:
+
+```puppet
+class { 'vmwaretools':
+  yum_server            => 'http://yumserver.example.lan',
+  yum_path              => '/yumdir/v2.3.0',
+  just_prepend_yum_path => true,
+}
+```
+
+would become this:
+
+```puppet
+class { 'vmwaretools':
+  reposerver            => 'http://yumserver.example.lan',
+  repopath              => '/yumdir/v2.3.0',
+  just_prepend_repopath => true,
+}
+```
 
 Contributing
 ------------
