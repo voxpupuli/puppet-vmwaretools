@@ -19,19 +19,19 @@
 #   RHN Satellite).
 #   Default: true (ie let the module manage it)
 #
-# [*yum_server*]
-#   The server which holds the YUM repository.  Customize this if you mirror
-#   public YUM repos to your internal network.
+# [*reposerver*]
+#   The server which holds the software repository.  Customize this if you
+#   mirror public repos to your internal network.
 #   Default: http://packages.vmware.com
 #
-# [*yum_path*]
-#   The path on *yum_server* where the repository can be found.  Customize
-#   this if you mirror public YUM repos to your internal network.
+# [*repopath*]
+#   The path on *reposerver* where the repository can be found.  Customize
+#   this if you mirror public repos to your internal network.
 #   Default: /tools
 #
-# [*just_prepend_yum_path*]
-#   Whether to prepend the overridden *yum_path* onto the default *yum_path*
-#   or completely replace it.  Only works if *yum_path* is specified.
+# [*just_prepend_repopath*]
+#   Whether to prepend the overridden *repopath* onto the default *repopath*
+#   or completely replace it.  Only works if *repopath* is specified.
 #   Default: 0 (false)
 #
 # [*priority*]
@@ -125,11 +125,11 @@ class vmwaretools (
   $tools_version         = $vmwaretools::params::tools_version,
   $disable_tools_version = $vmwaretools::params::safe_disable_tools_version,
   $manage_repository     = $vmwaretools::params::safe_manage_repository,
-  $yum_server            = $vmwaretools::params::yum_server,
-  $yum_path              = $vmwaretools::params::yum_path,
-  $just_prepend_yum_path = $vmwaretools::params::safe_just_prepend_yum_path,
-  $priority              = $vmwaretools::params::yum_priority,
-  $protect               = $vmwaretools::params::yum_protect,
+  $reposerver            = $vmwaretools::params::reposerver,
+  $repopath              = $vmwaretools::params::repopath,
+  $just_prepend_repopath = $vmwaretools::params::safe_just_prepend_repopath,
+  $priority              = $vmwaretools::params::repopriority,
+  $protect               = $vmwaretools::params::repoprotect,
   $proxy                 = $vmwaretools::params::proxy,
   $proxy_username        = $vmwaretools::params::proxy_username,
   $proxy_password        = $vmwaretools::params::proxy_password,
@@ -148,7 +148,7 @@ class vmwaretools (
   # Validate our booleans
   validate_bool($manage_repository)
   validate_bool($disable_tools_version)
-  validate_bool($just_prepend_yum_path)
+  validate_bool($just_prepend_repopath)
   validate_bool($autoupgrade)
   validate_bool($service_enable)
   validate_bool($service_hasrestart)
@@ -220,19 +220,19 @@ class vmwaretools (
           default => $service_hasstatus,
         }
 
-        $yum_basearch = $tools_version ? {
-          /^3\./ => $vmwaretools::params::yum_basearch_4x,
-          /^4\./ => $vmwaretools::params::yum_basearch_4x,
-          default => $vmwaretools::params::yum_basearch_5x,
+        $repobasearch = $tools_version ? {
+          /^3\./ => $vmwaretools::params::repobasearch_4x,
+          /^4\./ => $vmwaretools::params::repobasearch_4x,
+          default => $vmwaretools::params::repobasearch_5x,
         }
 
         if $manage_repository {
           class { '::vmwaretools::repo':
             ensure                => $ensure,
             tools_version         => $tools_version,
-            yum_server            => $yum_server,
-            yum_path              => $yum_path,
-            just_prepend_yum_path => $just_prepend_yum_path,
+            reposerver            => $reposerver,
+            repopath              => $repopath,
+            just_prepend_repopath => $just_prepend_repopath,
             priority              => $priority,
             protect               => $protect,
             proxy                 => $proxy,

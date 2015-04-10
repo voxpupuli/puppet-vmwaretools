@@ -43,9 +43,9 @@ Parameterized Class:
 Mirror packages.vmware.com to a local host and point the vmwaretools class at it.
 
     class { 'vmwaretools':
-      yum_server            => 'http://yumserver.example.lan',
-      yum_path              => '/yumdir/v2.3.0',
-      just_prepend_yum_path => true,
+      reposerver            => 'http://yumserver.example.lan',
+      repopath              => '/yumdir/v2.3.0',
+      just_prepend_repopath => true,
     }
 
 Turn off configuration of the software repository so that some other tool (ie RHN Satellite) or class can take care of it.
@@ -61,7 +61,7 @@ Notes
 * Not supported on Fedora or Debian as these distros are not supported by the OSP.
 * Not supported on RHEL/CentOS/OEL 7+ or SLES 12 as VMware is [recommending open-vm-tools](http://kb.vmware.com/kb/2073803) instead.
 * Supports yumrepo proxy, proxy_username, proxy_password, yum priorities, yum repo
-  protection, and using a local mirror for the yum_server and yum_path.
+  protection, and using a local mirror for the reposerver and repopath.
 * Supports not managing the yumrepo configuration via `manage_repository => false`.
 * No other VM tools (ie [Open Virtual Machine Tools](http://open-vm-tools.sourceforge.net/)) will be supported.
 

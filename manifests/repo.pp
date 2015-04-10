@@ -10,19 +10,19 @@
 #   http://packages.vmware.com/tools/esx/index.html
 #   Default: latest
 #
-# [*yum_server*]
+# [*reposerver*]
 #   The server which holds the YUM repository.  Customize this if you mirror
 #   public YUM repos to your internal network.
 #   Default: http://packages.vmware.com
 #
-# [*yum_path*]
-#   The path on *yum_server* where the repository can be found.  Customize
+# [*repopath*]
+#   The path on *reposerver* where the repository can be found.  Customize
 #   this if you mirror public YUM repos to your internal network.
 #   Default: /tools
 #
-# [*just_prepend_yum_path*]
-#   Whether to prepend the overridden *yum_path* onto the default *yum_path*
-#   or completely replace it.  Only works if *yum_path* is specified.
+# [*just_prepend_repopath*]
+#   Whether to prepend the overridden *repopath* onto the default *repopath*
+#   or completely replace it.  Only works if *repopath* is specified.
 #   Default: 0 (false)
 #
 # [*priority*]
@@ -76,18 +76,18 @@
 #
 class vmwaretools::repo (
   $tools_version         = $vmwaretools::params::tools_version,
-  $yum_server            = $vmwaretools::params::yum_server,
-  $yum_path              = $vmwaretools::params::yum_path,
-  $just_prepend_yum_path = $vmwaretools::params::safe_just_prepend_yum_path,
-  $priority              = $vmwaretools::params::yum_priority,
-  $protect               = $vmwaretools::params::yum_protect,
+  $reposerver            = $vmwaretools::params::reposerver,
+  $repopath              = $vmwaretools::params::repopath,
+  $just_prepend_repopath = $vmwaretools::params::safe_just_prepend_repopath,
+  $priority              = $vmwaretools::params::repopriority,
+  $protect               = $vmwaretools::params::repoprotect,
   $proxy                 = $vmwaretools::params::proxy,
   $proxy_username        = $vmwaretools::params::proxy_username,
   $proxy_password        = $vmwaretools::params::proxy_password,
   $ensure                = $vmwaretools::params::ensure
 ) inherits vmwaretools::params {
   # Validate our booleans
-  validate_bool($just_prepend_yum_path)
+  validate_bool($just_prepend_repopath)
 
   case $ensure {
     /(present)/: {
@@ -103,26 +103,26 @@ class vmwaretools::repo (
 
   case $::virtual {
     'vmware': {
-      $yum_basearch = $tools_version ? {
-        /3\..+/ => $vmwaretools::params::yum_basearch_4x,
-        /4\..+/ => $vmwaretools::params::yum_basearch_4x,
-        default => $vmwaretools::params::yum_basearch_5x,
+      $repobasearch = $tools_version ? {
+        /3\..+/ => $vmwaretools::params::repobasearch_4x,
+        /4\..+/ => $vmwaretools::params::repobasearch_4x,
+        default => $vmwaretools::params::repobasearch_5x,
       }
 
       # We use $::operatingsystem and not $::osfamily because certain things
       # (like Fedora) need to be excluded.
       case $::operatingsystem {
         'RedHat', 'CentOS', 'Scientific', 'OracleLinux', 'OEL': {
-          if ( $yum_path == $vmwaretools::params::yum_path ) or ( $just_prepend_yum_path == true ) {
-            $gpgkey_url  = "${yum_server}${yum_path}/keys/"
-            $baseurl_url = "${yum_server}${yum_path}/esx/${tools_version}/${vmwaretools::params::baseurl_string}${vmwaretools::params::majdistrelease}/${yum_basearch}/"
+          if ( $repopath == $vmwaretools::params::repopath ) or ( $just_prepend_repopath == true ) {
+            $gpgkey_url  = "${reposerver}${repopath}/keys/"
+            $baseurl_url = "${reposerver}${repopath}/esx/${tools_version}/${vmwaretools::params::baseurl_string}${vmwaretools::params::majdistrelease}/${repobasearch}/"
           } else {
-            $gpgkey_url  = "${yum_server}${yum_path}/"
-            $baseurl_url = "${yum_server}${yum_path}/"
+            $gpgkey_url  = "${reposerver}${repopath}/"
+            $baseurl_url = "${reposerver}${repopath}/"
           }
 
           yumrepo { 'vmware-tools':
-            descr          => "VMware Tools ${tools_version} - ${vmwaretools::params::baseurl_string}${vmwaretools::params::majdistrelease} ${yum_basearch}",
+            descr          => "VMware Tools ${tools_version} - ${vmwaretools::params::baseurl_string}${vmwaretools::params::majdistrelease} ${repobasearch}",
             enabled        => $yumrepo_enabled,
             gpgcheck       => '1',
             # gpgkey has to be a string value with an indented second line
@@ -145,16 +145,16 @@ class vmwaretools::repo (
           }
         }
         'SLES', 'SLED': {
-          if ( $yum_path == $vmwaretools::params::yum_path ) or ( $just_prepend_yum_path == true ) {
-            $gpgkey_url  = "${yum_server}${yum_path}/keys/"
-            $baseurl_url = "${yum_server}${yum_path}/esx/${tools_version}/${vmwaretools::params::baseurl_string}${vmwaretools::params::distrelease}/${yum_basearch}/"
+          if ( $repopath == $vmwaretools::params::repopath ) or ( $just_prepend_repopath == true ) {
+            $gpgkey_url  = "${reposerver}${repopath}/keys/"
+            $baseurl_url = "${reposerver}${repopath}/esx/${tools_version}/${vmwaretools::params::baseurl_string}${vmwaretools::params::distrelease}/${repobasearch}/"
           } else {
-            $gpgkey_url  = "${yum_server}${yum_path}/"
-            $baseurl_url = "${yum_server}${yum_path}/"
+            $gpgkey_url  = "${reposerver}${repopath}/"
+            $baseurl_url = "${reposerver}${repopath}/"
           }
 
           zypprepo { 'vmware-tools':
-            descr       => "VMware Tools ${tools_version} - ${vmwaretools::params::baseurl_string}${vmwaretools::params::distrelease} ${yum_basearch}",
+            descr       => "VMware Tools ${tools_version} - ${vmwaretools::params::baseurl_string}${vmwaretools::params::distrelease} ${repobasearch}",
             enabled     => $yumrepo_enabled,
             gpgcheck    => '1',
             gpgkey      => "${gpgkey_url}VMWARE-PACKAGING-GPG-RSA-KEY.pub",
@@ -178,12 +178,12 @@ class vmwaretools::repo (
           }
         }
         'Ubuntu': {
-          if ( $yum_path == $vmwaretools::params::yum_path ) or ( $just_prepend_yum_path == true ) {
-            $gpgkey_url  = "${yum_server}${yum_path}/keys/"
-            $baseurl_url = "${yum_server}${yum_path}/esx/${tools_version}/${vmwaretools::params::baseurl_string}"
+          if ( $repopath == $vmwaretools::params::repopath ) or ( $just_prepend_repopath == true ) {
+            $gpgkey_url  = "${reposerver}${repopath}/keys/"
+            $baseurl_url = "${reposerver}${repopath}/esx/${tools_version}/${vmwaretools::params::baseurl_string}"
           } else {
-            $gpgkey_url  = "${yum_server}${yum_path}/"
-            $baseurl_url = "${yum_server}${yum_path}/"
+            $gpgkey_url  = "${reposerver}${repopath}/"
+            $baseurl_url = "${reposerver}${repopath}/"
           }
 
           include '::apt'
