@@ -3,7 +3,10 @@
 	<name>vmwaretools</name>
 	<comment></comment>
 	<projects>
+		<project>apt</project>
 		<project>stdlib</project>
+		<project>vmware_puppetfact</project>
+		<project>zypprepo</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
