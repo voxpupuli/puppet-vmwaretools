@@ -15,27 +15,27 @@
 #   Default: true (ie do not report)
 #
 # [*manage_repository*]
-#   Whether to allow the yumrepo to be manged by the module or out of band (ie
-#   RHN Satellite).
+#   Whether to allow the repo to be manged by the module or out of band (ie
+#   RHN Satellite/Pulp).
 #   Default: true (ie let the module manage it)
 #
-# [*yum_server*]
-#   The server which holds the YUM repository.  Customize this if you mirror
-#   public YUM repos to your internal network.
+# [*reposerver*]
+#   The server which holds the software repository.  Customize this if you
+#   mirror public repos to your internal network.
 #   Default: http://packages.vmware.com
 #
-# [*yum_path*]
-#   The path on *yum_server* where the repository can be found.  Customize
-#   this if you mirror public YUM repos to your internal network.
+# [*repopath*]
+#   The path on *reposerver* where the repository can be found.  Customize
+#   this if you mirror public repos to your internal network.
 #   Default: /tools
 #
-# [*just_prepend_yum_path*]
-#   Whether to prepend the overridden *yum_path* onto the default *yum_path*
-#   or completely replace it.  Only works if *yum_path* is specified.
+# [*just_prepend_repopath*]
+#   Whether to prepend the overridden *repopath* onto the default *repopath*
+#   or completely replace it.  Only works if *repopath* is specified.
 #   Default: 0 (false)
 #
 # [*priority*]
-#   Give packages in this YUM repository a different weight.  Requires
+#   Give packages in this repository a different weight.  Requires
 #   yum-plugin-priorities to be installed.
 #   Default: 50
 #
@@ -97,7 +97,7 @@
 # === Actions:
 #
 # Removes old VMwareTools package or runs vmware-uninstall-tools.pl if found.
-# Installs a vmware YUM repository.
+# Installs a VMWare package repository.
 # Installs the OSP.
 # Starts the vmware-tools service.
 #
@@ -125,11 +125,11 @@ class vmwaretools (
   $tools_version         = $vmwaretools::params::tools_version,
   $disable_tools_version = $vmwaretools::params::safe_disable_tools_version,
   $manage_repository     = $vmwaretools::params::safe_manage_repository,
-  $yum_server            = $vmwaretools::params::yum_server,
-  $yum_path              = $vmwaretools::params::yum_path,
-  $just_prepend_yum_path = $vmwaretools::params::safe_just_prepend_yum_path,
-  $priority              = $vmwaretools::params::yum_priority,
-  $protect               = $vmwaretools::params::yum_protect,
+  $reposerver            = $vmwaretools::params::reposerver,
+  $repopath              = $vmwaretools::params::repopath,
+  $just_prepend_repopath = $vmwaretools::params::safe_just_prepend_repopath,
+  $priority              = $vmwaretools::params::repopriority,
+  $protect               = $vmwaretools::params::repoprotect,
   $proxy                 = $vmwaretools::params::proxy,
   $proxy_username        = $vmwaretools::params::proxy_username,
   $proxy_password        = $vmwaretools::params::proxy_password,
@@ -140,7 +140,12 @@ class vmwaretools (
   $service_name          = $vmwaretools::params::service_name,
   $service_enable        = $vmwaretools::params::safe_service_enable,
   $service_hasstatus     = $vmwaretools::params::service_hasstatus,
-  $service_hasrestart    = $vmwaretools::params::safe_service_hasrestart
+  $service_hasrestart    = $vmwaretools::params::safe_service_hasrestart,
+
+  # Deprecated parameters
+  $yum_server            = undef,
+  $yum_path              = undef,
+  $just_prepend_yum_path = undef
 ) inherits vmwaretools::params {
 
   $supported = $vmwaretools::params::supported
@@ -148,7 +153,7 @@ class vmwaretools (
   # Validate our booleans
   validate_bool($manage_repository)
   validate_bool($disable_tools_version)
-  validate_bool($just_prepend_yum_path)
+  validate_bool($just_prepend_repopath)
   validate_bool($autoupgrade)
   validate_bool($service_enable)
   validate_bool($service_hasrestart)
@@ -175,6 +180,26 @@ class vmwaretools (
     default: {
       fail('ensure parameter must be present or absent')
     }
+  }
+
+  # Deprecated parameters.
+  if $yum_server {
+    crit('This parameter has been renamed to reposerver.')
+    $real_reposerver = $yum_server
+  } else {
+    $real_reposerver = $reposerver
+  }
+  if $yum_path {
+    crit('This parameter has been renamed to repopath.')
+    $real_repopath = $yum_path
+  } else {
+    $real_repopath = $repopath
+  }
+  if $just_prepend_yum_path {
+    crit('This parameter has been renamed to just_prepend_repopath.')
+    $real_just_prepend_repopath = $just_prepend_yum_path
+  } else {
+    $real_just_prepend_repopath = $just_prepend_repopath
   }
 
   case $::virtual {
@@ -220,19 +245,19 @@ class vmwaretools (
           default => $service_hasstatus,
         }
 
-        $yum_basearch = $tools_version ? {
-          /^3\./ => $vmwaretools::params::yum_basearch_4x,
-          /^4\./ => $vmwaretools::params::yum_basearch_4x,
-          default => $vmwaretools::params::yum_basearch_5x,
+        $repobasearch = $tools_version ? {
+          /^3\./ => $vmwaretools::params::repobasearch_4x,
+          /^4\./ => $vmwaretools::params::repobasearch_4x,
+          default => $vmwaretools::params::repobasearch_5x,
         }
 
         if $manage_repository {
           class { '::vmwaretools::repo':
             ensure                => $ensure,
             tools_version         => $tools_version,
-            yum_server            => $yum_server,
-            yum_path              => $yum_path,
-            just_prepend_yum_path => $just_prepend_yum_path,
+            reposerver            => $real_reposerver,
+            repopath              => $real_repopath,
+            just_prepend_repopath => $real_just_prepend_repopath,
             priority              => $priority,
             protect               => $protect,
             proxy                 => $proxy,

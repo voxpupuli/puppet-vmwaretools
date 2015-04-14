@@ -18,24 +18,24 @@
 class vmwaretools::params {
   # If we have a top scope variable defined, use it, otherwise fall back to a
   # hardcoded value.
-  $yum_server = $::vmwaretools_yum_server ? {
+  $reposerver = $::vmwaretools_reposerver ? {
     undef   => 'http://packages.vmware.com',
-    default => $::vmwaretools_yum_server,
+    default => $::vmwaretools_reposerver,
   }
 
-  $yum_path = $::vmwaretools_yum_path ? {
+  $repopath = $::vmwaretools_repopath ? {
     undef   => '/tools',
-    default => $::vmwaretools_yum_path,
+    default => $::vmwaretools_repopath,
   }
 
-  $yum_priority = $::vmwaretools_yum_priority ? {
+  $repopriority = $::vmwaretools_repopriority ? {
     undef   => '50',
-    default => $::vmwaretools_yum_priority,
+    default => $::vmwaretools_repopriority,
   }
 
-  $yum_protect = $::vmwaretools_yum_protect ? {
+  $repoprotect = $::vmwaretools_repoprotect ? {
     undef   => '0',
-    default => $::vmwaretools_yum_protect,
+    default => $::vmwaretools_repoprotect,
   }
 
   $proxy = $::vmwaretools_proxy ? {
@@ -87,14 +87,14 @@ class vmwaretools::params {
 
   # Since the top scope variable could be a string (if from an ENC), we might
   # need to convert it to a boolean.
-  $just_prepend_yum_path = $::just_prepend_yum_path ? {
+  $just_prepend_repopath = $::just_prepend_repopath ? {
     undef   => false,
-    default => $::vmwaretools_just_prepend_yum_path,
+    default => $::vmwaretools_just_prepend_repopath,
   }
-  if is_string($just_prepend_yum_path) {
-    $safe_just_prepend_yum_path = str2bool($just_prepend_yum_path)
+  if is_string($just_prepend_repopath) {
+    $safe_just_prepend_repopath = str2bool($just_prepend_repopath)
   } else {
-    $safe_just_prepend_yum_path = $just_prepend_yum_path
+    $safe_just_prepend_repopath = $just_prepend_repopath
   }
 
   $manage_repository = $::manage_repository ? {
@@ -186,12 +186,12 @@ class vmwaretools::params {
           $supported = false
         }
       }
-      $yum_basearch_4x = $::architecture ? {
+      $repobasearch_4x = $::architecture ? {
         'i386'  => 'i686',
         'i586'  => 'i686',
         default => $::architecture,
       }
-      $yum_basearch_5x = $::architecture ? {
+      $repobasearch_5x = $::architecture ? {
         'i586'  => 'i386',
         'i686'  => 'i386',
         default => $::architecture,
@@ -225,11 +225,11 @@ class vmwaretools::params {
           $service_name_5x = 'vmware-tools-services'
           $service_hasstatus_4x = false
           $service_hasstatus_5x = true
-          $yum_basearch_4x = $::architecture ? {
+          $repobasearch_4x = $::architecture ? {
             'i386'  => 'i586',
             default => $::architecture,
           }
-          $yum_basearch_5x = $::architecture ? {
+          $repobasearch_5x = $::architecture ? {
             'i386'  => 'i586',
             default => $::architecture,
           }

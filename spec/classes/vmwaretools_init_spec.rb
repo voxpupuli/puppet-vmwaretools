@@ -75,9 +75,9 @@ describe 'vmwaretools', :type => 'class' do
     end
     it { should contain_class('vmwaretools::repo').with(
       :tools_version         => 'latest',
-      :yum_server            => 'http://packages.vmware.com',
-      :yum_path              => '/tools',
-      :just_prepend_yum_path => 'false',
+      :reposerver            => 'http://packages.vmware.com',
+      :repopath              => '/tools',
+      :just_prepend_repopath => 'false',
       :priority              => '50',
       :protect               => '0',
       :proxy                 => 'absent',
