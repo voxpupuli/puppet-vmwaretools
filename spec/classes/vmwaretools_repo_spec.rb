@@ -7,8 +7,9 @@ describe 'vmwaretools::repo', :type => 'class' do
   context 'on a non-supported osfamily' do
     let(:params) {{}}
     let :facts do {
-      :osfamily        => 'foo',
-      :operatingsystem => 'foo'
+      :osfamily               => 'foo',
+      :operatingsystem        => 'foo',
+      :operatingsystemrelease => '1.0'
     }
     end
     #it { should run.with_params("Your operating system #{osfamily} is unsupported and will not have the VMware Tools OSP installed.").and_return('Your operating system foo is unsupported and will not have the VMware Tools OSP installed.') }
@@ -26,9 +27,10 @@ describe 'vmwaretools::repo', :type => 'class' do
       describe "for osfamily #{osf} operatingsystem #{os}" do
         let(:params) {{}}
         let :facts do {
-          :osfamily        => osf,
-          :operatingsystem => os,
-          :virtual         => 'foo'
+          :osfamily               => osf,
+          :operatingsystem        => os,
+          :operatingsystemrelease => '1.0',
+          :virtual                => 'foo'
         }
         end
         it { should_not contain_yumrepo('vmware-tools') }

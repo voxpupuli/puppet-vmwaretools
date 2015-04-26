@@ -7,8 +7,9 @@ describe 'vmwaretools', :type => 'class' do
   context 'on a non-supported osfamily' do
     let(:params) {{}}
     let :facts do {
-      :osfamily        => 'foo',
-      :operatingsystem => 'foo'
+      :osfamily               => 'foo',
+      :operatingsystem        => 'foo',
+      :operatingsystemrelease => '1.0'
     }
     end
     it { should_not contain_class('vmwaretools::repo') }
@@ -26,9 +27,10 @@ describe 'vmwaretools', :type => 'class' do
   context 'on a supported osfamily, non-vmware platform' do
     let(:params) {{}}
     let :facts do {
-      :osfamily        => 'RedHat',
-      :operatingsystem => 'RedHat',
-      :virtual         => 'foo'
+      :osfamily               => 'RedHat',
+      :operatingsystem        => 'RedHat',
+      :operatingsystemrelease => '1.0',
+      :virtual                => 'foo'
     }
     end
     it { should_not contain_class('vmwaretools::repo') }
@@ -46,9 +48,10 @@ describe 'vmwaretools', :type => 'class' do
   context 'on a supported osfamily, vmware platform, non-supported operatingsystem' do
     describe "for operating system Fedora" do
       let :facts do {
-        :virtual         => 'vmware',
-        :osfamily        => 'Redhat',
-        :operatingsystem => 'Fedora'
+        :virtual                => 'vmware',
+        :osfamily               => 'Redhat',
+        :operatingsystem        => 'Fedora',
+        :operatingsystemrelease => '1.0'
       }
       end
       it { should_not contain_class('vmwaretools::repo') }
