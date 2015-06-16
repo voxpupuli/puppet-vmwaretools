@@ -287,7 +287,7 @@ class vmwaretools (
              creates => '/lib/security/pam_unix2.so'
           }
 	  # same for 64bit pam-libs
-	   exec { "symlink /lib54/security/pam_unix2.so":
+	   exec { "symlink /lib64/security/pam_unix2.so":
 	     command => '/bin/ln -s /lib64/security/pam_unix.so /lib64/security/pam_unix2.so',
              onlyif => '/usr/bin/test -f /lib64/security/pam_unix.so',
              creates => '/lib64/security/pam_unix2.so'
