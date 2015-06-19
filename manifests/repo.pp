@@ -25,6 +25,11 @@
 #   or completely replace it.  Only works if *repopath* is specified.
 #   Default: 0 (false)
 #
+# [*gpgkey_url*]
+#   The URL where the public GPG key resides for the repository NOT including
+#   the GPG public key file itself (ending with a trailing /).
+#   Default: ${reposerver}${repopath}/
+#
 # [*priority*]
 #   Give packages in this repository a different weight.  Requires
 #   yum-plugin-priorities to be installed.
@@ -82,6 +87,7 @@ class vmwaretools::repo (
   $just_prepend_repopath = $vmwaretools::params::safe_just_prepend_repopath,
   $priority              = $vmwaretools::params::repopriority,
   $protect               = $vmwaretools::params::repoprotect,
+  $gpgkey_url            = $vmwaretools::params::gpgkey_url,
   $proxy                 = $vmwaretools::params::proxy,
   $proxy_username        = $vmwaretools::params::proxy_username,
   $proxy_password        = $vmwaretools::params::proxy_password,
@@ -115,20 +121,28 @@ class vmwaretools::repo (
       case $::operatingsystem {
         'RedHat', 'CentOS', 'Scientific', 'OracleLinux', 'OEL': {
           if ( $repopath == $vmwaretools::params::repopath ) or ( $just_prepend_repopath == true ) {
-            $gpgkey_url  = "${reposerver}${repopath}/keys/"
             $baseurl_url = "${reposerver}${repopath}/esx/${tools_version}/${vmwaretools::params::baseurl_string}${vmwaretools::params::majdistrelease}/${repobasearch}/"
           } else {
-            $gpgkey_url  = "${reposerver}${repopath}/"
             $baseurl_url = "${reposerver}${repopath}/"
+          }
+
+          # gpgkey has to be a string value with an indented second line
+          # per http://projects.puppetlabs.com/issues/8867
+          if ( $gpgkey_url == $vmwaretools::params::gpgkey_url ) {
+            if ( $repopath == $vmwaretools::params::repopath ) or ( $just_prepend_repopath == true ) {
+              $gpgkey = "${reposerver}${repopath}/keys/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    ${reposerver}${repopath}/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub"
+            } else {
+              $gpgkey = "${reposerver}${repopath}/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    ${reposerver}${repopath}/VMWARE-PACKAGING-GPG-RSA-KEY.pub"
+            }
+          } else {
+            $gpgkey = "${gpgkey_url}VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    ${gpgkey_url}VMWARE-PACKAGING-GPG-RSA-KEY.pub"
           }
 
           yumrepo { 'vmware-tools':
             descr          => "VMware Tools ${tools_version} - ${vmwaretools::params::baseurl_string}${vmwaretools::params::majdistrelease} ${repobasearch}",
             enabled        => $repo_enabled,
             gpgcheck       => '1',
-            # gpgkey has to be a string value with an indented second line
-            # per http://projects.puppetlabs.com/issues/8867
-            gpgkey         => "${gpgkey_url}VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    ${gpgkey_url}VMWARE-PACKAGING-GPG-RSA-KEY.pub",
+            gpgkey         => $gpgkey,
             baseurl        => $baseurl_url,
             priority       => $priority,
             protect        => $protect,
@@ -147,18 +161,26 @@ class vmwaretools::repo (
         }
         'SLES', 'SLED': {
           if ( $repopath == $vmwaretools::params::repopath ) or ( $just_prepend_repopath == true ) {
-            $gpgkey_url  = "${reposerver}${repopath}/keys/"
             $baseurl_url = "${reposerver}${repopath}/esx/${tools_version}/${vmwaretools::params::baseurl_string}${vmwaretools::params::distrelease}/${repobasearch}/"
           } else {
-            $gpgkey_url  = "${reposerver}${repopath}/"
             $baseurl_url = "${reposerver}${repopath}/"
+          }
+
+          if ( $gpgkey_url == $vmwaretools::params::gpgkey_url ) {
+            if ( $repopath == $vmwaretools::params::repopath ) or ( $just_prepend_repopath == true ) {
+              $gpgkey = "${reposerver}${repopath}/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub"
+            } else {
+              $gpgkey = "${reposerver}${repopath}/VMWARE-PACKAGING-GPG-RSA-KEY.pub"
+            }
+          } else {
+            $gpgkey = "${gpgkey_url}VMWARE-PACKAGING-GPG-RSA-KEY.pub"
           }
 
           zypprepo { 'vmware-tools':
             descr       => "VMware Tools ${tools_version} - ${vmwaretools::params::baseurl_string}${vmwaretools::params::distrelease} ${repobasearch}",
             enabled     => $repo_enabled,
             gpgcheck    => '1',
-            gpgkey      => "${gpgkey_url}VMWARE-PACKAGING-GPG-RSA-KEY.pub",
+            gpgkey      => $gpgkey,
             baseurl     => $baseurl_url,
             priority    => $priority,
             autorefresh => 1,
@@ -180,11 +202,19 @@ class vmwaretools::repo (
         }
         'Ubuntu': {
           if ( $repopath == $vmwaretools::params::repopath ) or ( $just_prepend_repopath == true ) {
-            $gpgkey_url  = "${reposerver}${repopath}/keys/"
             $baseurl_url = "${reposerver}${repopath}/esx/${tools_version}/${vmwaretools::params::baseurl_string}"
           } else {
-            $gpgkey_url  = "${reposerver}${repopath}/"
             $baseurl_url = "${reposerver}${repopath}/"
+          }
+
+          if ( $gpgkey_url == $vmwaretools::params::gpgkey_url ) {
+            if ( $repopath == $vmwaretools::params::repopath ) or ( $just_prepend_repopath == true ) {
+              $gpgkey = "${reposerver}${repopath}/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub"
+            } else {
+              $gpgkey = "${reposerver}${repopath}/VMWARE-PACKAGING-GPG-RSA-KEY.pub"
+            }
+          } else {
+            $gpgkey = "${gpgkey_url}VMWARE-PACKAGING-GPG-RSA-KEY.pub"
           }
 
           include '::apt'
@@ -192,7 +222,7 @@ class vmwaretools::repo (
             ensure      => $ensure,
             comment     => "VMware Tools ${tools_version} - ${vmwaretools::params::baseurl_string} ${::lsbdistcodename}",
             location    => $baseurl_url,
-            key_source  => "${gpgkey_url}VMWARE-PACKAGING-GPG-RSA-KEY.pub",
+            key_source  => $gpgkey,
             #key         => '0xC0B5E0AB66FD4949',
             key         => '36E47E1CC4DCC5E8152D115CC0B5E0AB66FD4949',
             include_src => false,

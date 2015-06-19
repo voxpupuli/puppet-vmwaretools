@@ -38,6 +38,11 @@ class vmwaretools::params {
     default => $::vmwaretools_repoprotect,
   }
 
+  $gpgkey_url = $::vmwaretools_gpgkey_url ? {
+    undef   => "${reposerver}${repopath}/",
+    default => $::vmwaretools_gpgkey_url,
+  }
+
   $proxy = $::vmwaretools_proxy ? {
     undef   => 'absent',
     default => $::vmwaretools_proxy,

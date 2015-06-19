@@ -34,6 +34,11 @@
 #   or completely replace it.  Only works if *repopath* is specified.
 #   Default: 0 (false)
 #
+# [*gpgkey_url*]
+#   The URL where the public GPG key resides for the repository NOT including
+#   the GPG public key file itself (ending with a trailing /).
+#   Default: ${reposerver}${repopath}/
+#
 # [*priority*]
 #   Give packages in this repository a different weight.  Requires
 #   yum-plugin-priorities to be installed.
@@ -130,6 +135,7 @@ class vmwaretools (
   $just_prepend_repopath = $vmwaretools::params::safe_just_prepend_repopath,
   $priority              = $vmwaretools::params::repopriority,
   $protect               = $vmwaretools::params::repoprotect,
+  $gpgkey_url            = $vmwaretools::params::gpgkey_url,
   $proxy                 = $vmwaretools::params::proxy,
   $proxy_username        = $vmwaretools::params::proxy_username,
   $proxy_password        = $vmwaretools::params::proxy_password,
@@ -258,6 +264,7 @@ class vmwaretools (
             reposerver            => $real_reposerver,
             repopath              => $real_repopath,
             just_prepend_repopath => $real_just_prepend_repopath,
+            gpgkey_url            => $gpgkey_url,
             priority              => $priority,
             protect               => $protect,
             proxy                 => $proxy,
