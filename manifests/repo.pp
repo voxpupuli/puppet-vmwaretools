@@ -25,6 +25,11 @@
 #   or completely replace it.  Only works if *repopath* is specified.
 #   Default: 0 (false)
 #
+# [*gpgkey_url*]
+#   The URL where the public GPG key resides for the repository NOT including
+#   the GPG public key file itself (ending with a trailing /).
+#   Default: ${reposerver}${repopath}/
+#
 # [*priority*]
 #   Give packages in this repository a different weight.  Requires
 #   yum-plugin-priorities to be installed.
@@ -82,6 +87,7 @@ class vmwaretools::repo (
   $just_prepend_repopath = $vmwaretools::params::safe_just_prepend_repopath,
   $priority              = $vmwaretools::params::repopriority,
   $protect               = $vmwaretools::params::repoprotect,
+  $gpgkey_url            = $vmwaretools::params::gpgkey_url,
   $proxy                 = $vmwaretools::params::proxy,
   $proxy_username        = $vmwaretools::params::proxy_username,
   $proxy_password        = $vmwaretools::params::proxy_password,
@@ -115,10 +121,10 @@ class vmwaretools::repo (
       case $::operatingsystem {
         'RedHat', 'CentOS', 'Scientific', 'OracleLinux', 'OEL': {
           if ( $repopath == $vmwaretools::params::repopath ) or ( $just_prepend_repopath == true ) {
-            $gpgkey_url  = "${reposerver}${repopath}/keys/"
+            unless $gpgkey_url { $gpgkey_url = "${reposerver}${repopath}/keys/" }
             $baseurl_url = "${reposerver}${repopath}/esx/${tools_version}/${vmwaretools::params::baseurl_string}${vmwaretools::params::majdistrelease}/${repobasearch}/"
           } else {
-            $gpgkey_url  = "${reposerver}${repopath}/"
+            unless $gpgkey_url { $gpgkey_url = "${reposerver}${repopath}/" }
             $baseurl_url = "${reposerver}${repopath}/"
           }
 
@@ -147,10 +153,10 @@ class vmwaretools::repo (
         }
         'SLES', 'SLED': {
           if ( $repopath == $vmwaretools::params::repopath ) or ( $just_prepend_repopath == true ) {
-            $gpgkey_url  = "${reposerver}${repopath}/keys/"
+            unless $gpgkey_url { $gpgkey_url = "${reposerver}${repopath}/keys/" }
             $baseurl_url = "${reposerver}${repopath}/esx/${tools_version}/${vmwaretools::params::baseurl_string}${vmwaretools::params::distrelease}/${repobasearch}/"
           } else {
-            $gpgkey_url  = "${reposerver}${repopath}/"
+            unless $gpgkey_url { $gpgkey_url = "${reposerver}${repopath}/" }
             $baseurl_url = "${reposerver}${repopath}/"
           }
 
@@ -180,10 +186,10 @@ class vmwaretools::repo (
         }
         'Ubuntu': {
           if ( $repopath == $vmwaretools::params::repopath ) or ( $just_prepend_repopath == true ) {
-            $gpgkey_url  = "${reposerver}${repopath}/keys/"
+            unless $gpgkey_url { $gpgkey_url = "${reposerver}${repopath}/keys/" }
             $baseurl_url = "${reposerver}${repopath}/esx/${tools_version}/${vmwaretools::params::baseurl_string}"
           } else {
-            $gpgkey_url  = "${reposerver}${repopath}/"
+            unless $gpgkey_url { $gpgkey_url = "${reposerver}${repopath}/" }
             $baseurl_url = "${reposerver}${repopath}/"
           }
 

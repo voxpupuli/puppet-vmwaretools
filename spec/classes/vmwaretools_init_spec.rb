@@ -254,6 +254,11 @@ describe 'vmwaretools', :type => 'class' do
       it { should_not contain_class('vmwaretools::repo') }
     end
 
+    describe 'gpgkey_url => http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub' do
+      let(:params) {{ :gpgkey_url => 'http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub' }}
+      it { should contain_class('vmwaretools::repo').with_gpgkey_url('http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub') }
+    end
+
     describe 'ensure => absent' do
       let(:params) {{ :ensure => 'absent' }}
       it { should contain_class('vmwaretools::repo').with_ensure('absent') }
