@@ -7,8 +7,9 @@ describe 'vmwaretools', :type => 'class' do
   context 'on a non-supported osfamily' do
     let(:params) {{}}
     let :facts do {
-      :osfamily        => 'foo',
-      :operatingsystem => 'foo'
+      :osfamily               => 'foo',
+      :operatingsystem        => 'foo',
+      :operatingsystemrelease => '1.0'
     }
     end
     it { should_not contain_class('vmwaretools::repo') }
@@ -26,9 +27,10 @@ describe 'vmwaretools', :type => 'class' do
   context 'on a supported osfamily, non-vmware platform' do
     let(:params) {{}}
     let :facts do {
-      :osfamily        => 'RedHat',
-      :operatingsystem => 'RedHat',
-      :virtual         => 'foo'
+      :osfamily               => 'RedHat',
+      :operatingsystem        => 'RedHat',
+      :operatingsystemrelease => '1.0',
+      :virtual                => 'foo'
     }
     end
     it { should_not contain_class('vmwaretools::repo') }
@@ -46,9 +48,10 @@ describe 'vmwaretools', :type => 'class' do
   context 'on a supported osfamily, vmware platform, non-supported operatingsystem' do
     describe "for operating system Fedora" do
       let :facts do {
-        :virtual         => 'vmware',
-        :osfamily        => 'Redhat',
-        :operatingsystem => 'Fedora'
+        :virtual                => 'vmware',
+        :osfamily               => 'Redhat',
+        :operatingsystem        => 'Fedora',
+        :operatingsystemrelease => '1.0'
       }
       end
       it { should_not contain_class('vmwaretools::repo') }
@@ -75,9 +78,9 @@ describe 'vmwaretools', :type => 'class' do
     end
     it { should contain_class('vmwaretools::repo').with(
       :tools_version         => 'latest',
-      :yum_server            => 'http://packages.vmware.com',
-      :yum_path              => '/tools',
-      :just_prepend_yum_path => 'false',
+      :reposerver            => 'http://packages.vmware.com',
+      :repopath              => '/tools',
+      :just_prepend_repopath => 'false',
       :priority              => '50',
       :protect               => '0',
       :proxy                 => 'absent',
@@ -249,6 +252,11 @@ describe 'vmwaretools', :type => 'class' do
     describe 'manage_repository => false' do
       let(:params) {{ :manage_repository => false }}
       it { should_not contain_class('vmwaretools::repo') }
+    end
+
+    describe 'gpgkey_url => http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub' do
+      let(:params) {{ :gpgkey_url => 'http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub' }}
+      it { should contain_class('vmwaretools::repo').with_gpgkey_url('http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub') }
     end
 
     describe 'ensure => absent' do

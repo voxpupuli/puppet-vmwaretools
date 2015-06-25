@@ -7,8 +7,9 @@ describe 'vmwaretools::repo', :type => 'class' do
   context 'on a non-supported osfamily' do
     let(:params) {{}}
     let :facts do {
-      :osfamily        => 'foo',
-      :operatingsystem => 'foo'
+      :osfamily               => 'foo',
+      :operatingsystem        => 'foo',
+      :operatingsystemrelease => '1.0'
     }
     end
     #it { should run.with_params("Your operating system #{osfamily} is unsupported and will not have the VMware Tools OSP installed.").and_return('Your operating system foo is unsupported and will not have the VMware Tools OSP installed.') }
@@ -26,9 +27,10 @@ describe 'vmwaretools::repo', :type => 'class' do
       describe "for osfamily #{osf} operatingsystem #{os}" do
         let(:params) {{}}
         let :facts do {
-          :osfamily        => osf,
-          :operatingsystem => os,
-          :virtual         => 'foo'
+          :osfamily               => osf,
+          :operatingsystem        => os,
+          :operatingsystemrelease => '1.0',
+          :virtual                => 'foo'
         }
         end
         it { should_not contain_yumrepo('vmware-tools') }
@@ -140,26 +142,26 @@ describe 'vmwaretools::repo', :type => 'class' do
       it { should contain_yumrepo('vmware-tools').with_enabled('0') }
     end
 
-    describe 'yum_server => http://localhost:8000' do
-      let(:params) {{ :yum_server => 'http://localhost:8000' }}
+    describe 'reposerver => http://localhost:8000' do
+      let(:params) {{ :reposerver => 'http://localhost:8000' }}
       it { should contain_yumrepo('vmware-tools').with(
         :gpgkey   => "http://localhost:8000/tools/keys/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    http://localhost:8000/tools/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub",
         :baseurl  => 'http://localhost:8000/tools/esx/latest/rhel6/x86_64/'
       )}
     end
 
-    describe 'yum_path => /some/path' do
-      let(:params) {{ :yum_path => '/some/path' }}
+    describe 'repopath => /some/path' do
+      let(:params) {{ :repopath => '/some/path' }}
       it { should contain_yumrepo('vmware-tools').with(
         :gpgkey   => "http://packages.vmware.com/some/path/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    http://packages.vmware.com/some/path/VMWARE-PACKAGING-GPG-RSA-KEY.pub",
         :baseurl  => 'http://packages.vmware.com/some/path/'
       )}
     end
 
-    describe 'yum_server => http://localhost:8000 and yum_path => /some/path' do
+    describe 'reposerver => http://localhost:8000 and repopath => /some/path' do
       let :params do {
-        :yum_server => 'http://localhost:8000',
-        :yum_path   => '/some/path'
+        :reposerver => 'http://localhost:8000',
+        :repopath   => '/some/path'
       }
       end
       it { should contain_yumrepo('vmware-tools').with(
@@ -168,11 +170,11 @@ describe 'vmwaretools::repo', :type => 'class' do
       )}
     end
 
-    describe 'yum_server => http://localhost:8000 and yum_path => /some/path and just_prepend_yum_path => true' do
+    describe 'reposerver => http://localhost:8000 and repopath => /some/path and just_prepend_repopath => true' do
       let :params do {
-        :yum_server            => 'http://localhost:8000',
-        :yum_path              => '/some/path',
-        :just_prepend_yum_path => true
+        :reposerver            => 'http://localhost:8000',
+        :repopath              => '/some/path',
+        :just_prepend_repopath => true
       }
       end
       it { should contain_yumrepo('vmware-tools').with(
