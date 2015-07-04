@@ -158,6 +158,13 @@ describe 'vmwaretools::repo', :type => 'class' do
       )}
     end
 
+    describe 'gpgkey_url => http://localhost:8000/custom/path/' do
+      let(:params) {{ :gpgkey_url => 'http://localhost:8000/custom/path/' }}
+      it { should contain_yumrepo('vmware-tools').with(
+        :gpgkey   => "http://localhost:8000/custom/path/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    http://localhost:8000/custom/path/VMWARE-PACKAGING-GPG-RSA-KEY.pub"
+      )}
+    end
+
     describe 'reposerver => http://localhost:8000 and repopath => /some/path' do
       let :params do {
         :reposerver => 'http://localhost:8000',

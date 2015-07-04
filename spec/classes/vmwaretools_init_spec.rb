@@ -83,6 +83,7 @@ describe 'vmwaretools', :type => 'class' do
       :just_prepend_repopath => 'false',
       :priority              => '50',
       :protect               => '0',
+      :gpgkey_url            => 'http://packages.vmware.com/tools/',
       :proxy                 => 'absent',
       :proxy_username        => 'absent',
       :proxy_password        => 'absent',
