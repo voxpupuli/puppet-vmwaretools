@@ -1,6 +1,6 @@
 {
   "name": "razorsedge-vmwaretools",
-  "version": "5.0.0",
+  "version": "5.0.1",
   "author": "razorsedge",
   "summary": "Install VMware Tools Operating System Specific Packages (OSP) on VMware guests.",
   "license": "Apache-2.0",
@@ -59,7 +59,7 @@
     },
     {
       "name": "puppet",
-      "version_requirement": ">=2.7.20 <4.0.0"
+      "version_requirement": ">=2.7.20 <5.0.0"
     }
   ]
 }
