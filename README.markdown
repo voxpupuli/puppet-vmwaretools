@@ -190,6 +190,10 @@ Default: /tools
 Whether to prepend the overridden *repopath* onto the default *repopath* or completely replace it.  Only works if *repopath* is specified.
 Default: 0 (false)
 
+####`gpgkey_url`
+The URL where the public GPG key resides for the repository NOT including the GPG public key file itself (ending with a trailing /).
+Default: ${reposerver}${repopath}/
+
 ####`priority`
 
 Give packages in this YUM repository a different weight.  Requires yum-plugin-priorities to be installed.
