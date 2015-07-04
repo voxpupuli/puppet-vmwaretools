@@ -10,28 +10,33 @@
 #   http://packages.vmware.com/tools/esx/index.html
 #   Default: latest
 #
-# [*yum_server*]
-#   The server which holds the YUM repository.  Customize this if you mirror
-#   public YUM repos to your internal network.
+# [*reposerver*]
+#   The server which holds the package repository.  Customize this if you mirror
+#   public repos to your internal network.
 #   Default: http://packages.vmware.com
 #
-# [*yum_path*]
-#   The path on *yum_server* where the repository can be found.  Customize
-#   this if you mirror public YUM repos to your internal network.
+# [*repopath*]
+#   The path on *reposerver* where the repository can be found.  Customize
+#   this if you mirror public repos to your internal network.
 #   Default: /tools
 #
-# [*just_prepend_yum_path*]
-#   Whether to prepend the overridden *yum_path* onto the default *yum_path*
-#   or completely replace it.  Only works if *yum_path* is specified.
+# [*just_prepend_repopath*]
+#   Whether to prepend the overridden *repopath* onto the default *repopath*
+#   or completely replace it.  Only works if *repopath* is specified.
 #   Default: 0 (false)
 #
+# [*gpgkey_url*]
+#   The URL where the public GPG key resides for the repository NOT including
+#   the GPG public key file itself (ending with a trailing /).
+#   Default: ${reposerver}${repopath}/
+#
 # [*priority*]
-#   Give packages in this YUM repository a different weight.  Requires
+#   Give packages in this repository a different weight.  Requires
 #   yum-plugin-priorities to be installed.
 #   Default: 50
 #
 # [*protect*]
-#   Protect packages in this YUM repository from being overridden by packages
+#   Protect packages in this repository from being overridden by packages
 #   in non-protected repositories.
 #   Default: 0 (false)
 #
@@ -53,7 +58,8 @@
 #
 # === Actions:
 #
-# Installs a vmware YUM repository.
+# Installs a vmware package repository.
+# Imports a GPG signing key if needed.
 #
 # === Requires:
 #
@@ -76,25 +82,26 @@
 #
 class vmwaretools::repo (
   $tools_version         = $vmwaretools::params::tools_version,
-  $yum_server            = $vmwaretools::params::yum_server,
-  $yum_path              = $vmwaretools::params::yum_path,
-  $just_prepend_yum_path = $vmwaretools::params::safe_just_prepend_yum_path,
-  $priority              = $vmwaretools::params::yum_priority,
-  $protect               = $vmwaretools::params::yum_protect,
+  $reposerver            = $vmwaretools::params::reposerver,
+  $repopath              = $vmwaretools::params::repopath,
+  $just_prepend_repopath = $vmwaretools::params::safe_just_prepend_repopath,
+  $priority              = $vmwaretools::params::repopriority,
+  $protect               = $vmwaretools::params::repoprotect,
+  $gpgkey_url            = $vmwaretools::params::gpgkey_url,
   $proxy                 = $vmwaretools::params::proxy,
   $proxy_username        = $vmwaretools::params::proxy_username,
   $proxy_password        = $vmwaretools::params::proxy_password,
   $ensure                = $vmwaretools::params::ensure
 ) inherits vmwaretools::params {
   # Validate our booleans
-  validate_bool($just_prepend_yum_path)
+  validate_bool($just_prepend_repopath)
 
   case $ensure {
     /(present)/: {
-      $yumrepo_enabled = '1'
+      $repo_enabled = '1'
     }
     /(absent)/: {
-      $yumrepo_enabled = '0'
+      $repo_enabled = '0'
     }
     default: {
       fail('ensure parameter must be present or absent')
@@ -103,31 +110,39 @@ class vmwaretools::repo (
 
   case $::virtual {
     'vmware': {
-      $yum_basearch = $tools_version ? {
-        /3\..+/ => $vmwaretools::params::yum_basearch_4x,
-        /4\..+/ => $vmwaretools::params::yum_basearch_4x,
-        default => $vmwaretools::params::yum_basearch_5x,
+      $repobasearch = $tools_version ? {
+        /3\..+/ => $vmwaretools::params::repobasearch_4x,
+        /4\..+/ => $vmwaretools::params::repobasearch_4x,
+        default => $vmwaretools::params::repobasearch_5x,
       }
 
       # We use $::operatingsystem and not $::osfamily because certain things
       # (like Fedora) need to be excluded.
       case $::operatingsystem {
         'RedHat', 'CentOS', 'Scientific', 'OracleLinux', 'OEL': {
-          if ( $yum_path == $vmwaretools::params::yum_path ) or ( $just_prepend_yum_path == true ) {
-            $gpgkey_url  = "${yum_server}${yum_path}/keys/"
-            $baseurl_url = "${yum_server}${yum_path}/esx/${tools_version}/${vmwaretools::params::baseurl_string}${vmwaretools::params::majdistrelease}/${yum_basearch}/"
+          if ( $repopath == $vmwaretools::params::repopath ) or ( $just_prepend_repopath == true ) {
+            $baseurl_url = "${reposerver}${repopath}/esx/${tools_version}/${vmwaretools::params::baseurl_string}${vmwaretools::params::majdistrelease}/${repobasearch}/"
           } else {
-            $gpgkey_url  = "${yum_server}${yum_path}/"
-            $baseurl_url = "${yum_server}${yum_path}/"
+            $baseurl_url = "${reposerver}${repopath}/"
+          }
+
+          # gpgkey has to be a string value with an indented second line
+          # per http://projects.puppetlabs.com/issues/8867
+          if ( $gpgkey_url == $vmwaretools::params::gpgkey_url ) {
+            if ( $repopath == $vmwaretools::params::repopath ) or ( $just_prepend_repopath == true ) {
+              $gpgkey = "${reposerver}${repopath}/keys/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    ${reposerver}${repopath}/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub"
+            } else {
+              $gpgkey = "${reposerver}${repopath}/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    ${reposerver}${repopath}/VMWARE-PACKAGING-GPG-RSA-KEY.pub"
+            }
+          } else {
+            $gpgkey = "${gpgkey_url}VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    ${gpgkey_url}VMWARE-PACKAGING-GPG-RSA-KEY.pub"
           }
 
           yumrepo { 'vmware-tools':
-            descr          => "VMware Tools ${tools_version} - ${vmwaretools::params::baseurl_string}${vmwaretools::params::majdistrelease} ${yum_basearch}",
-            enabled        => $yumrepo_enabled,
+            descr          => "VMware Tools ${tools_version} - ${vmwaretools::params::baseurl_string}${vmwaretools::params::majdistrelease} ${repobasearch}",
+            enabled        => $repo_enabled,
             gpgcheck       => '1',
-            # gpgkey has to be a string value with an indented second line
-            # per http://projects.puppetlabs.com/issues/8867
-            gpgkey         => "${gpgkey_url}VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    ${gpgkey_url}VMWARE-PACKAGING-GPG-RSA-KEY.pub",
+            gpgkey         => $gpgkey,
             baseurl        => $baseurl_url,
             priority       => $priority,
             protect        => $protect,
@@ -145,19 +160,27 @@ class vmwaretools::repo (
           }
         }
         'SLES', 'SLED': {
-          if ( $yum_path == $vmwaretools::params::yum_path ) or ( $just_prepend_yum_path == true ) {
-            $gpgkey_url  = "${yum_server}${yum_path}/keys/"
-            $baseurl_url = "${yum_server}${yum_path}/esx/${tools_version}/${vmwaretools::params::baseurl_string}${vmwaretools::params::distrelease}/${yum_basearch}/"
+          if ( $repopath == $vmwaretools::params::repopath ) or ( $just_prepend_repopath == true ) {
+            $baseurl_url = "${reposerver}${repopath}/esx/${tools_version}/${vmwaretools::params::baseurl_string}${vmwaretools::params::distrelease}/${repobasearch}/"
           } else {
-            $gpgkey_url  = "${yum_server}${yum_path}/"
-            $baseurl_url = "${yum_server}${yum_path}/"
+            $baseurl_url = "${reposerver}${repopath}/"
+          }
+
+          if ( $gpgkey_url == $vmwaretools::params::gpgkey_url ) {
+            if ( $repopath == $vmwaretools::params::repopath ) or ( $just_prepend_repopath == true ) {
+              $gpgkey = "${reposerver}${repopath}/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub"
+            } else {
+              $gpgkey = "${reposerver}${repopath}/VMWARE-PACKAGING-GPG-RSA-KEY.pub"
+            }
+          } else {
+            $gpgkey = "${gpgkey_url}VMWARE-PACKAGING-GPG-RSA-KEY.pub"
           }
 
           zypprepo { 'vmware-tools':
-            descr       => "VMware Tools ${tools_version} - ${vmwaretools::params::baseurl_string}${vmwaretools::params::distrelease} ${yum_basearch}",
-            enabled     => $yumrepo_enabled,
+            descr       => "VMware Tools ${tools_version} - ${vmwaretools::params::baseurl_string}${vmwaretools::params::distrelease} ${repobasearch}",
+            enabled     => $repo_enabled,
             gpgcheck    => '1',
-            gpgkey      => "${gpgkey_url}VMWARE-PACKAGING-GPG-RSA-KEY.pub",
+            gpgkey      => $gpgkey,
             baseurl     => $baseurl_url,
             priority    => $priority,
             autorefresh => 1,
@@ -178,12 +201,20 @@ class vmwaretools::repo (
           }
         }
         'Ubuntu': {
-          if ( $yum_path == $vmwaretools::params::yum_path ) or ( $just_prepend_yum_path == true ) {
-            $gpgkey_url  = "${yum_server}${yum_path}/keys/"
-            $baseurl_url = "${yum_server}${yum_path}/esx/${tools_version}/${vmwaretools::params::baseurl_string}"
+          if ( $repopath == $vmwaretools::params::repopath ) or ( $just_prepend_repopath == true ) {
+            $baseurl_url = "${reposerver}${repopath}/esx/${tools_version}/${vmwaretools::params::baseurl_string}"
           } else {
-            $gpgkey_url  = "${yum_server}${yum_path}/"
-            $baseurl_url = "${yum_server}${yum_path}/"
+            $baseurl_url = "${reposerver}${repopath}/"
+          }
+
+          if ( $gpgkey_url == $vmwaretools::params::gpgkey_url ) {
+            if ( $repopath == $vmwaretools::params::repopath ) or ( $just_prepend_repopath == true ) {
+              $gpgkey = "${reposerver}${repopath}/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub"
+            } else {
+              $gpgkey = "${reposerver}${repopath}/VMWARE-PACKAGING-GPG-RSA-KEY.pub"
+            }
+          } else {
+            $gpgkey = "${gpgkey_url}VMWARE-PACKAGING-GPG-RSA-KEY.pub"
           }
 
           include '::apt'
@@ -191,7 +222,7 @@ class vmwaretools::repo (
             ensure      => $ensure,
             comment     => "VMware Tools ${tools_version} - ${vmwaretools::params::baseurl_string} ${::lsbdistcodename}",
             location    => $baseurl_url,
-            key_source  => "${gpgkey_url}VMWARE-PACKAGING-GPG-RSA-KEY.pub",
+            key_source  => $gpgkey,
             #key         => '0xC0B5E0AB66FD4949',
             key         => '36E47E1CC4DCC5E8152D115CC0B5E0AB66FD4949',
             include_src => false,
