@@ -1,0 +1,11 @@
+#
+# VMware SCSI devices Timeout adjustment
+#
+# Modify the timeout value for VMware SCSI devices so that
+# in the event of a failover, we don't time out.
+# See Bug 271286 for more information.
+
+
+ACTION=="add", SUBSYSTEMS=="scsi", ATTRS{vendor}=="VMware  ", ATTRS{model}=="Virtual disk    ", RUN+="/bin/sh -c 'echo <%= @scsi_timeout %> >/sys$DEVPATH/timeout'"
+ACTION=="add", SUBSYSTEMS=="scsi", ATTRS{vendor}=="VMware, ", ATTRS{model}=="VMware Virtual S", RUN+="/bin/sh -c 'echo <%= @scsi_timeout %> >/sys$DEVPATH/timeout'"
+

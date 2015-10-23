@@ -152,6 +152,11 @@ class vmwaretools::params {
     $safe_service_hasrestart = $service_hasrestart
   }
 
+  $scsi_timeout = $::vmwaretools_scsi_timeout ? {
+    undef   => '180',
+    default => $::vmwaretools_scsi_timeout,
+  }
+
   if $::operatingsystemmajrelease { # facter 1.7+
     $majdistrelease = $::operatingsystemmajrelease
   } elsif $::lsbmajdistrelease {    # requires LSB to already be installed

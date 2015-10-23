@@ -147,6 +147,7 @@ class vmwaretools (
   $service_enable        = $vmwaretools::params::safe_service_enable,
   $service_hasstatus     = $vmwaretools::params::service_hasstatus,
   $service_hasrestart    = $vmwaretools::params::safe_service_hasrestart,
+  $scsi_timeout          = $vmwaretools::params::scsi_timeout,
 
   # Deprecated parameters
   $yum_server            = undef,
@@ -298,6 +299,18 @@ class vmwaretools (
           ensure  => $package_ensure,
         }
 
+        file { '/etc/udev/rules.d/99-vmware-scsi-udev.rules':
+          ensure  => present,
+          content => template('vmwaretools/udev-rules.erb'),
+          require => Package[$package_real],
+          notify  => Exec['udevrefresh'],
+        }
+
+        exec { 'udevrefresh':
+          refreshonly => true,
+          command     => '/sbin/udevadm control --reload-rules',
+        }
+          
         file_line { 'disable-tools-version':
           path    => '/etc/vmware-tools/tools.conf',
           line    => $disable_tools_version ? {
