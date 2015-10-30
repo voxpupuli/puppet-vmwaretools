@@ -196,7 +196,7 @@ class vmwaretools::repo (
 
           exec { 'vmware-import-gpgkey':
             path        => '/bin:/usr/bin:/sbin:/usr/sbin',
-            command     => "rpm --import ${gpgkey_url}VMWARE-PACKAGING-GPG-RSA-KEY.pub",
+            command     => "rpm --import ${gpgkey}",
             refreshonly => true,
           }
         }
