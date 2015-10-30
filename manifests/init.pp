@@ -306,9 +306,17 @@ class vmwaretools (
           notify  => Exec['udevrefresh'],
         }
 
-        exec { 'udevrefresh':
-          refreshonly => true,
-          command     => '/sbin/udevadm control --reload-rules',
+        if ($::operatingsystem == 'RedHat') and ($::operatingsystemmajrelease == 5) {
+          exec { 'udevrefresh':
+            refreshonly => true,
+            command     => '/sbin/udevcontrol reload_rules && /sbin/start_udev',
+          }
+        }
+        else {
+          exec { 'udevrefresh':
+            refreshonly => true,
+            command     => '/sbin/udevadm control --reload-rules && /sbin/udevadm trigger --action=add --subsystem-match=scsi',
+          }
         }
           
         file_line { 'disable-tools-version':
