@@ -99,6 +99,11 @@
 #   Service has restart command.
 #   Default: true
 #
+# [*scsi_timeout*]
+#   This will adjust the scsi timout value set in udev rules.  This file is 
+#   created by the VMWare Tools installer.
+#   Defualt: 180
+#
 # === Actions:
 #
 # Removes old VMwareTools package or runs vmware-uninstall-tools.pl if found.

@@ -219,6 +219,12 @@ Default: absent
 The password for the proxy.
 Default: absent
 
+####`scsi_timeout`
+
+This will adjust the scsi timout value set in udev rules.  This file is created by the VMWare Tools installer.
+Defualt: 180
+
+
 ##Limitations
 
 ###OS Support:
