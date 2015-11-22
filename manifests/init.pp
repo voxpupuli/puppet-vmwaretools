@@ -99,6 +99,11 @@
 #   Service has restart command.
 #   Default: true
 #
+# [*scsi_timeout*]
+#   This will adjust the scsi timout value set in udev rules.  This file is
+#   created by the VMWare Tools installer.
+#   Defualt: 180
+#
 # === Actions:
 #
 # Removes old VMwareTools package or runs vmware-uninstall-tools.pl if found.
@@ -147,6 +152,7 @@ class vmwaretools (
   $service_enable        = $vmwaretools::params::safe_service_enable,
   $service_hasstatus     = $vmwaretools::params::service_hasstatus,
   $service_hasrestart    = $vmwaretools::params::safe_service_hasrestart,
+  $scsi_timeout          = $vmwaretools::params::scsi_timeout,
 
   # Deprecated parameters
   $yum_server            = undef,
@@ -296,6 +302,26 @@ class vmwaretools (
 
         package { $package_real :
           ensure  => $package_ensure,
+        }
+
+        file { '/etc/udev/rules.d/99-vmware-scsi-udev.rules':
+          ensure  => present,
+          content => template('vmwaretools/udev-rules.erb'),
+          require => Package[$package_real],
+          notify  => Exec['udevrefresh'],
+        }
+
+        if ($::operatingsystem == 'RedHat') and ($::operatingsystemmajrelease == 5) {
+          exec { 'udevrefresh':
+            refreshonly => true,
+            command     => '/sbin/udevcontrol reload_rules && /sbin/start_udev',
+          }
+        }
+        else {
+          exec { 'udevrefresh':
+            refreshonly => true,
+            command     => '/sbin/udevadm control --reload-rules && /sbin/udevadm trigger --action=add --subsystem-match=scsi',
+          }
         }
 
         file_line { 'disable-tools-version':
