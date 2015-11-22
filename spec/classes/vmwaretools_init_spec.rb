@@ -125,7 +125,7 @@ describe 'vmwaretools', :type => 'class' do
       ) }
       it { should contain_exec('udevrefresh').with(
         :refreshonly => true
-      ) } 
+      ) }
     end
 
     describe 'for osfamily RedHat and operatingsystem RedHat 6' do

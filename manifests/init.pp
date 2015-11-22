@@ -100,7 +100,7 @@
 #   Default: true
 #
 # [*scsi_timeout*]
-#   This will adjust the scsi timout value set in udev rules.  This file is 
+#   This will adjust the scsi timout value set in udev rules.  This file is
 #   created by the VMWare Tools installer.
 #   Defualt: 180
 #
@@ -323,7 +323,7 @@ class vmwaretools (
             command     => '/sbin/udevadm control --reload-rules && /sbin/udevadm trigger --action=add --subsystem-match=scsi',
           }
         }
-          
+
         file_line { 'disable-tools-version':
           path    => '/etc/vmware-tools/tools.conf',
           line    => $disable_tools_version ? {
