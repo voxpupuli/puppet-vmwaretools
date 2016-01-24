@@ -311,13 +311,12 @@ class vmwaretools (
           notify  => Exec['udevrefresh'],
         }
 
-        if ($::operatingsystem == 'RedHat') and ($::operatingsystemmajrelease == 5) {
+        if ($::osfamily == 'RedHat') and ($::operatingsystemmajrelease == 5) {
           exec { 'udevrefresh':
             refreshonly => true,
             command     => '/sbin/udevcontrol reload_rules && /sbin/start_udev',
           }
-        }
-        else {
+        } else {
           exec { 'udevrefresh':
             refreshonly => true,
             command     => '/sbin/udevadm control --reload-rules && /sbin/udevadm trigger --action=add --subsystem-match=scsi',
