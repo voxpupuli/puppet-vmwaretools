@@ -51,7 +51,9 @@ include ::vmwaretools
 
 ####Deprecation Warning
 
-The parameters `yum_server`, `yum_path`, and `just_prepend_yum_path` will be renamed to be `reposerver`, `repopath`, and `just_prepend_repopath` respectively in version 5.0.0 of this module.  Please be aware that your manifests may need to change to account for the new syntax.
+- Due to the switch to the dependent puppetlabs-apt version 2.x in version 6.0.0 of this module, Puppet 2.7 will no longer be supported.
+
+- The parameters `yum_server`, `yum_path`, and `just_prepend_yum_path` will be renamed to be `reposerver`, `repopath`, and `just_prepend_repopath` respectively in version 5.0.0 of this module.  Please be aware that your manifests may need to change to account for the new syntax.
 
 This:
 
