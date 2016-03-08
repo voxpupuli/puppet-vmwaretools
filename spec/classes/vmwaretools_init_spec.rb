@@ -53,7 +53,7 @@ describe 'vmwaretools', :type => 'class' do
     describe "for operating system Fedora" do
       let :facts do {
         :virtual                => 'vmware',
-        :osfamily               => 'Redhat',
+        :osfamily               => 'RedHat',
         :operatingsystem        => 'Fedora',
         :operatingsystemrelease => '1.0'
       }
@@ -108,10 +108,11 @@ describe 'vmwaretools', :type => 'class' do
 
     describe 'for osfamily RedHat and operatingsystem RedHat 5' do
       let :facts do {
-        :virtual                => 'vmware',
-        :osfamily               => 'RedHat',
-        :operatingsystem        => 'RedHat',
-        :operatingsystemrelease => '5.5'
+        :virtual                   => 'vmware',
+        :osfamily                  => 'RedHat',
+        :operatingsystem           => 'RedHat',
+        :operatingsystemrelease    => '5.5',
+        :operatingsystemmajrelease => '5'
       }
       end
       it { should contain_class('vmwaretools::repo').with(
@@ -124,17 +125,19 @@ describe 'vmwaretools', :type => 'class' do
         :content => "#\n# VMware SCSI devices Timeout adjustment\n#\n# Modify the timeout value for VMware SCSI devices so that\n# in the event of a failover, we don't time out.\n# See Bug 271286 for more information.\n\n\nACTION==\"add\", SUBSYSTEMS==\"scsi\", ATTRS{vendor}==\"VMware  \", ATTRS{model}==\"Virtual disk    \", RUN+=\"/bin/sh -c 'echo 180 >/sys$DEVPATH/timeout'\"\nACTION==\"add\", SUBSYSTEMS==\"scsi\", ATTRS{vendor}==\"VMware, \", ATTRS{model}==\"VMware Virtual S\", RUN+=\"/bin/sh -c 'echo 180 >/sys$DEVPATH/timeout'\"\n\n"
       ) }
       it { should contain_exec('udevrefresh').with(
-        :refreshonly => true
+        :refreshonly => true,
+        :command     => '/sbin/udevcontrol reload_rules && /sbin/start_udev'
       ) }
     end
 
     describe 'for osfamily RedHat and operatingsystem RedHat 6' do
       let(:params) {{ :scsi_timeout => '14400' }}
       let :facts do {
-        :virtual                => 'vmware',
-        :osfamily               => 'RedHat',
-        :operatingsystem        => 'RedHat',
-        :operatingsystemrelease => '6.1'
+        :virtual                   => 'vmware',
+        :osfamily                  => 'RedHat',
+        :operatingsystem           => 'RedHat',
+        :operatingsystemrelease    => '6.1',
+        :operatingsystemmajrelease => '6'
       }
       end
       it { should contain_class('vmwaretools::repo').with(
@@ -147,7 +150,8 @@ describe 'vmwaretools', :type => 'class' do
         :content => "#\n# VMware SCSI devices Timeout adjustment\n#\n# Modify the timeout value for VMware SCSI devices so that\n# in the event of a failover, we don't time out.\n# See Bug 271286 for more information.\n\n\nACTION==\"add\", SUBSYSTEMS==\"scsi\", ATTRS{vendor}==\"VMware  \", ATTRS{model}==\"Virtual disk    \", RUN+=\"/bin/sh -c 'echo 14400 >/sys$DEVPATH/timeout'\"\nACTION==\"add\", SUBSYSTEMS==\"scsi\", ATTRS{vendor}==\"VMware, \", ATTRS{model}==\"VMware Virtual S\", RUN+=\"/bin/sh -c 'echo 14400 >/sys$DEVPATH/timeout'\"\n\n"
       ) }
       it { should contain_exec('udevrefresh').with(
-        :refreshonly => true
+        :refreshonly => true,
+        :command     => '/sbin/udevadm control --reload-rules && /sbin/udevadm trigger --action=add --subsystem-match=scsi'
       ) }
 
     end
@@ -189,11 +193,12 @@ describe 'vmwaretools', :type => 'class' do
 
   context 'on a supported operatingsystem, vmware platform, custom parameters' do
     let :facts do {
-      :virtual                => 'vmware',
-      :osfamily               => 'RedHat',
-      :operatingsystem        => 'RedHat',
-      :operatingsystemrelease => '6.1',
-      :architecture           => 'x86_64'
+      :virtual                   => 'vmware',
+      :osfamily                  => 'RedHat',
+      :operatingsystem           => 'RedHat',
+      :operatingsystemrelease    => '6.1',
+      :operatingsystemmajrelease => '6',
+      :architecture              => 'x86_64'
     }
     end
 
