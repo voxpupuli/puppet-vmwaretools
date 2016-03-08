@@ -311,7 +311,7 @@ class vmwaretools (
           notify  => Exec['udevrefresh'],
         }
 
-        if ($::osfamily == 'RedHat') and ($::operatingsystemmajrelease == 5) {
+        if ($::osfamily == 'RedHat') and ($::operatingsystemmajrelease == '5') {
           exec { 'udevrefresh':
             refreshonly => true,
             command     => '/sbin/udevcontrol reload_rules && /sbin/start_udev',
