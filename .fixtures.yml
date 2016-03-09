@@ -3,8 +3,6 @@ fixtures:
     stdlib: "https://github.com/puppetlabs/puppetlabs-stdlib.git"
     vmware_puppetfact: "https://github.com/wolfspyre/vmware_puppetfact.git"
     zypprepo: "https://github.com/deadpoint/puppet-zypprepo.git"
-    apt:
-      repo: "https://github.com/puppetlabs/puppetlabs-apt.git"
-      ref: "1.8.0"
+    apt: "https://github.com/puppetlabs/puppetlabs-apt.git"
   symlinks:
     vmwaretools: "#{source_dir}"

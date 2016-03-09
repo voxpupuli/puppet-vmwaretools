@@ -107,13 +107,12 @@ describe 'vmwaretools::repo', :type => 'class' do
       }
       end
       it { should contain_apt__source('vmware-tools').with(
-        :comment     => 'VMware Tools latest - ubuntu precise',
-        :ensure      => 'present',
-        :location    => 'http://packages.vmware.com/tools/esx/latest/ubuntu',
-        :key_source  => 'http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub',
-       #:key         => '0xC0B5E0AB66FD4949',
-        :key         => '36E47E1CC4DCC5E8152D115CC0B5E0AB66FD4949',
-        :include_src => false
+        :comment    => 'VMware Tools latest - ubuntu precise',
+        :ensure     => 'present',
+        :location   => 'http://packages.vmware.com/tools/esx/latest/ubuntu',
+        :key_source => 'http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub',
+       #:key        => '0xC0B5E0AB66FD4949',
+        :key        => '36E47E1CC4DCC5E8152D115CC0B5E0AB66FD4949'
       )}
     end
   end

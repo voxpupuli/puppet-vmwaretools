@@ -51,7 +51,9 @@ include ::vmwaretools
 
 ####Deprecation Warning
 
-The parameters `yum_server`, `yum_path`, and `just_prepend_yum_path` will be renamed to be `reposerver`, `repopath`, and `just_prepend_repopath` respectively in version 5.0.0 of this module.  Please be aware that your manifests may need to change to account for the new syntax.
+- Due to the switch to the dependent puppetlabs-apt version 2.x in version 6.0.0 of this module, Puppet 2.7 will no longer be supported.
+
+- The parameters `yum_server`, `yum_path`, and `just_prepend_yum_path` will be renamed to be `reposerver`, `repopath`, and `just_prepend_repopath` respectively in version 5.0.0 of this module.  Please be aware that your manifests may need to change to account for the new syntax.
 
 This:
 
@@ -109,120 +111,68 @@ class { '::vmwaretools':
 
 ####Public Classes
 
-* vmwaretools: Installs the VMware Tools Operating System Specific Packages.
-* vmwaretools::ntp: Turns off syncTime via the vmware-tools API and should be accompanied by a running NTP client on the guest.
+* [`vmwaretools`](#class-vmwaretools): Installs the VMware Tools Operating System Specific Packages.
+* [`vmwaretools::ntp`](#class-vmwaretoolsntp): Turns off syncTime via the vmware-tools API and should be accompanied by a running NTP client on the guest.
 
 ####Private Classes
 
-* vmwaretools::repo: Installs the VMware Tools software repository.
+* `vmwaretools::repo`: Installs the VMware Tools software repository.
 
-###Parameters
+####Class: `vmwaretools`
 
-The following parameters are available in the vmwaretools module:
+Main class, includes all other classes.
 
-####`ensure`
+#####Parameters
 
-Ensure if present or absent.
-Default: present
+* `ensure`: Ensure if present or absent.  Default: present
 
-####`autoupgrade`
+* `autoupgrade`: Upgrade package automatically, if there is a newer version.  Default: false
 
-Upgrade package automatically, if there is a newer version.
-Default: false
+* `package`: Name of the package.  Only set this if your platform is not supported or you know what you are doing.  Default: auto-set, platform specific
 
-####`package`
+* `service_ensure`: Ensure if service is running or stopped.  Default: running
 
-Name of the package.  Only set this if your platform is not supported or you know what you are doing.
-Default: auto-set, platform specific
+* `service_name`: Name of openvmtools service.  Only set this if your platform is not supported or you know what you are doing.  Default: auto-set, platform specific
 
-####`service_ensure`
+* `service_enable`: Start service at boot.  Default: true
 
-Ensure if service is running or stopped.
-Default: running
+* `service_hasstatus`: Service has status command.  Only set this if your platform is not supported or you know what you are doing.  Default: auto-set, platform specific
 
-####`service_name`
+* `service_hasrestart`: Service has restart command.  Default: true
 
-Name of openvmtools service.  Only set this if your platform is not supported or you know what you are doing.
-Default: auto-set, platform specific
+* `tools_version`: The version of VMware Tools to install.  Possible values can be found here: http://packages.vmware.com/tools/esx/index.html Default: latest
 
-####`service_enable`
+* `disable_tools_version`: Whether to report the version of the tools back to vCenter/ESX.  Default: true (ie do not report)
 
-Start service at boot.
-Default: true
+* `manage_repository`: Whether to allow the repo to be manged by the module or out of band (ie RHN Satellite).  Default: true (ie let the module manage it)
 
-####`service_hasstatus`
+* `reposerver`: The server which holds the YUM repository.  Customize this if you mirror public YUM repos to your internal network.  Default: http://packages.vmware.com
 
-Service has status command.  Only set this if your platform is not supported or you know what you are doing.
-Default: auto-set, platform specific
+* `repopath`: The path on *reposerver* where the repository can be found.  Customize this if you mirror public YUM repos to your internal network.  Default: /tools
 
-####`service_hasrestart`
+* `just_prepend_repopath`: Whether to prepend the overridden *repopath* onto the default *repopath* or completely replace it.  Only works if *repopath* is specified.  Default: 0 (false)
 
-Service has restart command.
-Default: true
+* `gpgkey_url`: The URL where the public GPG key resides for the repository NOT including the GPG public key file itself (ending with a trailing /).  Default: ${reposerver}${repopath}/
 
-####`tools_version`
+* `priority`: Give packages in this YUM repository a different weight.  Requires yum-plugin-priorities to be installed.  Default: 50
 
-The version of VMware Tools to install.  Possible values can be found here: http://packages.vmware.com/tools/esx/index.html
-Default: latest
+* `protect`: Protect packages in this YUM repository from being overridden by packages in non-protected repositories.  Default: 0 (false)
 
-####`disable_tools_version`
+* `proxy`: The URL to the proxy server for this repository.  Default: absent
 
-Whether to report the version of the tools back to vCenter/ESX.
-Default: true (ie do not report)
+* `proxy_username`: The username for the proxy.  Default: absent
 
-####`manage_repository`
+* `proxy_password`: The password for the proxy.  Default: absent
 
-Whether to allow the repo to be manged by the module or out of band (ie RHN Satellite).
-Default: true (ie let the module manage it)
+* `scsi_timeout`: This will adjust the scsi timout value set in udev rules.  This file is created by the VMWare Tools installer.  Defualt: 180
 
-####`reposerver`
+####Class: `vmwaretools::ntp`
 
-The server which holds the YUM repository.  Customize this if you mirror public YUM repos to your internal network.
-Default: http://packages.vmware.com
+This class handles turning off syncTime via the vmware-tools API and should be accompanied by a running NTP daemon on the guest.
 
-####`repopath`
+#####Parameters
 
-The path on *reposerver* where the repository can be found.  Customize this if you mirror public YUM repos to your internal network.
-Default: /tools
-
-####`just_prepend_repopath`
-
-Whether to prepend the overridden *repopath* onto the default *repopath* or completely replace it.  Only works if *repopath* is specified.
-Default: 0 (false)
-
-####`gpgkey_url`
-The URL where the public GPG key resides for the repository NOT including the GPG public key file itself (ending with a trailing /).
-Default: ${reposerver}${repopath}/
-
-####`priority`
-
-Give packages in this YUM repository a different weight.  Requires yum-plugin-priorities to be installed.
-Default: 50
-
-####`protect`
-
-Protect packages in this YUM repository from being overridden by packages in non-protected repositories.
-Default: 0 (false)
-
-####`proxy`
-
-The URL to the proxy server for this repository.
-Default: absent
-
-####`proxy_username`
-
-The username for the proxy.
-Default: absent
-
-####`proxy_password`
-
-The password for the proxy.
-Default: absent
-
-####`scsi_timeout`
-
-This will adjust the scsi timout value set in udev rules.  This file is created by the VMWare Tools installer.
-Defualt: 180
+None
 
 
 ##Limitations
