@@ -218,22 +218,22 @@ class vmwaretools (
     'vmware': {
       if $supported {
         $service_pattern = $tools_version ? {
-          /^3\./   => 'vmware-guestd',
+          /^3\./  => 'vmware-guestd',
           /^4\.0/ => 'vmware-guestd',
-          default   => 'vmtoolsd',
+          default => 'vmtoolsd',
         }
 
         $rhel_upstart = $tools_version ? {
-          /^3\./   => false,
-          /^4\./   => false,
+          /^3\./  => false,
+          /^4\./  => false,
           /^5\.0/ => false,
-          default   => true,
+          default => true,
         }
 
         $package_real = $package ? {
           undef   => $tools_version ? {
-            /^3\./ => $vmwaretools::params::package_name_4x,
-            /^4\./ => $vmwaretools::params::package_name_4x,
+            /^3\./  => $vmwaretools::params::package_name_4x,
+            /^4\./  => $vmwaretools::params::package_name_4x,
             default => $vmwaretools::params::package_name_5x,
           },
           default => $package,
@@ -241,8 +241,8 @@ class vmwaretools (
 
         $service_name_real = $service_name ? {
           undef   => $tools_version ? {
-            /^3\./ => $vmwaretools::params::service_name_4x,
-            /^4\./ => $vmwaretools::params::service_name_4x,
+            /^3\./  => $vmwaretools::params::service_name_4x,
+            /^4\./  => $vmwaretools::params::service_name_4x,
             default => $vmwaretools::params::service_name_5x,
           },
           default => $service_name,
@@ -250,16 +250,16 @@ class vmwaretools (
 
         $service_hasstatus_real = $service_hasstatus ? {
           undef   => $tools_version ? {
-            /^3\./ => $vmwaretools::params::service_hasstatus_4x,
-            /^4\./ => $vmwaretools::params::service_hasstatus_4x,
+            /^3\./  => $vmwaretools::params::service_hasstatus_4x,
+            /^4\./  => $vmwaretools::params::service_hasstatus_4x,
             default => $vmwaretools::params::service_hasstatus_5x,
           },
           default => $service_hasstatus,
         }
 
         $repobasearch = $tools_version ? {
-          /^3\./ => $vmwaretools::params::repobasearch_4x,
-          /^4\./ => $vmwaretools::params::repobasearch_4x,
+          /^3\./  => $vmwaretools::params::repobasearch_4x,
+          /^4\./  => $vmwaretools::params::repobasearch_4x,
           default => $vmwaretools::params::repobasearch_5x,
         }
 
