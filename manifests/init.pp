@@ -344,7 +344,7 @@ class vmwaretools (
             start      => "service ${service_name_real} start",
             stop       => "service ${service_name_real} stop",
             status     => "service ${service_name_real} status",
-            restart    => "service ${service_name_real} restart",            
+            restart    => "service ${service_name_real} restart",
             require    => Package[$package_real],
           }
         } else {
