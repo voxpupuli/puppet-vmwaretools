@@ -229,7 +229,7 @@ describe 'vmwaretools', :type => 'class' do
       it { should contain_package('vmware-tools-esx-nox') }
       it { should contain_package('vmware-tools-esx-kmods') }
       it { should contain_service('vmware-tools-services').with_pattern('vmtoolsd') }
-      it { should_not contain_service('vmware-tools-services').with_start('/sbin/service vmware-tools-services start') }
+      it { should_not contain_service('vmware-tools-services').with_start('/sbin/start vmware-tools-services start') }
     end
 
     describe 'tools_version => 5.1 and operatingsystem => RedHat 6' do
