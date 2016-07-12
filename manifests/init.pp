@@ -341,11 +341,11 @@ class vmwaretools (
             ensure     => $service_ensure_real,
             hasrestart => true,
             hasstatus  => true,
-	    start      => "service ${service_name_real} start",
+            start      => "service ${service_name_real} start",
             stop       => "service ${service_name_real} stop",
             status     => "service ${service_name_real} status",
             restart    => "service ${service_name_real} restart",            
-	    require    => Package[$package_real],
+            require    => Package[$package_real],
           }
         } else {
           service { $service_name_real :
