@@ -47,16 +47,25 @@ class vmwaretools::ntp {
       }
       # tools.syncTime = "FALSE" should be in the guest's vmx file and NTP
       # should be in use on the guest.  http://kb.vmware.com/kb/1006427
-      exec { 'vmware-tools.syncTime':
-        command     => $::vmwaretools::service_pattern ? {
-          'vmware-guestd' => 'vmware-guestd --cmd "vmx.set_option synctime 1 0" || true',
-          'vmtoolsd'      => 'vmware-toolbox-cmd timesync disable',
-          default         => undef,
-        },
-        path        => '/usr/bin:/usr/sbin',
-        returns     => [ 0, 1, ],
-        require     => Package[$::vmwaretools::package_real],
-        refreshonly => true,
+      # This nasty if/elseif/else statement comes from the inability to determine
+      ## The value of synctime when using vmware-guestd. :-(
+      if $::vmwaretools::service_pattern == 'vmtoolsd' {
+        exec { 'vmware-tools.syncTime':
+          command  => 'vmware-toolbox-cmd timesync disable',
+          onlyif   => 'vmware-toolbox-cmd timesync status',
+          path        => '/usr/bin:/usr/sbin',
+          require     => Package[$::vmwaretools::package_real],
+        }
+      } elsif $::vmwaretools::service_pattern == 'vmware-guestd' {
+        exec { 'vmware-tools.syncTime':
+          command => 'vmware-guestd --cmd "vmx.set_option synctime 1 0" || true',
+          path        => '/usr/bin:/usr/sbin',
+          returns     => [ 0, 1, ],
+          subscribe   => Package[$::vmwaretools::package_real],
+          refreshonly => true,
+        }
+      } else {
+        # Do nothing.
       }
     }
     # If we are not on VMware, do not do anything.
