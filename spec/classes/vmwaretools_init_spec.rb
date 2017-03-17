@@ -10,7 +10,8 @@ describe 'vmwaretools', :type => 'class' do
       :architecture           => 'i386',
       :osfamily               => 'foo',
       :operatingsystem        => 'foo',
-      :operatingsystemrelease => '1.0'
+      :operatingsystemrelease => '1.0',
+      :virtual                => 'foo'
     }
     end
     it { should_not contain_class('vmwaretools::repo') }

@@ -214,7 +214,7 @@ class vmwaretools (
     $real_just_prepend_repopath = $just_prepend_repopath
   }
 
-  case $facts['virtual'] {
+  case $::virtual {
     'vmware': {
       if $supported {
         $service_pattern = $tools_version ? {
