@@ -84,7 +84,7 @@ class vmwaretools::repo (
   $tools_version         = $vmwaretools::params::tools_version,
   $reposerver            = $vmwaretools::params::reposerver,
   $repopath              = $vmwaretools::params::repopath,
-  $just_prepend_repopath = $vmwaretools::params::safe_just_prepend_repopath,
+  $just_prepend_repopath = $vmwaretools::params::just_prepend_repopath,
   $priority              = $vmwaretools::params::repopriority,
   $protect               = $vmwaretools::params::repoprotect,
   $gpgkey_url            = $vmwaretools::params::gpgkey_url,

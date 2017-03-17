@@ -9,7 +9,8 @@ describe 'vmwaretools::repo', :type => 'class' do
     let :facts do {
       :osfamily               => 'foo',
       :operatingsystem        => 'foo',
-      :operatingsystemrelease => '1.0'
+      :operatingsystemrelease => '1.0',
+      :virtual                => 'foo'
     }
     end
     #it { should run.with_params("Your operating system #{osfamily} is unsupported and will not have the VMware Tools OSP installed.").and_return('Your operating system foo is unsupported and will not have the VMware Tools OSP installed.') }
@@ -23,15 +24,33 @@ describe 'vmwaretools::repo', :type => 'class' do
   suseish   = ['SLES', 'SLED']
 
   context 'on a supported osfamily, non-vmware platform' do
-    ({'RedHat' => 'CentOS', 'SuSE' => 'SLES', 'Debian' => 'Ubuntu'}).each do |osf, os|
+    #({'RedHat' => 'CentOS', 'SuSE' => 'SLES', 'Debian' => 'Ubuntu'}).each do |osf, os|
+    [
+      {
+        :osfamily => 'RedHat',
+        :operatingsystem => 'CentOS',
+        :operatingsystemrelease => '6.5'
+      },
+      {
+        :osfamily => 'SuSE',
+        :operatingsystem => 'SLES',
+        :operatingsystemrelease => '10.2'
+      },
+      {
+        :osfamily => 'Debian',
+        :operatingsystem=> 'Ubuntu',
+        :operatingsystemrelease => '12.04',
+        :lsbdistcodename => 'precise'
+      }
+    ].each do |f|
+      osf = f[:osfamily]
+      os  = f[:operatingsystem]
       describe "for osfamily #{osf} operatingsystem #{os}" do
         let(:params) {{}}
-        let :facts do {
-          :osfamily               => osf,
-          :operatingsystem        => os,
-          :operatingsystemrelease => '1.0',
+        let :facts do f.merge({
+          :architecture           => 'i386',
           :virtual                => 'foo'
-        }
+        })
         end
         it { should_not contain_yumrepo('vmware-tools') }
         it { should_not contain_file('/etc/yum.repos.d/vmware-tools.repo') }
@@ -103,7 +122,8 @@ describe 'vmwaretools::repo', :type => 'class' do
         :architecture           => 'amd64',
         :operatingsystem        => 'Ubuntu',
         :lsbdistcodename        => 'precise',
-        :lsbdistid              => 'Ubuntu'
+        :lsbdistid              => 'Ubuntu',
+        :puppetversion          => '3.8.1'
       }
       end
       it { should contain_apt__source('vmware-tools').with(

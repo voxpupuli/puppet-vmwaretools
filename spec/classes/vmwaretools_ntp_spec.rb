@@ -30,8 +30,10 @@ describe 'vmwaretools::ntp', :type => 'class' do
     let(:pre_condition) { "class { 'vmwaretools': package => 'RandomData' }" }
     let(:params) {{}}
     let :facts do {
+      :architecture              => 'i386',
       :osfamily                  => 'RedHat',
       :operatingsystem           => 'RedHat',
+      :operatingsystemrelease    => '6.5',
       :operatingsystemmajrelease => '6',
       :virtual                   => 'foo'
     }
@@ -49,8 +51,10 @@ describe 'vmwaretools::ntp', :type => 'class' do
       end
       let(:params) {{}}
       let :facts do {
+        :architecture              => 'i386',
         :osfamily                  => 'RedHat',
         :operatingsystem           => 'RedHat',
+        :operatingsystemrelease    => '6.5',
         :operatingsystemmajrelease => '6',
         :virtual                   => 'vmware'
       }
@@ -67,8 +71,10 @@ describe 'vmwaretools::ntp', :type => 'class' do
       end
       let(:params) {{}}
       let :facts do {
+        :architecture              => 'i386',
         :osfamily                  => 'RedHat',
         :operatingsystem           => 'RedHat',
+        :operatingsystemrelease    => '6.5',
         :operatingsystemmajrelease => '6',
         :virtual                   => 'vmware'
       }
