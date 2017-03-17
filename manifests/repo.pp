@@ -121,7 +121,18 @@ class vmwaretools::repo (
       case $::operatingsystem {
         'RedHat', 'CentOS', 'Scientific', 'OracleLinux', 'OEL': {
           if ( $repopath == $vmwaretools::params::repopath ) or ( $just_prepend_repopath == true ) {
-            $baseurl_url = "${reposerver}${repopath}/esx/${tools_version}/${vmwaretools::params::baseurl_string}${vmwaretools::params::majdistrelease}/${repobasearch}/"
+            $baseurl_url = join([
+              $reposerver,
+              $repopath,
+              '/esx/',
+              $tools_version,
+              '/',
+              $vmwaretools::params::baseurl_string,
+              $vmwaretools::params::majdistrelease,
+              '/',
+              $repobasearch,
+              '/'
+            ], '')
           } else {
             $baseurl_url = "${reposerver}${repopath}/"
           }
@@ -130,16 +141,25 @@ class vmwaretools::repo (
           # per http://projects.puppetlabs.com/issues/8867
           if ( $gpgkey_url == $vmwaretools::params::gpgkey_url ) {
             if ( $repopath == $vmwaretools::params::repopath ) or ( $just_prepend_repopath == true ) {
-              $gpgkey = "${reposerver}${repopath}/keys/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    ${reposerver}${repopath}/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub"
+              $gpgkey = join([
+                "${reposerver}${repopath}/keys/VMWARE-PACKAGING-GPG-DSA-KEY.pub",
+                "${reposerver}${repopath}/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub"], "\n    ")
             } else {
-              $gpgkey = "${reposerver}${repopath}/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    ${reposerver}${repopath}/VMWARE-PACKAGING-GPG-RSA-KEY.pub"
+              $gpgkey = join([
+                "${reposerver}${repopath}/VMWARE-PACKAGING-GPG-DSA-KEY.pub",
+                "${reposerver}${repopath}/VMWARE-PACKAGING-GPG-RSA-KEY.pub"], "\n    ")
             }
           } else {
-            $gpgkey = "${gpgkey_url}VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    ${gpgkey_url}VMWARE-PACKAGING-GPG-RSA-KEY.pub"
+            $gpgkey = join(["${gpgkey_url}VMWARE-PACKAGING-GPG-DSA-KEY.pub",
+            "${gpgkey_url}VMWARE-PACKAGING-GPG-RSA-KEY.pub"], "\n    ")
           }
 
+          $descr = join([
+            'VMware Tools', $tools_version, '-',
+            "${vmwaretools::params::baseurl_string}${vmwaretools::params::majdistrelease}",
+            $repobasearch], ' ')
           yumrepo { 'vmware-tools':
-            descr          => "VMware Tools ${tools_version} - ${vmwaretools::params::baseurl_string}${vmwaretools::params::majdistrelease} ${repobasearch}",
+            descr          => $descr,
             enabled        => $repo_enabled,
             gpgcheck       => '1',
             gpgkey         => $gpgkey,
@@ -161,7 +181,10 @@ class vmwaretools::repo (
         }
         'SLES', 'SLED': {
           if ( $repopath == $vmwaretools::params::repopath ) or ( $just_prepend_repopath == true ) {
-            $baseurl_url = "${reposerver}${repopath}/esx/${tools_version}/${vmwaretools::params::baseurl_string}${vmwaretools::params::distrelease}/${repobasearch}/"
+            $baseurl_url = join(["${reposerver}${repopath}",
+            "/esx/${tools_version}/",
+            "${vmwaretools::params::baseurl_string}${vmwaretools::params::distrelease}",
+            "/${repobasearch}/"], '')
           } else {
             $baseurl_url = "${reposerver}${repopath}/"
           }
@@ -176,8 +199,11 @@ class vmwaretools::repo (
             $gpgkey = "${gpgkey_url}VMWARE-PACKAGING-GPG-RSA-KEY.pub"
           }
 
+          $descr = join(['VMware Tools', $tools_version, '-',
+          "${vmwaretools::params::baseurl_string}${vmwaretools::params::distrelease}",
+          $repobasearch], ' ')
           zypprepo { 'vmware-tools':
-            descr       => "VMware Tools ${tools_version} - ${vmwaretools::params::baseurl_string}${vmwaretools::params::distrelease} ${repobasearch}",
+            descr       => $descr,
             enabled     => $repo_enabled,
             gpgcheck    => '1',
             gpgkey      => $gpgkey,
