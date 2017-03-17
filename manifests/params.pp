@@ -281,6 +281,14 @@ class vmwaretools::params {
         }
       }
     }
+    'Debian': {
+      $package_name_4x = 'open-vm-tools'
+      $package_name_5x = 'open-vm-tools'
+      $service_name_4x = 'open-vm-tools'
+      $service_name_5x = 'open-vm-tools'
+      $service_hasstatus_4x = false
+      $service_hasstatus_5x = false
+    }
     default: {
       notice "Your operating system ${::operatingsystem} is unsupported and will not have the VMware Tools OSP installed."
       $supported = false
