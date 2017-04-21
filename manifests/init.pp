@@ -133,11 +133,11 @@
 #
 class vmwaretools (
   $tools_version         = $vmwaretools::params::tools_version,
-  $disable_tools_version = $vmwaretools::params::safe_disable_tools_version,
-  $manage_repository     = $vmwaretools::params::safe_manage_repository,
+  $disable_tools_version = $vmwaretools::params::disable_tools_version,
+  $manage_repository     = $vmwaretools::params::manage_repository,
   $reposerver            = $vmwaretools::params::reposerver,
   $repopath              = $vmwaretools::params::repopath,
-  $just_prepend_repopath = $vmwaretools::params::safe_just_prepend_repopath,
+  $just_prepend_repopath = $vmwaretools::params::just_prepend_repopath,
   $priority              = $vmwaretools::params::repopriority,
   $protect               = $vmwaretools::params::repoprotect,
   $gpgkey_url            = $vmwaretools::params::gpgkey_url,
@@ -145,13 +145,13 @@ class vmwaretools (
   $proxy_username        = $vmwaretools::params::proxy_username,
   $proxy_password        = $vmwaretools::params::proxy_password,
   $ensure                = $vmwaretools::params::ensure,
-  $autoupgrade           = $vmwaretools::params::safe_autoupgrade,
+  $autoupgrade           = $vmwaretools::params::autoupgrade,
   $package               = $vmwaretools::params::package,
   $service_ensure        = $vmwaretools::params::service_ensure,
   $service_name          = $vmwaretools::params::service_name,
-  $service_enable        = $vmwaretools::params::safe_service_enable,
+  $service_enable        = $vmwaretools::params::service_enable,
   $service_hasstatus     = $vmwaretools::params::service_hasstatus,
-  $service_hasrestart    = $vmwaretools::params::safe_service_hasrestart,
+  $service_hasrestart    = $vmwaretools::params::service_hasrestart,
   $scsi_timeout          = $vmwaretools::params::scsi_timeout,
 
   # Deprecated parameters

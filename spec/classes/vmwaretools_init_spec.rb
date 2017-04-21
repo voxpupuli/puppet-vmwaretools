@@ -7,9 +7,11 @@ describe 'vmwaretools', :type => 'class' do
   context 'on a non-supported osfamily' do
     let(:params) {{}}
     let :facts do {
+      :architecture           => 'i386',
       :osfamily               => 'foo',
       :operatingsystem        => 'foo',
-      :operatingsystemrelease => '1.0'
+      :operatingsystemrelease => '1.0',
+      :virtual                => 'foo'
     }
     end
     it { should_not contain_class('vmwaretools::repo') }
@@ -29,6 +31,7 @@ describe 'vmwaretools', :type => 'class' do
   context 'on a supported osfamily, non-vmware platform' do
     let(:params) {{}}
     let :facts do {
+      :architecture           => 'i386',
       :osfamily               => 'RedHat',
       :operatingsystem        => 'RedHat',
       :operatingsystemrelease => '1.0',
@@ -52,6 +55,7 @@ describe 'vmwaretools', :type => 'class' do
   context 'on a supported osfamily, vmware platform, non-supported operatingsystem' do
     describe "for operating system Fedora" do
       let :facts do {
+        :architecture           => 'i386',
         :virtual                => 'vmware',
         :osfamily               => 'RedHat',
         :operatingsystem        => 'Fedora',
@@ -76,9 +80,11 @@ describe 'vmwaretools', :type => 'class' do
   context 'on a supported osfamily, vmware platform, default parameters' do
     let(:params) {{}}
     let :facts do {
+      :architecture              => 'i386',
       :virtual                   => 'vmware',
       :osfamily                  => 'RedHat',
       :operatingsystem           => 'RedHat',
+      :operatingsystemrelease    => '6.5',
       :operatingsystemmajrelease => '6'
     }
     end
@@ -108,6 +114,7 @@ describe 'vmwaretools', :type => 'class' do
 
     describe 'for osfamily RedHat and operatingsystem RedHat 5' do
       let :facts do {
+        :architecture              => 'i386',
         :virtual                   => 'vmware',
         :osfamily                  => 'RedHat',
         :operatingsystem           => 'RedHat',
@@ -133,6 +140,7 @@ describe 'vmwaretools', :type => 'class' do
     describe 'for osfamily RedHat and operatingsystem RedHat 6' do
       let(:params) {{ :scsi_timeout => '14400' }}
       let :facts do {
+        :architecture              => 'i386',
         :virtual                   => 'vmware',
         :osfamily                  => 'RedHat',
         :operatingsystem           => 'RedHat',
@@ -158,6 +166,7 @@ describe 'vmwaretools', :type => 'class' do
 
     describe 'for osfamily SuSE and operatingsystem SLES' do
       let :facts do {
+        :architecture              => 'i386',
         :virtual                => 'vmware',
         :osfamily               => 'SuSE',
         :operatingsystem        => 'SLES',
@@ -174,12 +183,14 @@ describe 'vmwaretools', :type => 'class' do
 
     describe 'for osfamily Debian and operatingsystem Ubuntu' do
       let :facts do {
+        :architecture              => 'i386',
         :virtual                => 'vmware',
         :osfamily               => 'Debian',
         :operatingsystem        => 'Ubuntu',
         :operatingsystemrelease => '12.04',
         :lsbdistcodename        => 'precise',
-        :lsbdistid              => 'Ubuntu'
+        :lsbdistid              => 'Ubuntu',
+        :puppetversion          => '3.8.1' # for apt module
       }
       end
       it { should contain_class('vmwaretools::repo').with(
