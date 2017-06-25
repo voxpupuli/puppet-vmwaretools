@@ -9,7 +9,11 @@ describe 'vmwaretools', :type => 'class' do
     let :facts do {
       :osfamily               => 'foo',
       :operatingsystem        => 'foo',
-      :operatingsystemrelease => '1.0'
+      :operatingsystemrelease => '1.0',
+      :lsbmajdistrelease      => '1',
+      :operatingsystemmajrelease => '1',
+      :architecture           => 'x86_64',
+      :virtual                => 'foo'
     }
     end
     it { should_not contain_class('vmwaretools::repo') }
@@ -32,6 +36,9 @@ describe 'vmwaretools', :type => 'class' do
       :osfamily               => 'RedHat',
       :operatingsystem        => 'RedHat',
       :operatingsystemrelease => '1.0',
+      :lsbmajdistrelease      => '1',
+      :operatingsystemmajrelease => '1',
+      :architecture           => 'x86_64',
       :virtual                => 'foo'
     }
     end
@@ -55,7 +62,10 @@ describe 'vmwaretools', :type => 'class' do
         :virtual                => 'vmware',
         :osfamily               => 'RedHat',
         :operatingsystem        => 'Fedora',
-        :operatingsystemrelease => '1.0'
+        :operatingsystemrelease => '1.0',
+        :lsbmajdistrelease      => '1',
+        :operatingsystemmajrelease => '1',
+        :architecture           => 'x86_64'
       }
       end
       it { should_not contain_class('vmwaretools::repo') }
@@ -79,7 +89,8 @@ describe 'vmwaretools', :type => 'class' do
       :virtual                   => 'vmware',
       :osfamily                  => 'RedHat',
       :operatingsystem           => 'RedHat',
-      :operatingsystemmajrelease => '6'
+      :operatingsystemmajrelease => '6',
+      :architecture              => 'x86_64'
     }
     end
     it { should contain_class('vmwaretools::repo').with(
@@ -112,7 +123,9 @@ describe 'vmwaretools', :type => 'class' do
         :osfamily                  => 'RedHat',
         :operatingsystem           => 'RedHat',
         :operatingsystemrelease    => '5.5',
-        :operatingsystemmajrelease => '5'
+        :lsbmajdistrelease         => '5',
+        :operatingsystemmajrelease => '5',
+        :architecture              => 'x86_64'
       }
       end
       it { should contain_class('vmwaretools::repo').with(
@@ -137,7 +150,9 @@ describe 'vmwaretools', :type => 'class' do
         :osfamily                  => 'RedHat',
         :operatingsystem           => 'RedHat',
         :operatingsystemrelease    => '6.1',
-        :operatingsystemmajrelease => '6'
+        :lsbmajdistrelease         => '6',
+        :operatingsystemmajrelease => '6',
+        :architecture              => 'x86_64'
       }
       end
       it { should contain_class('vmwaretools::repo').with(
@@ -161,7 +176,10 @@ describe 'vmwaretools', :type => 'class' do
         :virtual                => 'vmware',
         :osfamily               => 'SuSE',
         :operatingsystem        => 'SLES',
-        :operatingsystemrelease => '11.1'
+        :operatingsystemrelease => '11.1',
+        :lsbmajdistrelease      => '11',
+        :operatingsystemmajrelease => '11',
+        :architecture           => 'x86_64'
       }
       end
       it { should contain_class('vmwaretools::repo').with(
@@ -178,8 +196,11 @@ describe 'vmwaretools', :type => 'class' do
         :osfamily               => 'Debian',
         :operatingsystem        => 'Ubuntu',
         :operatingsystemrelease => '12.04',
+        :operatingsystemmajrelease => '12',
+        :architecture           => 'amd64',
         :lsbdistcodename        => 'precise',
-        :lsbdistid              => 'Ubuntu'
+        :lsbdistid              => 'Ubuntu',
+        :puppetversion          => '3.5.1'
       }
       end
       it { should contain_class('vmwaretools::repo').with(
@@ -257,6 +278,8 @@ describe 'vmwaretools', :type => 'class' do
         :osfamily               => 'SuSE',
         :operatingsystem        => 'SLES',
         :operatingsystemrelease => '11.1',
+        :lsbmajdistrelease      => '11',
+        :operatingsystemmajrelease => '11',
         :architecture           => 'x86_64'
       }
       end

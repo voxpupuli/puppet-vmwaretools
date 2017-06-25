@@ -33,6 +33,7 @@ describe 'vmwaretools::ntp', :type => 'class' do
       :osfamily                  => 'RedHat',
       :operatingsystem           => 'RedHat',
       :operatingsystemmajrelease => '6',
+      :architecture              => 'x86_64',
       :virtual                   => 'foo'
     }
     end
@@ -52,6 +53,7 @@ describe 'vmwaretools::ntp', :type => 'class' do
         :osfamily                  => 'RedHat',
         :operatingsystem           => 'RedHat',
         :operatingsystemmajrelease => '6',
+        :architecture              => 'x86_64',
         :virtual                   => 'vmware'
       }
       end
@@ -70,6 +72,7 @@ describe 'vmwaretools::ntp', :type => 'class' do
         :osfamily                  => 'RedHat',
         :operatingsystem           => 'RedHat',
         :operatingsystemmajrelease => '6',
+        :architecture              => 'x86_64',
         :virtual                   => 'vmware'
       }
       end
