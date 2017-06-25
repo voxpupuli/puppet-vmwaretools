@@ -2,7 +2,11 @@ fixtures:
   repositories:
     stdlib: "https://github.com/puppetlabs/puppetlabs-stdlib.git"
     vmware_puppetfact: "https://github.com/wolfspyre/vmware_puppetfact.git"
-    zypprepo: "https://github.com/deadpoint/puppet-zypprepo.git"
-    apt: "https://github.com/puppetlabs/puppetlabs-apt.git"
+    zypprepo:
+      repo: "https://github.com/deadpoint/puppet-zypprepo.git"
+      ref: "v1.0.2"
+    apt:
+      repo: "https://github.com/puppetlabs/puppetlabs-apt.git"
+      ref: "2.4.0"
   symlinks:
     vmwaretools: "#{source_dir}"

@@ -9,7 +9,10 @@ describe 'vmwaretools::repo', :type => 'class' do
     let :facts do {
       :osfamily               => 'foo',
       :operatingsystem        => 'foo',
-      :operatingsystemrelease => '1.0'
+      :operatingsystemrelease => '1.0',
+      :lsbmajdistrelease      => '1',
+      :operatingsystemmajrelease => '1',
+      :virtual                => 'foo' #TODO
     }
     end
     #it { should run.with_params("Your operating system #{osfamily} is unsupported and will not have the VMware Tools OSP installed.").and_return('Your operating system foo is unsupported and will not have the VMware Tools OSP installed.') }
@@ -30,6 +33,11 @@ describe 'vmwaretools::repo', :type => 'class' do
           :osfamily               => osf,
           :operatingsystem        => os,
           :operatingsystemrelease => '1.0',
+          :lsbmajdistrelease      => '1',
+          :operatingsystemmajrelease => '1',
+          :architecture           => 'x86_64',
+          :lsbdistcodename        => 'precise',
+          :lsbdistid              => os,
           :virtual                => 'foo'
         }
         end
@@ -49,6 +57,8 @@ describe 'vmwaretools::repo', :type => 'class' do
           :virtual                => 'vmware',
           :osfamily               => 'RedHat',
           :operatingsystemrelease => '6.1',
+          :lsbmajdistrelease      => '6',
+          :operatingsystemmajrelease => '6',
           :architecture           => 'x86_64',
           :operatingsystem        => os
         }
@@ -75,6 +85,8 @@ describe 'vmwaretools::repo', :type => 'class' do
           :virtual                => 'vmware',
           :osfamily               => 'SuSE',
           :operatingsystemrelease => '10',
+          :lsbmajdistrelease      => '10',
+          :operatingsystemmajrelease => '10',
           :architecture           => 'i386',
           :operatingsystem        => os
         }
@@ -100,10 +112,13 @@ describe 'vmwaretools::repo', :type => 'class' do
         :virtual                => 'vmware',
         :osfamily               => 'Debian',
         :operatingsystemrelease => '12.04',
+        :lsbmajdistrelease      => '12',
+        :operatingsystemmajrelease => '12',
         :architecture           => 'amd64',
         :operatingsystem        => 'Ubuntu',
         :lsbdistcodename        => 'precise',
-        :lsbdistid              => 'Ubuntu'
+        :lsbdistid              => 'Ubuntu',
+        :puppetversion          => '3.5.1'
       }
       end
       it { should contain_apt__source('vmware-tools').with(
@@ -123,6 +138,8 @@ describe 'vmwaretools::repo', :type => 'class' do
       :osfamily               => 'RedHat',
       :operatingsystem        => 'RedHat',
       :operatingsystemrelease => '6.1',
+      :lsbmajdistrelease      => '6',
+      :operatingsystemmajrelease => '6',
       :architecture           => 'x86_64'
     }
     end

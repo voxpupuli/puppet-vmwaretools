@@ -1,15 +1,15 @@
-#VMware Tools Operating System Specific Packages
+# VMware Tools Operating System Specific Packages
 
 [![Build Status](https://secure.travis-ci.org/razorsedge/puppet-vmwaretools.png?branch=master)](http://travis-ci.org/razorsedge/puppet-vmwaretools)
 
-####Table of Contents
+#### Table of Contents
 
 1. [Overview](#overview)
 2. [Module Description - What the module does and why it is useful](#module-description)
 3. [Setup - The basics of getting started with this module](#setup)
     * [What this module affects](#what-this-module-affects)
     * [What this module requires](#requirements)
-    * [Beginning with this module](#beginning-with-this module)
+    * [Beginning with this module](#beginning-with-this-module)
     * [Upgrading](#upgrading)
 4. [Usage - Configuration options and additional functionality](#usage)
 5. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
@@ -19,37 +19,37 @@
     * [Issues](#issues)
 6. [Development - Guide for contributing to the module](#development)
 
-##Overview
+## Overview
 
 This Puppet module manages the installation and configuration of the [Operating System Specific Packages](http://packages.vmware.com/) for VMware Tools.  This allows you to use your operating system's native tools to install and update the VMware Tools.
 
-##Module Description
+## Module Description
 
 This Puppet module manages the installation and configuration of the [Operating System Specific Packages](http://packages.vmware.com/) for VMware Tools.  OSPs are an alternative to the existing mechanism used to install VMware Tools through the VMware vSphere™ Client. With OSPs you can use the native update mechanisms of your operating system to download, install, and manage VMware Tools. With OSPs you can manage VMware Tools from the virtual machine as you would other standard software. VMware Tools OSPs occupy a smaller amount of disk space than the tar installer used with vSphere Client, which makes package installation or uninstallation fast.
 
-##Setup
+## Setup
 
-###What this module affects
+### What this module affects
 
 * Removes old VMwareTools package or runs vmware-uninstall-tools.pl if found.
 * Installs a VMware package repository (defaults to the 'latest' package repository).
 * Installs the OSP VMware Tools.
 * Starts the vmware-tools service.
 
-###Requirements
+### Requirements
 
 You need to be running a virtual machine on the VMware platform and on an operating system supported by VMware's OSPs for this module to do anything.
 
-###Beginning with this module
+### Beginning with this module
 
 It is safe for all nodes to use this declaration.  Any non-VMware or unsupported system will skip installtion of the tools.
 ```puppet
 include ::vmwaretools
 ```
 
-###Upgrading
+### Upgrading
 
-####Deprecation Warning
+#### Deprecation Warning
 
 - Due to the switch to the dependent puppetlabs-apt version 2.x in version 6.0.0 of this module, Puppet 2.7 will no longer be supported.
 
@@ -75,7 +75,7 @@ class { '::vmwaretools':
 }
 ```
 
-##Usage
+## Usage
 
 All interaction with the vmwaretools module can be done through the main vmwaretools class. This means you can simply toggle the options in ::vmwaretools to have full functionality of the module.
 
@@ -105,24 +105,24 @@ class { '::vmwaretools':
 }
 ```
 
-##Reference
+## Reference
 
-###Classes
+### Classes
 
-####Public Classes
+#### Public Classes
 
 * [`vmwaretools`](#class-vmwaretools): Installs the VMware Tools Operating System Specific Packages.
 * [`vmwaretools::ntp`](#class-vmwaretoolsntp): Turns off syncTime via the vmware-tools API and should be accompanied by a running NTP client on the guest.
 
-####Private Classes
+#### Private Classes
 
 * `vmwaretools::repo`: Installs the VMware Tools software repository.
 
-####Class: `vmwaretools`
+#### Class: `vmwaretools`
 
 Main class, includes all other classes.
 
-#####Parameters
+##### Parameters
 
 * `ensure`: Ensure if present or absent.  Default: present
 
@@ -166,18 +166,18 @@ Main class, includes all other classes.
 
 * `scsi_timeout`: This will adjust the scsi timout value set in udev rules.  This file is created by the VMWare Tools installer.  Defualt: 180
 
-####Class: `vmwaretools::ntp`
+#### Class: `vmwaretools::ntp`
 
 This class handles turning off syncTime via the vmware-tools API and should be accompanied by a running NTP daemon on the guest.
 
-#####Parameters
+##### Parameters
 
 None
 
 
-##Limitations
+## Limitations
 
-###OS Support:
+### OS Support:
 
 VMware Tools Operating System Specific Packages official [supported guest operating systems](http://packages.vmware.com/) are available for these operating systems:
 
@@ -192,7 +192,7 @@ VMware Tools Operating System Specific Packages official [supported guest operat
 * Ubuntu Linux
   * 8.04 through 12.04
 
-###Notes:
+### Notes:
 
 * Only tested on CentOS 5.5+ and CentOS 6.2+ x86_64 with 4.0latest.
 * Not supported on Fedora or Debian as these distros are not supported by the OSP.
@@ -206,14 +206,14 @@ VMware Tools Operating System Specific Packages official [supported guest operat
 * No other VM tools (ie [Open Virtual Machine
   Tools](http://open-vm-tools.sourceforge.net/)) will be supported.
 
-###Issues:
+### Issues:
 
 * Does not install Desktop (X Window) components.
 * Does not handle RHEL5 i386 PAE kernel on OSP 5.0+.
 
-##Development
+## Development
 
-Please see [DEVELOP.md](DEVELOP.md) for information on how to contribute.
+Please see [CONTRIBUTING.md](CONTRIBUTING.md) for information on how to contribute.
 
 Copyright (C) 2012 Mike Arnold <mike@razorsedge.org>
 

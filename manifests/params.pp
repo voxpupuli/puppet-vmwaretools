@@ -18,83 +18,113 @@
 class vmwaretools::params {
   # If we have a top scope variable defined, use it, otherwise fall back to a
   # hardcoded value.
-  $reposerver = $::vmwaretools_reposerver ? {
-    undef   => 'http://packages.vmware.com',
-    default => $::vmwaretools_reposerver,
+  $vmwaretools_reposerver = getvar('::vmwaretools_reposerver')
+  if $vmwaretools_reposerver {
+    $reposerver = $::vmwaretools_reposerver
+  } else {
+    $reposerver = 'http://packages.vmware.com'
   }
 
-  $repopath = $::vmwaretools_repopath ? {
-    undef   => '/tools',
-    default => $::vmwaretools_repopath,
+  $vmwaretools_repopath = getvar('::vmwaretools_repopath')
+  if $vmwaretools_repopath {
+    $repopath = $::vmwaretools_repopath
+  } else {
+    $repopath = '/tools'
   }
 
-  $repopriority = $::vmwaretools_repopriority ? {
-    undef   => '50',
-    default => $::vmwaretools_repopriority,
+  $vmwaretools_repopriority = getvar('::vmwaretools_repopriority')
+  if $vmwaretools_repopriority {
+    $repopriority = $::vmwaretools_repopriority
+  } else {
+    $repopriority = '50'
   }
 
-  $repoprotect = $::vmwaretools_repoprotect ? {
-    undef   => '0',
-    default => $::vmwaretools_repoprotect,
+  $vmwaretools_repoprotect = getvar('::vmwaretools_repoprotect')
+  if $vmwaretools_repoprotect {
+    $repoprotect = $::vmwaretools_repoprotect
+  } else {
+    $repoprotect = '0'
   }
 
-  $gpgkey_url = $::vmwaretools_gpgkey_url ? {
-    undef   => "${reposerver}${repopath}/",
-    default => $::vmwaretools_gpgkey_url,
+  $vmwaretools_gpgkey_url = getvar('::vmwaretools_gpgkey_url')
+  if $vmwaretools_gpgkey_url {
+    $gpgkey_url = $::vmwaretools_gpgkey_url
+  } else {
+    $gpgkey_url = "${reposerver}${repopath}/"
   }
 
-  $proxy = $::vmwaretools_proxy ? {
-    undef   => 'absent',
-    default => $::vmwaretools_proxy,
+  $vmwaretools_proxy = getvar('::vmwaretools_proxy')
+  if $vmwaretools_proxy {
+    $proxy = $::vmwaretools_proxy
+  } else {
+    $proxy = 'absent'
   }
 
-  $proxy_username = $::vmwaretools_proxy_username ? {
-    undef   => 'absent',
-    default => $::vmwaretools_proxy_username,
+  $vmwaretools_proxy_username = getvar('::vmwaretools_proxy_username')
+  if $vmwaretools_proxy_username {
+    $proxy_username = $::vmwaretools_proxy_username
+  } else {
+    $proxy_username = 'absent'
   }
 
-  $proxy_password = $::vmwaretools_proxy_password ? {
-    undef   => 'absent',
-    default => $::vmwaretools_proxy_password,
+  $vmwaretools_proxy_password = getvar('::vmwaretools_proxy_password')
+  if $vmwaretools_proxy_password {
+    $proxy_password = $::vmwaretools_proxy_password
+  } else {
+    $proxy_password = 'absent'
   }
 
-  $tools_version = $::vmwaretools_tools_version ? {
-    undef   => 'latest',
-    default => $::vmwaretools_tools_version,
+  $vmwaretools_tools_version = getvar('::vmwaretools_tools_version')
+  if $vmwaretools_tools_version {
+    $tools_version = $::vmwaretools_tools_version
+  } else {
+    $tools_version = 'latest'
   }
   # Validate that tools version starts with a numeral.
   #validate_re($tools_version, '^[^3-9]\.[0-9]*')
 
-  $ensure = $::vmwaretools_ensure ? {
-    undef   => 'present',
-    default => $::vmwaretools_ensure,
+  $vmwaretools_ensure = getvar('::vmwaretools_ensure')
+  if $vmwaretools_ensure {
+    $ensure = $::vmwaretools_ensure
+  } else {
+    $ensure = 'present'
   }
 
-  $package = $::vmwaretools_package ? {
-    undef   => undef,
-    default => $::vmwaretools_package,
+  $vmwaretools_package = getvar('::vmwaretools_package')
+  if $vmwaretools_package {
+    $package = $::vmwaretools_package
+  } else {
+    $package = undef
   }
 
-  $service_ensure = $::vmwaretools_service_ensure ? {
-    undef   => 'running',
-    default => $::vmwaretools_service_ensure,
+  $vmwaretools_service_ensure = getvar('::vmwaretools_service_ensure')
+  if $vmwaretools_service_ensure {
+    $service_ensure = $::vmwaretools_service_ensure
+  } else {
+    $service_ensure = 'running'
   }
 
-  $service_name = $::vmwaretools_service_name ? {
-    undef   => undef,
-    default => $::vmwaretools_service_name,
+  $vmwaretools_service_name = getvar('::vmwaretools_service_name')
+  if $vmwaretools_service_name {
+    $service_name = $::vmwaretools_service_name
+  } else {
+    $service_name = undef
   }
 
-  $service_hasstatus = $::vmwaretools_service_hasstatus ? {
-    undef   => undef,
-    default => $::vmwaretools_service_hasstatus,
+  $vmwaretools_service_hasstatus = getvar('::vmwaretools_service_hasstatus')
+  if $vmwaretools_service_hasstatus {
+    $service_hasstatus = $::vmwaretools_service_hasstatus
+  } else {
+    $service_hasstatus = undef
   }
 
   # Since the top scope variable could be a string (if from an ENC), we might
   # need to convert it to a boolean.
-  $just_prepend_repopath = $::just_prepend_repopath ? {
-    undef   => false,
-    default => $::vmwaretools_just_prepend_repopath,
+  $vmwaretools_just_prepend_repopath = getvar('::vmwaretools_just_prepend_repopath')
+  if $vmwaretools_just_prepend_repopath {
+    $just_prepend_repopath = $::vmwaretools_just_prepend_repopath
+  } else {
+    $just_prepend_repopath = false
   }
   if is_string($just_prepend_repopath) {
     $safe_just_prepend_repopath = str2bool($just_prepend_repopath)
@@ -102,9 +132,11 @@ class vmwaretools::params {
     $safe_just_prepend_repopath = $just_prepend_repopath
   }
 
-  $manage_repository = $::manage_repository ? {
-    undef   => true,
-    default => $::vmwaretools_manage_repository,
+  $vmwaretools_manage_repository = getvar('::vmwaretools_manage_repository')
+  if $vmwaretools_manage_repository {
+    $manage_repository = $::vmwaretools_manage_repository
+  } else {
+    $manage_repository = true
   }
   if is_string($manage_repository) {
     $safe_manage_repository = str2bool($manage_repository)
@@ -112,9 +144,11 @@ class vmwaretools::params {
     $safe_manage_repository = $manage_repository
   }
 
-  $disable_tools_version = $::vmwaretools_disable_tools_version ? {
-    undef   => true,
-    default => $::vmwaretools_disable_tools_version,
+  $vmwaretools_disable_tools_version = getvar('::vmwaretools_disable_tools_version')
+  if $vmwaretools_disable_tools_version {
+    $disable_tools_version = $::vmwaretools_disable_tools_version
+  } else {
+    $disable_tools_version = true
   }
   if is_string($disable_tools_version) {
     $safe_disable_tools_version = str2bool($disable_tools_version)
@@ -122,9 +156,11 @@ class vmwaretools::params {
     $safe_disable_tools_version = $disable_tools_version
   }
 
-  $autoupgrade = $::vmwaretools_autoupgrade ? {
-    undef   => false,
-    default => $::vmwaretools_autoupgrade,
+  $vmwaretools_autoupgrade = getvar('::vmwaretools_autoupgrade')
+  if $vmwaretools_autoupgrade {
+    $autoupgrade = $::vmwaretools_autoupgrade
+  } else {
+    $autoupgrade = false
   }
   if is_string($autoupgrade) {
     $safe_autoupgrade = str2bool($autoupgrade)
@@ -132,9 +168,11 @@ class vmwaretools::params {
     $safe_autoupgrade = $autoupgrade
   }
 
-  $service_enable = $::vmwaretools_service_enable ? {
-    undef   => true,
-    default => $::vmwaretools_service_enable,
+  $vmwaretools_service_enable = getvar('::vmwaretools_service_enable')
+  if $vmwaretools_service_enable {
+    $service_enable = $::vmwaretools_service_enable
+  } else {
+    $service_enable = true
   }
   if is_string($service_enable) {
     $safe_service_enable = str2bool($service_enable)
@@ -142,9 +180,11 @@ class vmwaretools::params {
     $safe_service_enable = $service_enable
   }
 
-  $service_hasrestart = $::vmwaretools_service_hasrestart ? {
-    undef   => true,
-    default => $::vmwaretools_service_hasrestart,
+  $vmwaretools_service_hasrestart = getvar('::vmwaretools_service_hasrestart')
+  if $vmwaretools_service_hasrestart {
+    $service_hasrestart = $::vmwaretools_service_hasrestart
+  } else {
+    $service_hasrestart = true
   }
   if is_string($service_hasrestart) {
     $safe_service_hasrestart = str2bool($service_hasrestart)
@@ -152,9 +192,11 @@ class vmwaretools::params {
     $safe_service_hasrestart = $service_hasrestart
   }
 
-  $scsi_timeout = $::vmwaretools_scsi_timeout ? {
-    undef   => '180',
-    default => $::vmwaretools_scsi_timeout,
+  $vmwaretools_scsi_timeout = getvar('::vmwaretools_scsi_timeout')
+  if $vmwaretools_scsi_timeout {
+    $scsi_timeout = $::vmwaretools_scsi_timeout
+  } else {
+    $scsi_timeout = '180'
   }
 
   if $::operatingsystemmajrelease { # facter 1.7+
@@ -273,6 +315,8 @@ class vmwaretools::params {
           $service_name_5x = 'vmware-tools-services'
           $service_hasstatus_4x = false
           $service_hasstatus_5x = true
+          $repobasearch_4x = $::architecture
+          $repobasearch_5x = $::architecture
           $baseurl_string = 'ubuntu'  # must be lower case
         }
         default: {
