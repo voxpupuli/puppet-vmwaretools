@@ -7,7 +7,7 @@
 #
 # [*tools_version*]
 #   The version of VMware Tools to install.  Possible values can be found here:
-#   http://packages.vmware.com/tools/esx/index.html
+#   http://packages.vmware.com/tools/releases/index.html
 #   Default: latest
 #
 # [*reposerver*]
@@ -121,7 +121,7 @@ class vmwaretools::repo (
       case $::operatingsystem {
         'RedHat', 'CentOS', 'Scientific', 'OracleLinux', 'OEL': {
           if ( $repopath == $vmwaretools::params::repopath ) or ( $just_prepend_repopath == true ) {
-            $baseurl_url = "${reposerver}${repopath}/esx/${tools_version}/${vmwaretools::params::baseurl_string}${vmwaretools::params::majdistrelease}/${repobasearch}/"
+            $baseurl_url = "${reposerver}${repopath}/releases/${tools_version}/${vmwaretools::params::baseurl_string}${vmwaretools::params::majdistrelease}/${repobasearch}/"
           } else {
             $baseurl_url = "${reposerver}${repopath}/"
           }
@@ -161,7 +161,7 @@ class vmwaretools::repo (
         }
         'SLES', 'SLED': {
           if ( $repopath == $vmwaretools::params::repopath ) or ( $just_prepend_repopath == true ) {
-            $baseurl_url = "${reposerver}${repopath}/esx/${tools_version}/${vmwaretools::params::baseurl_string}${vmwaretools::params::distrelease}/${repobasearch}/"
+            $baseurl_url = "${reposerver}${repopath}/releases/${tools_version}/${vmwaretools::params::baseurl_string}${vmwaretools::params::distrelease}/${repobasearch}/"
           } else {
             $baseurl_url = "${reposerver}${repopath}/"
           }
@@ -202,7 +202,7 @@ class vmwaretools::repo (
         }
         'Ubuntu': {
           if ( $repopath == $vmwaretools::params::repopath ) or ( $just_prepend_repopath == true ) {
-            $baseurl_url = "${reposerver}${repopath}/esx/${tools_version}/${vmwaretools::params::baseurl_string}"
+            $baseurl_url = "${reposerver}${repopath}/releases/${tools_version}/${vmwaretools::params::baseurl_string}"
           } else {
             $baseurl_url = "${reposerver}${repopath}/"
           }
