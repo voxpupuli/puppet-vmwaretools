@@ -334,6 +334,24 @@ class vmwaretools (
           notify  => Service[$service_name_real],
         }
 
+        if ($::osfamily == 'RedHat') and ($vmwaretools::params::majdistrelease == '6') {
+        # the rpms provided by vmware install a PAM-Service. This pam-service
+        # references modules not provided by RH. See https://access.redhat.com/solutions/977793
+        # create symlinks to make the service working again.
+        # check if 32bit pam-libs installed and if so make symlink for /etc/pam.d/vmtoolsd working
+          exec { 'symlink /lib/security/pam_unix2.so':
+            command => '/bin/ln -s /lib/security/pam_unix.so /lib/security/pam_unix2.so',
+            onlyif  => '/usr/bin/test -f /lib/security/pam_unix.so',
+            creates => '/lib/security/pam_unix2.so'
+          }
+        # same for 64bit pam-libs
+          exec { 'symlink /lib64/security/pam_unix2.so':
+            command => '/bin/ln -s /lib64/security/pam_unix.so /lib64/security/pam_unix2.so',
+            onlyif  => '/usr/bin/test -f /lib64/security/pam_unix.so',
+            creates => '/lib64/security/pam_unix2.so'
+          }
+        }
+
         if ($::osfamily == 'RedHat') and ($vmwaretools::params::majdistrelease == '6') and ($rhel_upstart == true) {
           # VMware-tools 5.1 on EL6 is now using upstart and not System V init.
           # http://projects.puppetlabs.com/issues/11989#note-7
