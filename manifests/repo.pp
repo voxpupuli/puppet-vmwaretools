@@ -222,9 +222,10 @@ class vmwaretools::repo (
             ensure     => $ensure,
             comment    => "VMware Tools ${tools_version} - ${vmwaretools::params::baseurl_string} ${::lsbdistcodename}",
             location   => $baseurl_url,
-            key_source => $gpgkey,
-            #key        => '0xC0B5E0AB66FD4949',
-            key        => '36E47E1CC4DCC5E8152D115CC0B5E0AB66FD4949',
+            key        => {
+              id     => '36E47E1CC4DCC5E8152D115CC0B5E0AB66FD4949',
+              source => $gpgkey,
+            }
           }
         }
         default: { }
