@@ -125,9 +125,8 @@ describe 'vmwaretools::repo', :type => 'class' do
         :comment    => 'VMware Tools latest - ubuntu precise',
         :ensure     => 'present',
         :location   => 'http://packages.vmware.com/tools/esx/latest/ubuntu',
-        :key_source => 'http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub',
        #:key        => '0xC0B5E0AB66FD4949',
-        :key        => { 'id' => '36E47E1CC4DCC5E8152D115CC0B5E0AB66FD4949' }
+        :key        => { 'id' => '36E47E1CC4DCC5E8152D115CC0B5E0AB66FD4949', 'source' => 'http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub' }
       )}
     end
   end
