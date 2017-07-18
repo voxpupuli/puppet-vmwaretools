@@ -7,6 +7,6 @@ fixtures:
       ref: "v1.0.2"
     apt:
       repo: "https://github.com/puppetlabs/puppetlabs-apt.git"
-      ref: "2.4.0"
+      ref: "4.1.0"
   symlinks:
     vmwaretools: "#{source_dir}"

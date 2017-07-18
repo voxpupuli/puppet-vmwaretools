@@ -30,6 +30,10 @@ describe 'vmwaretools::repo', :type => 'class' do
       describe "for osfamily #{osf} operatingsystem #{os}" do
         let(:params) {{}}
         let :facts do {
+          :os                     => {
+            :family  => osf,
+            :name    => os,
+          },
           :osfamily               => osf,
           :operatingsystem        => os,
           :operatingsystemrelease => '1.0',
@@ -54,6 +58,10 @@ describe 'vmwaretools::repo', :type => 'class' do
     redhatish.each do |os|
       describe "for operating system #{os}" do
         let :facts do {
+          :os                     => {
+            :family  => 'RedHat',
+            :name    => os,
+          },
           :virtual                => 'vmware',
           :osfamily               => 'RedHat',
           :operatingsystemrelease => '6.1',
@@ -82,6 +90,10 @@ describe 'vmwaretools::repo', :type => 'class' do
     suseish.each do |os|
       describe "for operating system #{os}" do
         let :facts do {
+          :os                     => {
+            :family  => 'SuSE',
+            :name    => os,
+          },
           :virtual                => 'vmware',
           :osfamily               => 'SuSE',
           :operatingsystemrelease => '10',
@@ -110,6 +122,13 @@ describe 'vmwaretools::repo', :type => 'class' do
       let(:pre_condition) { "class { 'apt': }" }
       let :facts do {
         :virtual                => 'vmware',
+        :os                     => {
+          :family  => 'Debian',
+          :name    => 'Ubuntu',
+          :release => {
+            :full => '12.04'
+          }
+        },
         :osfamily               => 'Debian',
         :operatingsystemrelease => '12.04',
         :lsbmajdistrelease      => '12',
@@ -122,18 +141,26 @@ describe 'vmwaretools::repo', :type => 'class' do
       }
       end
       it { should contain_apt__source('vmware-tools').with(
-        :comment    => 'VMware Tools latest - ubuntu precise',
-        :ensure     => 'present',
-        :location   => 'http://packages.vmware.com/tools/esx/latest/ubuntu',
-        :key_source => 'http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub',
-       #:key        => '0xC0B5E0AB66FD4949',
-        :key        => '36E47E1CC4DCC5E8152D115CC0B5E0AB66FD4949'
+        :comment  => 'VMware Tools latest - ubuntu precise',
+        :ensure   => 'present',
+        :location => 'http://packages.vmware.com/tools/esx/latest/ubuntu',
+        :key      => {
+          'source' => 'http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub',
+          'id'     => '36E47E1CC4DCC5E8152D115CC0B5E0AB66FD4949'
+        }
       )}
     end
   end
 
   context 'on a supported operatingsystem, vmware platform, custom parameters' do
     let :facts do {
+      :os                     => {
+        :family  => 'RedHat',
+        :name    => 'RedHat',
+        :release => {
+          :full => '6.1'
+        }
+      },
       :virtual                => 'vmware',
       :osfamily               => 'RedHat',
       :operatingsystem        => 'RedHat',

@@ -192,6 +192,13 @@ describe 'vmwaretools', :type => 'class' do
 
     describe 'for osfamily Debian and operatingsystem Ubuntu' do
       let :facts do {
+        :os                     => {
+          :family  => 'Debian',
+          :name    => 'Ubuntu',
+          :release => {
+            :full => '12.04'
+          }
+        },
         :virtual                => 'vmware',
         :osfamily               => 'Debian',
         :operatingsystem        => 'Ubuntu',
