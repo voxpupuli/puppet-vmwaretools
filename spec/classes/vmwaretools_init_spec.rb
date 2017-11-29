@@ -192,6 +192,13 @@ describe 'vmwaretools', :type => 'class' do
 
     describe 'for osfamily Debian and operatingsystem Ubuntu' do
       let :facts do {
+        :os                     => {
+          :family  => 'Debian',
+          :name    => 'Ubuntu',
+          :release => {
+            :full => '12.04'
+          }
+        },
         :virtual                => 'vmware',
         :osfamily               => 'Debian',
         :operatingsystem        => 'Ubuntu',
@@ -200,7 +207,7 @@ describe 'vmwaretools', :type => 'class' do
         :architecture           => 'amd64',
         :lsbdistcodename        => 'precise',
         :lsbdistid              => 'Ubuntu',
-        :puppetversion          => '3.5.1'
+        :puppetversion          => Puppet.version
       }
       end
       it { should contain_class('vmwaretools::repo').with(
