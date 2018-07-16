@@ -130,12 +130,12 @@ class vmwaretools::repo (
           # per http://projects.puppetlabs.com/issues/8867
           if ( $gpgkey_url == $vmwaretools::params::gpgkey_url ) {
             if ( $repopath == $vmwaretools::params::repopath ) or ( $just_prepend_repopath == true ) {
-              $gpgkey = "${reposerver}${repopath}/keys/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    ${reposerver}${repopath}/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub"
+              $gpgkey = "${reposerver}${repopath}/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub"
             } else {
-              $gpgkey = "${reposerver}${repopath}/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    ${reposerver}${repopath}/VMWARE-PACKAGING-GPG-RSA-KEY.pub"
+              $gpgkey = "${reposerver}${repopath}/VMWARE-PACKAGING-GPG-RSA-KEY.pub"
             }
           } else {
-            $gpgkey = "${gpgkey_url}VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    ${gpgkey_url}VMWARE-PACKAGING-GPG-RSA-KEY.pub"
+            $gpgkey = "${gpgkey_url}VMWARE-PACKAGING-GPG-RSA-KEY.pub"
           }
 
           yumrepo { 'vmware-tools':
