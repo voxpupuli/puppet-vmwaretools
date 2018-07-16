@@ -67,7 +67,7 @@ describe 'vmwaretools::repo', :type => 'class' do
           :descr           => 'VMware Tools latest - rhel6 x86_64',
           :enabled         => '1',
           :gpgcheck        => '1',
-          :gpgkey          => "http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub",
+          :gpgkey          => "http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub",
           :baseurl         => 'http://packages.vmware.com/tools/esx/latest/rhel6/x86_64/',
           :priority        => '50',
           :protect         => '0',
@@ -148,7 +148,7 @@ describe 'vmwaretools::repo', :type => 'class' do
       let(:params) {{ :tools_version => '5.1' }}
       it { should contain_yumrepo('vmware-tools').with(
         :descr    => 'VMware Tools 5.1 - rhel6 x86_64',
-        :gpgkey   => "http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub",
+        :gpgkey   => "http://packages.vmware.com/tools/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub",
         :baseurl  => 'http://packages.vmware.com/tools/esx/5.1/rhel6/x86_64/'
       )}
     end
@@ -161,7 +161,7 @@ describe 'vmwaretools::repo', :type => 'class' do
     describe 'reposerver => http://localhost:8000' do
       let(:params) {{ :reposerver => 'http://localhost:8000' }}
       it { should contain_yumrepo('vmware-tools').with(
-        :gpgkey   => "http://localhost:8000/tools/keys/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    http://localhost:8000/tools/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub",
+        :gpgkey   => "http://localhost:8000/tools/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub",
         :baseurl  => 'http://localhost:8000/tools/esx/latest/rhel6/x86_64/'
       )}
     end
@@ -169,7 +169,7 @@ describe 'vmwaretools::repo', :type => 'class' do
     describe 'repopath => /some/path' do
       let(:params) {{ :repopath => '/some/path' }}
       it { should contain_yumrepo('vmware-tools').with(
-        :gpgkey   => "http://packages.vmware.com/some/path/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    http://packages.vmware.com/some/path/VMWARE-PACKAGING-GPG-RSA-KEY.pub",
+        :gpgkey   => "http://packages.vmware.com/some/path/VMWARE-PACKAGING-GPG-RSA-KEY.pub",
         :baseurl  => 'http://packages.vmware.com/some/path/'
       )}
     end
@@ -177,7 +177,7 @@ describe 'vmwaretools::repo', :type => 'class' do
     describe 'gpgkey_url => http://localhost:8000/custom/path/' do
       let(:params) {{ :gpgkey_url => 'http://localhost:8000/custom/path/' }}
       it { should contain_yumrepo('vmware-tools').with(
-        :gpgkey   => "http://localhost:8000/custom/path/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    http://localhost:8000/custom/path/VMWARE-PACKAGING-GPG-RSA-KEY.pub"
+        :gpgkey   => "http://localhost:8000/custom/path/VMWARE-PACKAGING-GPG-RSA-KEY.pub"
       )}
     end
 
@@ -188,7 +188,7 @@ describe 'vmwaretools::repo', :type => 'class' do
       }
       end
       it { should contain_yumrepo('vmware-tools').with(
-        :gpgkey   => "http://localhost:8000/some/path/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    http://localhost:8000/some/path/VMWARE-PACKAGING-GPG-RSA-KEY.pub",
+        :gpgkey   => "http://localhost:8000/some/path/VMWARE-PACKAGING-GPG-RSA-KEY.pub",
         :baseurl  => 'http://localhost:8000/some/path/'
       )}
     end
@@ -201,7 +201,7 @@ describe 'vmwaretools::repo', :type => 'class' do
       }
       end
       it { should contain_yumrepo('vmware-tools').with(
-        :gpgkey   => "http://localhost:8000/some/path/keys/VMWARE-PACKAGING-GPG-DSA-KEY.pub\n    http://localhost:8000/some/path/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub",
+        :gpgkey   => "http://localhost:8000/some/path/keys/VMWARE-PACKAGING-GPG-RSA-KEY.pub",
         :baseurl  => 'http://localhost:8000/some/path/esx/latest/rhel6/x86_64/'
       )}
     end
