@@ -14,8 +14,8 @@
       "version_requirement": ">=2.3.0 <5.0.0"
     },
     {
-      "name": "darin/zypprepo",
-      "version_requirement": "1.x"
+      "name": "puppet/zypprepo",
+      "version_requirement": ">=2.0.0 <3.0.0"
     },
     {
       "name": "puppetlabs/apt",
