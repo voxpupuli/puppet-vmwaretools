@@ -160,7 +160,7 @@ describe 'vmwaretools', :type => 'class' do
       )}
       it { should contain_package('vmware-tools-esx-kmods') }
       it { should_not contain_service('vmware-tools-services').with_pattern('vmtoolsd') }
-      it { should contain_service('vmware-tools-services').with_start('/sbin/start vmware-tools-services') }
+      it { should contain_service('vmware-tools-services').with_start('/sbin/service vmware-tools-services start') }
       it { should contain_file('/etc/udev/rules.d/99-vmware-scsi-udev.rules').with(
         :content => "#\n# VMware SCSI devices Timeout adjustment\n#\n# Modify the timeout value for VMware SCSI devices so that\n# in the event of a failover, we don't time out.\n# See Bug 271286 for more information.\n\n\nACTION==\"add\", SUBSYSTEMS==\"scsi\", ATTRS{vendor}==\"VMware  \", ATTRS{model}==\"Virtual disk    \", RUN+=\"/bin/sh -c 'echo 14400 >/sys$DEVPATH/timeout'\"\nACTION==\"add\", SUBSYSTEMS==\"scsi\", ATTRS{vendor}==\"VMware, \", ATTRS{model}==\"VMware Virtual S\", RUN+=\"/bin/sh -c 'echo 14400 >/sys$DEVPATH/timeout'\"\n\n"
       ) }
@@ -250,7 +250,7 @@ describe 'vmwaretools', :type => 'class' do
       it { should contain_package('vmware-tools-esx-nox') }
       it { should contain_package('vmware-tools-esx-kmods') }
       it { should contain_service('vmware-tools-services').with_pattern('vmtoolsd') }
-      it { should_not contain_service('vmware-tools-services').with_start('/sbin/start vmware-tools-services') }
+      it { should_not contain_service('vmware-tools-services').with_start('/sbin/start vmware-tools-services start') }
     end
 
     describe 'tools_version => 5.1 and operatingsystem => RedHat 6' do
@@ -259,7 +259,7 @@ describe 'vmwaretools', :type => 'class' do
       it { should contain_package('vmware-tools-esx-nox') }
       it { should contain_package('vmware-tools-esx-kmods') }
       it { should_not contain_service('vmware-tools-services').with_pattern('vmtoolsd') }
-      it { should contain_service('vmware-tools-services').with_start('/sbin/start vmware-tools-services') }
+      it { should contain_service('vmware-tools-services').with_start('/sbin/service vmware-tools-services start') }
     end
 
     describe 'tools_version => 5.5p02 and operatingsystem => RedHat 6' do
@@ -268,7 +268,7 @@ describe 'vmwaretools', :type => 'class' do
       it { should contain_package('vmware-tools-esx-nox') }
       it { should contain_package('vmware-tools-esx-kmods') }
       it { should_not contain_service('vmware-tools-services').with_pattern('vmtoolsd') }
-      it { should contain_service('vmware-tools-services').with_start('/sbin/start vmware-tools-services') }
+      it { should contain_service('vmware-tools-services').with_start('/sbin/service vmware-tools-services start') }
     end
 
     describe 'tools_version => 5.1 and operatingsystem => SLES' do

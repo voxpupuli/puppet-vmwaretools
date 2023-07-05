@@ -341,10 +341,10 @@ class vmwaretools (
             ensure     => $service_ensure_real,
             hasrestart => true,
             hasstatus  => true,
-            start      => "/sbin/start ${service_name_real}",
-            stop       => "/sbin/stop ${service_name_real}",
-            status     => "/sbin/status ${service_name_real} | grep -q 'start/'",
-            restart    => "/sbin/restart ${service_name_real}",
+            start      => "/sbin/service ${service_name_real} start",
+            stop       => "/sbin/service ${service_name_real} stop",
+            status     => "/sbin/service ${service_name_real} status",
+            restart    => "/sbin/service ${service_name_real} restart",
             require    => Package[$package_real],
           }
         } else {
